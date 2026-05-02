@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git stash*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(echo *)",
+      "Bash(which *)",
+      "Bash(pwd)",
+      "Bash(node --version)",
+      "Bash(python --version)",
+      "Bash(python3 --version)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf *)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"\n--- Leo done. Check the diff before moving on. ---\""
+          }
+        ]
+      }
+    ]
+  }
+}
