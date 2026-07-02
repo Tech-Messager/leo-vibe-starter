@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 16mm 16mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Georgia", "Times New Roman", "WenQuanYi Zen Hei", serif;
+    color: #23303a; line-height: 1.68; font-size: 12.5px; margin: 0;
+  }
+  /* ---------- Cover ---------- */
+  .cover {
+    text-align: center; padding: 46px 24px 34px;
+    background: linear-gradient(160deg,#1e3a5f 0%,#2c5a8a 45%,#5b8bc0 100%);
+    color: #fff; border-radius: 16px; margin-bottom: 26px;
+  }
+  .cover .kicker { letter-spacing: 4px; font-size: 12px; opacity: .85; text-transform: uppercase; }
+  .cover h1 { font-size: 34px; margin: 10px 0 4px; text-shadow: 0 2px 10px rgba(0,0,0,.3); }
+  .cover .sub { font-size: 15px; opacity: .95; font-style: italic; }
+  .cover .snow { font-size: 26px; margin: 14px 0 6px; letter-spacing: 6px; }
+  .cover .byline { margin-top: 16px; font-size: 12.5px; background: rgba(255,255,255,.12);
+    display:inline-block; padding: 8px 18px; border-radius: 20px; }
+
+  /* ---------- Episode headers ---------- */
+  .episode { page-break-before: always; }
+  .ep-tag { display:inline-block; background:#1e3a5f; color:#fff; border-radius:20px;
+    padding:3px 14px; font-size:12px; letter-spacing:2px; font-weight:bold; }
+  .skill { display:inline-block; background:#e0f2fe; color:#0c4a6e; border-radius:20px;
+    padding:3px 12px; font-size:11px; margin-left:6px; }
+  h2 { color:#1e3a5f; font-size:22px; margin:10px 0 2px; page-break-after: avoid;}
+  .ep-sub { color:#5b8bc0; font-style:italic; font-size:13px; margin-bottom:8px;}
+
+  .previously { background:#f1f5f9; border-left:4px solid #94a3b8; padding:7px 14px;
+    border-radius:6px; font-size:11.5px; color:#475569; font-style:italic; margin:10px 0;}
+
+  p { margin: 9px 0; }
+  .story p:first-letter { }
+
+  /* ---------- Puzzle box ---------- */
+  .decode { background:#fffbeb; border:2px dashed #f59e0b; border-radius:10px;
+    padding:10px 16px; margin:14px 0; page-break-inside: avoid;}
+  .decode .head { color:#b45309; font-weight:bold; font-size:13.5px; font-family:"Segoe UI",Arial,sans-serif;}
+  .decode ol { margin:8px 0 6px 4px; padding-left:22px; }
+  .decode li { margin:6px 0; }
+  .decode .why { font-style:italic; color:#92400e; font-size:11.5px; }
+
+  .solution { background:#dcfce7; border-left:4px solid #22c55e; padding:7px 14px;
+    border-radius:6px; margin:8px 0 2px; font-size:11.5px; font-family:"Segoe UI",Arial,sans-serif;}
+  .solution b { color:#15803d; }
+
+  /* ---------- Big test / vault ---------- */
+  .vault { background:#fef2f2; border:2px solid #ef4444; border-radius:12px;
+    padding:14px 20px; margin:16px 0; }
+  .vault h2 { color:#b91c1c; }
+  .vault .lock { font-size:20px; }
+
+  .cliff { text-align:center; font-weight:bold; color:#1e3a5f; letter-spacing:1px;
+    margin:16px 0 4px; font-family:"Segoe UI",Arial,sans-serif;}
+  .teaser { text-align:center; font-style:italic; color:#5b8bc0; font-size:12px; margin-bottom:6px;}
+
+  .map { background:#ecfeff; border:1px solid #a5f3fc; border-radius:10px;
+    padding:10px 16px; margin:12px 0; font-size:11.5px; color:#155e75;}
+  .map b { color:#0e7490; }
+  hr { border:none; border-top:1px solid #cbd5e1; margin:16px 0;}
+  .footer { text-align:center; color:#94a3b8; font-size:11px; margin-top:22px; }
+  .drop { float:left; font-size:40px; line-height:34px; padding:2px 8px 0 0; color:#1e3a5f; font-weight:bold;}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <div class="kicker">A Falls Creek Mystery · Serialized Adventure</div>
+  <h1>The Secret of the Golden Snowflake</h1>
+  <div class="sub">Chloe &amp; Leo and the Riddles of the Snow Fox</div>
+  <div class="snow">❄ ⛷ ❄ ⛷ ❄</div>
+  <div class="byline">Solve the maths, crack the code, find the treasure — Year 3 AMC Adventure</div>
+</div>
+
+<div class="map">
+<b>📖 How this story works —</b> Read each episode like a real book. But watch out: the mysterious <b>Snow Fox</b> has hidden coded clues all over Falls Creek. Whenever you see a <b>🔓 DECODE THIS!</b> box, you and your reading partner must solve the maths to unlock the next part of the adventure. The answers are hidden in the green <b>Solution</b> boxes — don't peek until you've tried! Two big locked challenges (the <b>Cattleman's Hut</b> and the <b>Summit Vault</b>) mix everything together. Ready, explorers? The chairlift is waiting… ⛷️</div>
+
+<!-- ============ PROLOGUE ============ -->
+<div class="episode">
+<span class="ep-tag">PROLOGUE</span>
+<h2>The Note in the Ski Boot</h2>
+<div class="ep-sub">Falls Creek Village · the first evening</div>
+
+<div class="story">
+<p><span class="drop">S</span>now was falling on Falls Creek like sugar from the sky. Chloe pressed her nose to the frosty window of the lodge and watched the lights of the Village glow orange in the dark. Behind her, her little brother Leo was fighting with a stubborn ski boot.</p>
+
+<p>"Chloe! There's something <i>inside</i> my boot!" Leo pulled out a folded slip of paper, crackly and old, with a tiny drawing of a fox in the corner.</p>
+
+<p>Chloe took it and read aloud, her breath catching:</p>
+
+<p style="text-align:center; font-style:italic; color:#b45309;">"Long ago I hid the <b>Golden Snowflake</b> high on this mountain. Only a clever explorer — one who can count, and think, and never gives up — will follow my riddles to the end. Your first clue waits where the Village clock counts the hours.<br>— The Snow Fox 🦊"</p>
+
+<p>Leo's eyes went round as dinner plates. "A treasure? A <i>real</i> treasure?"</p>
+
+<p>Chloe grinned. She loved a good mystery — and she was <i>very</i> good at maths. "Get your beanie, Leo," she said. "We start tomorrow. But first… the clock tower."</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: Episode 1 · The Clock Tower Clue</div>
+</div>
+
+<!-- ============ EPISODE 1 ============ -->
+<div class="episode">
+<span class="ep-tag">EPISODE 1</span><span class="skill">Adding · Subtracting · Times · Doubling</span>
+<h2>The Clock Tower Clue</h2>
+<div class="ep-sub">Falls Creek Village Square · morning, fresh snow</div>
+
+<div class="previously">Previously: A mysterious note from the Snow Fox promised a hidden Golden Snowflake. The first clue waits at the Village clock…</div>
+
+<div class="story">
+<p><span class="drop">T</span>he Village Square sparkled. Right in the middle stood the old clock tower, and taped to its base was a second fox-note. But the words were locked behind numbers.</p>
+
+<p>"To open the clue," Chloe read, "the Snow Fox says we must answer his counting riddles. Get them all, and the secret word appears."</p>
+
+<p>Leo cracked his knuckles. He might be little, but he was quick with numbers. "Bring it on, Fox."</p>
+</div>
+
+<div class="decode">
+<div class="head">🔓 DECODE THIS! — The Clock Tower Riddles</div>
+<div class="why">Each answer unlocks one letter of the secret word.</div>
+<ol>
+  <li>The Summit chairlift carried 8 skiers up, then 5 more climbed on. How many riders in all?</li>
+  <li>There were 15 icicles hanging from the roof. 6 melted away. How many are left?</li>
+  <li>A gondola has 3 cabins. Each cabin holds 4 people. How many people can ride at once? <span class="why">(times!)</span></li>
+  <li>Leo built 7 snowballs, then made the same number again. That's <b>double</b> 7 — how many?</li>
+  <li>The clock chimed 9 times, then 2 hours later chimed again for the hour. What hour did it chime?</li>
+</ol>
+<div class="solution"><b>Solutions:</b> 1) 13 &nbsp; 2) 9 &nbsp; 3) 12 (3×4) &nbsp; 4) 14 &nbsp; 5) 11 o'clock — and the secret word spells <b>"WOMBAT"</b> 🐾</div>
+</div>
+
+<div class="story">
+<p>As Leo said each answer, a letter glowed gold on the clock face — W, O, M, B, A, T. "<b>WOMBAT!</b>" Chloe gasped. "There's a ski run called <i>Wombat's Ramble</i>! That's where we go next!"</p>
+<p>A cold wind swirled, and for just a second, Chloe thought she saw a flash of orange fur behind the ticket booth. But when she looked again — nothing. Only paw prints in the snow, leading toward the lifts.</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: Episode 2 · The Frozen Window on Wombat's Ramble</div>
+</div>
+
+<!-- ============ EPISODE 2 ============ -->
+<div class="episode">
+<span class="ep-tag">EPISODE 2</span><span class="skill">Shapes · Symmetry · Perimeter</span>
+<h2>The Frozen Window</h2>
+<div class="ep-sub">Wombat's Ramble ski run · beside an old snow-gum hut</div>
+
+<div class="previously">Previously: The clock tower clue spelled WOMBAT, and paw prints led toward Wombat's Ramble…</div>
+
+<div class="story">
+<p><span class="drop">H</span>alfway down Wombat's Ramble stood a tiny snow-gum hut with one frosted window. On the icy glass, someone had drawn shapes — a triangle, a square, a snowflake — and a new note fluttered on the door.</p>
+
+<p>"The Snow Fox loves shapes," Chloe murmured. "Look — the snowflake he drew has six perfect points. It's <i>symmetrical</i>. He's testing whether we know our shapes."</p>
+
+<p>Leo pressed his mitten to the freezing glass. "So what do we have to figure out?"</p>
+</div>
+
+<div class="decode">
+<div class="head">🔓 DECODE THIS! — The Window of Shapes</div>
+<div class="why">Solve all five to melt the frost and reveal the hidden arrow.</div>
+<ol>
+  <li>The Fox drew 3 snowflakes. Each has 6 points. How many points in all? <span class="why">(times!)</span></li>
+  <li>He drew 1 triangle (3 sides) and 1 square (4 sides). How many sides altogether?</li>
+  <li>Which of these has a line of symmetry — you could fold it and both halves match? &nbsp;⭕ circle &nbsp;·&nbsp; ⬜ square &nbsp;·&nbsp; the letter <b>F</b></li>
+  <li>The hut's window is a rectangle, 5 tiles long and 3 tiles wide. What is the <b>perimeter</b> (all the way around, in tiles)? <span class="why">(long + short) × 2</span></li>
+  <li>How many corners (vertices) does the square window frame have?</li>
+</ol>
+<div class="solution"><b>Solutions:</b> 1) 18 (3×6) &nbsp; 2) 7 &nbsp; 3) circle &amp; square (F can't fold to match) &nbsp; 4) 16 ((5+3)×2) &nbsp; 5) 4. The melting frost reveals an arrow pointing <b>downhill to Cloud Nine café</b>.</div>
+</div>
+
+<div class="story">
+<p>The frost slid away and a glowing arrow pointed straight down the mountain. "Cloud Nine!" Leo cheered. "That's the café with the hot chips!"</p>
+<p>Chloe laughed — but as they clipped back into their skis, she noticed something odd. The paw prints in the snow were arranged in a perfect symmetrical pattern, left-right-left-right, as if the Fox <i>wanted</i> them to notice. <i>He's not just hiding,</i> she thought. <i>He's teaching us.</i></p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: Episode 3 · Trouble at Cloud Nine Café</div>
+</div>
+
+<!-- ============ EPISODE 3 ============ -->
+<div class="episode">
+<span class="ep-tag">EPISODE 3</span><span class="skill">Money · Word Problems</span>
+<h2>Trouble at Cloud Nine Café</h2>
+<div class="ep-sub">Cloud Nine café · lunchtime, windows fogged with steam</div>
+
+<div class="previously">Previously: A melting window pointed the way down to Cloud Nine café…</div>
+
+<div class="story">
+<p><span class="drop">T</span>he café was warm and smelled of chocolate. Behind the counter, a friendly lady named Rosa was frowning at a note pinned to the till. "Oh, you two look clever," she said. "A strange customer in an orange scarf left this. Said whoever solves it can have the little wooden box he left behind."</p>
+
+<p>Chloe's heart thumped. <i>Orange scarf.</i> The Fox again! The note was full of prices and money puzzles.</p>
+
+<p>"Money problems," said Chloe. "Remember the detective trick, Leo — <b>underline</b> the numbers, <b>decide</b> add or take-away or times, then <b>write</b> the sum."</p>
+</div>
+
+<div class="decode">
+<div class="head">🔓 DECODE THIS! — The Café Till Riddles</div>
+<div class="why">Solve all five to earn the Snow Fox's wooden box.</div>
+<ol>
+  <li>A hot chocolate is $4. Chloe and Leo buy one each. How much altogether?</li>
+  <li>Leo pays for a $6.50 toasted sandwich with a $10 note. How much <b>change</b> should Rosa give him?</li>
+  <li>A bowl of hot chips is $5. How much for 3 bowls to share? <span class="why">(times!)</span></li>
+  <li>Cookies cost $2 each. How many cookies can you buy with exactly $12?</li>
+  <li>Gloves cost $8, a beanie $7, a scarf $5. With $20, which <b>two</b> items could you buy? List all the pairs.</li>
+</ol>
+<div class="solution"><b>Solutions:</b> 1) $8 &nbsp; 2) $3.50 &nbsp; 3) $15 &nbsp; 4) 6 cookies (12÷2) &nbsp; 5) gloves+beanie ($15), gloves+scarf ($13), beanie+scarf ($12) — all three pairs work!</div>
+</div>
+
+<div class="story">
+<p>Rosa clapped and handed over a small wooden box carved with a fox. Inside was an old brass <b>key</b>… and a note: <i>"Well done. But the key alone is useless. Climb to the old Cattleman's Hut on Frying Pan Spur. The padlock there has TEN numbers. Prove you remember everything you've learned, or the trail ends."</i></p>
+<p>Leo gulped. "Ten numbers? That's a <i>big</i> lock."</p>
+<p>Chloe squeezed the key tight. "Then we'd better remember everything. Come on — to the Cattleman's Hut."</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: ⚡ THE FIRST BIG CHALLENGE · The Locked Cattleman's Hut</div>
+</div>
+
+<!-- ============ BIG TEST 1 ============ -->
+<div class="episode">
+<div class="vault">
+<span class="lock">🔒</span> <span class="ep-tag" style="background:#b91c1c;">BIG CHALLENGE 1</span>
+<h2>The Locked Cattleman's Hut</h2>
+<div class="ep-sub" style="color:#ef4444;">Frying Pan Spur · a lonely old hut half-buried in snow · mixes Episodes 1–3</div>
+
+<div class="previously" style="border-color:#fca5a5;">Previously: The brass key opened the box — but the real door is a padlock with TEN numbers, high on Frying Pan Spur…</div>
+
+<div class="story">
+<p>The wind howled across Frying Pan Spur. The Cattleman's Hut leaned into the snow, its door held shut by a huge iron padlock with ten little dials. Carved above the door: <i>"Answer my ten riddles in order. Every answer turns a dial. Get them all, and the door swings free."</i></p>
+</div>
+
+<div class="decode" style="border-color:#ef4444; background:#fff5f5;">
+<div class="head" style="color:#b91c1c;">🔒 THE TEN-DIAL PADLOCK — solve all ten!</div>
+<div class="why">A grand mix of everything from Episodes 1–3. Take your time, explorers.</div>
+<ol>
+  <li>9 + 8 = ?</li>
+  <li>What is 6 × 3?</li>
+  <li>How many sides do 4 triangles have altogether?</li>
+  <li>A square's side is 5 cm. What is its perimeter?</li>
+  <li>You have 18 snowballs and throw 7. How many are left?</li>
+  <li>Two hot dogs cost $3 each. What is the total?</li>
+  <li>You pay $10 for a $4.50 book of trail maps. What change do you get?</li>
+  <li>Does the letter "A" have a line of symmetry — yes or no?</li>
+  <li>What is double 9?</li>
+  <li>A gondola holds 6 people. How many people fit in 3 gondolas?</li>
+</ol>
+<div class="solution"><b>Padlock code:</b> 1) 17 &nbsp; 2) 18 &nbsp; 3) 12 &nbsp; 4) 20 &nbsp; 5) 11 &nbsp; 6) $6 &nbsp; 7) $5.50 &nbsp; 8) Yes &nbsp; 9) 18 &nbsp; 10) 18
+<br><b>Explorer rank:</b> 8–10 correct = 🦊 Fox-Level Detective! · 5–7 = Great — check the tricky dials · under 5 = re-read Episodes 1–3 and try again, every explorer stumbles!</div>
+</div>
+
+<div class="story">
+<p>With the last dial, the padlock sprang open with a <i>CLUNK!</i> Inside the hut, by the light of Chloe's torch, they found an old map — the top half torn away — and a single line of writing:</p>
+<p style="text-align:center; font-style:italic; color:#b45309;">"You are halfway, brave ones. The rest of the map hides in a PATTERN on the mountain. Follow the coloured flags. — The Snow Fox 🦊"</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: Episode 4 · The Trail of Coloured Flags</div>
+</div>
+</div>
+
+<!-- ============ EPISODE 4 ============ -->
+<div class="episode">
+<span class="ep-tag">EPISODE 4</span><span class="skill">Patterns · Logic</span>
+<h2>The Trail of Coloured Flags</h2>
+<div class="ep-sub">Halley's Comet run · a long trail marked with little flags</div>
+
+<div class="previously">Previously: Inside the Cattleman's Hut, half a map — the rest hidden in a pattern of coloured flags…</div>
+
+<div class="story">
+<p><span class="drop">A</span>long the edge of Halley's Comet run, tiny flags flapped in the snow: red, blue, red, blue… on and on. And every so often, a flag had a number on it. "It's a code made of patterns," Chloe breathed. "If we can work out what comes next, we'll know where to turn."</p>
+
+<p>Leo was already hopping from flag to flag. "I love patterns! You just find what changes each time!"</p>
+</div>
+
+<div class="decode">
+<div class="head">🔓 DECODE THIS! — The Pattern Flags</div>
+<div class="why">Each solved pattern points the way to the next flag.</div>
+<ol>
+  <li>Flags go red, blue, red, blue, red, ___ . What colour is next?</li>
+  <li>Numbered flags: 5, 10, 15, 20, ___ . What number comes next?</li>
+  <li>Flags read 2, 4, 6, 8, ___ . What is the "jump" each time, and what comes next?</li>
+  <li>The Fox left a clue: "Anna skis faster than Chloe. Chloe skis faster than Leo." Who is the slowest?</li>
+  <li>On day 1 the Fox hid 2 flags, day 2 he hid 4, day 3 he hid 6. At this rate, how many on day 5?</li>
+</ol>
+<div class="solution"><b>Solutions:</b> 1) blue &nbsp; 2) 25 &nbsp; 3) jump is +2, next is 10 &nbsp; 4) Leo &nbsp; 5) 10 (2, 4, 6, 8, 10). The last flag points straight up — toward the <b>Summit</b>.</div>
+</div>
+
+<div class="story">
+<p>The very last flag was gold, and it pointed up, up, up to the highest peak. On its back, the missing half of the map! Together the two halves showed a single glowing spot at the very top of Falls Creek — marked with a tiny golden snowflake.</p>
+<p>"That's it," whispered Chloe. "The treasure is at the Summit." Far away, a fox barked once, as if in answer.</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: Episode 5 · The Maze of Gondolas</div>
+</div>
+
+<!-- ============ EPISODE 5 ============ -->
+<div class="episode">
+<span class="ep-tag">EPISODE 5</span><span class="skill">Counting Ways · Multi-Step</span>
+<h2>The Maze of Gondolas</h2>
+<div class="ep-sub">Near the Summit · a tangle of chairlifts and cabins in the mist</div>
+
+<div class="previously">Previously: The joined map points to a golden snowflake at the very Summit…</div>
+
+<div class="story">
+<p><span class="drop">N</span>ear the top, the mist grew thick. Chairlifts crossed in every direction like a giant puzzle. A sign swung in the wind: <i>"Only those who can count every path may pass. Choose wrongly and you'll ride in circles forever."</i></p>
+
+<p>"Multi-step problems," said Chloe, "and 'how many ways' puzzles. The trick is to be neat and list everything in order, so we never miss one."</p>
+</div>
+
+<div class="decode">
+<div class="head">🔓 DECODE THIS! — The Gondola Maze</div>
+<div class="why">Answer all five to find the one safe path to the Summit.</div>
+<ol>
+  <li>There are red, blue and green gondolas. You and Leo each ride a <b>different</b> colour. How many combinations are possible?</li>
+  <li>The lift up takes 15 minutes; skiing down takes 10 minutes. How long is <b>one round trip</b>? And <b>three</b> round trips? <span class="why">(two steps!)</span></li>
+  <li>Each snowflake sign has 6 points. How many signs make exactly 30 points?</li>
+  <li>Fold the trail map in half 2 times, then unfold — how many sections? What about 3 folds?</li>
+  <li>You have 3 different energy bars. How many different <b>pairs</b> can you pack?</li>
+</ol>
+<div class="solution"><b>Solutions:</b> 1) 6 (red-blue, red-green, blue-red, blue-green, green-red, green-blue) &nbsp; 2) one trip = 25 min; three trips = 75 min &nbsp; 3) 5 (30÷6) &nbsp; 4) 2 folds = 4 sections, 3 folds = 8 sections &nbsp; 5) 3 pairs. The safe path glows — straight to the Summit!</div>
+</div>
+
+<div class="story">
+<p>The correct gondola rose out of the mist and carried them to the very top of Falls Creek. There, on the highest rock, sat a small iron chest… guarded by one final lock with a whole row of numbers.</p>
+</div>
+
+<div class="cliff">— TO BE CONTINUED —</div>
+<div class="teaser">Next: ⚡ THE GRAND FINALE · The Summit Vault &amp; the Snow Fox Revealed</div>
+</div>
+
+<!-- ============ FINAL BIG TEST ============ -->
+<div class="episode">
+<div class="vault" style="border-color:#eab308; background:#fefce8;">
+<span class="lock">🏆</span> <span class="ep-tag" style="background:#a16207;">GRAND FINALE</span>
+<h2 style="color:#a16207;">The Summit Vault</h2>
+<div class="ep-sub" style="color:#ca8a04;">The peak of Falls Creek · the Golden Snowflake within reach · mixes Episodes 1–5</div>
+
+<div class="previously" style="border-color:#fde047;">Previously: One safe gondola carried Chloe and Leo to the Summit — where the treasure chest waits behind one last, biggest lock…</div>
+
+<div class="story">
+<p>The chest gleamed. Carved into its golden lid: <i>"Fifteen riddles guard the Golden Snowflake — one for everything you have learned. Answer them, brave explorers, and the treasure is yours."</i></p>
+<p>Chloe and Leo looked at each other, took a deep breath, and began.</p>
+</div>
+
+<div class="decode" style="border-color:#eab308; background:#fffbeb;">
+<div class="head" style="color:#a16207;">🏆 THE FIFTEEN-NUMBER VAULT — the final challenge!</div>
+<div class="why">Everything from the whole adventure, easy → hard, just like a real AMC. Give it 30 minutes!</div>
+<ol>
+  <li>12 + 7 = ?</li>
+  <li>15 − 9 = ?</li>
+  <li>What is 5 × 4?</li>
+  <li>What is double 8?</li>
+  <li>How many sides do 3 squares have altogether?</li>
+  <li>A rectangle is 6 cm long and 2 cm wide. What is its perimeter?</li>
+  <li>Does the letter "H" have a line of symmetry — yes or no?</li>
+  <li>Two cocoas cost $4 each. You pay with $10. What change do you get?</li>
+  <li>Pencils are $2 each. How many can you buy with $12?</li>
+  <li>Pattern: 4, 8, 12, 16, ___ . What comes next?</li>
+  <li>Pattern: 1, 2, 4, 8, ___ (it doubles each time). What comes next?</li>
+  <li>Sam is taller than Kim. Kim is taller than Jo. Who is shortest?</li>
+  <li>Red, blue, green scarves — you and Leo each take a different one. How many combinations?</li>
+  <li>A chairlift up is 12 min and skiing down is 8 min. How long is one round trip?</li>
+  <li>Each star has 5 points. How many stars make 20 points?</li>
+</ol>
+<div class="solution"><b>Vault code:</b> 1) 19 &nbsp; 2) 6 &nbsp; 3) 20 &nbsp; 4) 16 &nbsp; 5) 12 &nbsp; 6) 16 cm &nbsp; 7) Yes &nbsp; 8) $2 &nbsp; 9) 6 &nbsp; 10) 20 &nbsp; 11) 16 &nbsp; 12) Jo &nbsp; 13) 6 &nbsp; 14) 20 min &nbsp; 15) 4
+<br><b>Final rank:</b> 13–15 = 🏆 Keeper of the Golden Snowflake! · 9–12 = 🥈 So brave, so close! · 5–8 = 🥉 A true explorer — review and return · under 5 = the mountain always welcomes a second climb!</div>
+</div>
+
+<div class="story">
+<p>With the final number, the vault sang open. Inside, on a bed of white velvet, lay the <b>Golden Snowflake</b> — glowing warm in Chloe's hands. And beside it, one last note:</p>
+<p style="text-align:center; font-style:italic; color:#a16207;">"You counted, you thought, and you never gave up. THAT is the real treasure. The Golden Snowflake belongs to every clever explorer who finishes the climb. — The Snow Fox 🦊"</p>
+<p>A soft laugh echoed across the peak. On a rock nearby sat a real fox, its orange coat bright against the snow. It winked one golden eye… and then, in a swirl of snowflakes, it was gone.</p>
+<p>Leo hugged his sister. "Can we do it all again next winter?"</p>
+<p>Chloe looked out over the whole glittering mountain and smiled. "Of course. There are always more riddles on the snow."</p>
+</div>
+
+<div class="cliff" style="color:#a16207;">✦ THE END ✦</div>
+<div class="teaser">…or is it? The Snow Fox always leaves one more clue. 🦊❄️</div>
+</div>
+</div>
+
+<!-- ============ EXPLORER LOG ============ -->
+<div class="episode">
+<h2>🗺️ Explorer's Log — Chloe &amp; Leo</h2>
+<p>Fill in one snowflake ❄️ for each riddle you crack. Race each other, or team up — the treasure belongs to both explorers!</p>
+<table style="border-collapse:collapse; width:100%; font-size:12px; margin-top:8px;">
+  <tr style="background:#e0f2fe;">
+    <th style="border:1px solid #cbd5e1; padding:6px;">Episode</th>
+    <th style="border:1px solid #cbd5e1; padding:6px;">Chloe ❄️</th>
+    <th style="border:1px solid #cbd5e1; padding:6px;">Leo ❄️</th>
+  </tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;">Ep 1 · Clock Tower (/5)</td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;">Ep 2 · Frozen Window (/5)</td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;">Ep 3 · Cloud Nine (/5)</td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;"><b>🔒 Cattleman's Hut (/10)</b></td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;">Ep 4 · Pattern Flags (/5)</td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;">Ep 5 · Gondola Maze (/5)</td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr><td style="border:1px solid #cbd5e1; padding:6px;"><b>🏆 Summit Vault (/15)</b></td><td style="border:1px solid #cbd5e1;"></td><td style="border:1px solid #cbd5e1;"></td></tr>
+  <tr style="background:#fef9c3;"><th style="border:1px solid #cbd5e1; padding:6px;">TOTAL</th><th style="border:1px solid #cbd5e1;"></th><th style="border:1px solid #cbd5e1;"></th></tr>
+</table>
+
+<div class="map" style="margin-top:16px;">
+<b>💡 For the grown-up reading along —</b> Read the story aloud together and stop at each <b>🔓 DECODE THIS!</b> box to solve the maths before turning the page. Let the kids explain <i>how</i> they worked each one out — explaining is where the real learning happens. The two big challenges (Cattleman's Hut and Summit Vault) work well as "mini exams." No penalty for wrong answers, just like the real AMC — so encourage brave guesses!</div>
+
+<div class="footer">The Secret of the Golden Snowflake · A Falls Creek Maths Adventure for Chloe &amp; Leo · 2026-07-02 ⛷️❄️🦊</div>
+</div>
+
+</body>
+</html>
