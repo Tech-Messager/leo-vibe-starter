@@ -1,0 +1,446 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 10mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Comic Sans MS","Segoe UI","WenQuanYi Zen Hei",sans-serif; margin:0; color:#1a2330; background:#fff; font-size:12px; }
+  .page { page-break-after: always; padding: 4px 2px; }
+  .page:last-child { page-break-after: auto; }
+
+  /* ---- Cover ---- */
+  .cover { text-align:center; color:#fff; border-radius:18px; padding:34px 20px 26px; position:relative; overflow:hidden; }
+  .cover .kick { letter-spacing:3px; font-size:12px; text-transform:uppercase; opacity:.9; }
+  .cover h1 { font-size:34px; margin:8px 12px 6px; text-shadow:0 3px 12px rgba(0,0,0,.35); }
+  .cover .sub { font-size:15px; font-style:italic; opacity:.95; }
+  .cover .cast { margin-top:16px; }
+  .cover .cast svg { width:88px; height:104px; vertical-align:bottom; margin:0 -2px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+  .cover .byline { margin-top:14px; font-size:12px; background:rgba(255,255,255,.18); display:inline-block; padding:7px 16px; border-radius:20px; }
+
+  /* ---- Comic grid ---- */
+  .strip { display:flex; gap:8px; margin-bottom:8px; }
+  .strip.rev { }
+  .panel { position:relative; border:3px solid #16202e; border-radius:8px; overflow:hidden; min-height:150px; flex:1; box-shadow:3px 3px 0 rgba(22,32,46,.15); }
+  .panel.tall { min-height:190px; }
+  .p2 { flex:2; } .p3 { flex:3; }
+
+  /* backgrounds */
+  .sky   { background:linear-gradient(#bfe3ff 0%,#e8f6ff 62%,#ffffff 100%); }
+  .dusk  { background:linear-gradient(#ffd9a0 0%,#ffb3c1 45%,#c7e6ff 100%); }
+  .dawn  { background:linear-gradient(#f9c6d6 0%,#ffe3b0 55%,#cfeaff 100%); }
+  .night { background:linear-gradient(#1e2a52 0%,#3a4a86 70%,#93a7d8 100%); }
+  .cave  { background:linear-gradient(#12332a 0%,#1c5045 70%,#2c7a63 100%); }
+  .warm  { background:linear-gradient(#7a2e0e 0%,#c26518 55%,#f6b26b 100%); }
+  .rosy  { background:linear-gradient(#7a1533 0%,#c23a6a 55%,#f7a8c6 100%); }
+  .indoor{ background:linear-gradient(#fde8c8 0%,#f6d9a8 100%); }
+  /* snow floor */
+  .snow { position:absolute; left:-10%; right:-10%; bottom:-30px; height:70px; background:#fff; border-radius:50%/60px; box-shadow:0 -3px 0 #e2eef7; }
+  .snow2{ position:absolute; left:-10%; right:-10%; bottom:-46px; height:70px; background:#eaf4fb; border-radius:50%/60px; }
+
+  /* characters positioned in panels */
+  .fig { position:absolute; bottom:6px; }
+  .fig svg { display:block; }
+  .s-sm svg{ width:58px; height:68px;} .s-md svg{ width:78px; height:92px;} .s-lg svg{ width:100px; height:118px;}
+
+  /* speech bubble */
+  .bub { position:absolute; background:#fff; border:2.5px solid #16202e; border-radius:14px; padding:5px 9px; font-size:11px; max-width:62%; line-height:1.3; box-shadow:2px 2px 0 rgba(22,32,46,.12); }
+  .bub:after { content:""; position:absolute; width:0; height:0; }
+  .bub.bl:after{ left:16px; bottom:-12px; border:7px solid transparent; border-top-color:#16202e; }
+  .bub.br:after{ right:16px; bottom:-12px; border:7px solid transparent; border-top-color:#16202e; }
+  .bub b{ color:#b45309; }
+  /* narration caption */
+  .cap { position:absolute; top:0; left:0; right:0; background:#fff3c4; border-bottom:2px solid #eab308; padding:4px 8px; font-size:10.5px; font-style:italic; color:#7a5a00; }
+  .cap.bot { top:auto; bottom:0; border-bottom:none; border-top:2px solid #eab308; }
+  /* sound effect */
+  .sfx { position:absolute; font-weight:bold; font-size:26px; color:#fff; transform:rotate(-10deg); text-shadow:2px 2px 0 #16202e,-1px -1px 0 #16202e; letter-spacing:1px; }
+
+  /* clue scroll (puzzle) */
+  .clue { border:3px dashed #f59e0b; background:#fffbeb; border-radius:12px; padding:8px 16px; margin:8px 0; }
+  .clue .h { font-weight:bold; color:#b45309; font-size:14px; }
+  .clue ol { margin:6px 0 4px 2px; padding-left:22px; }
+  .clue li { margin:4px 0; font-size:11.5px; }
+  .sol { background:#dcfce7; border-left:4px solid #22c55e; border-radius:6px; padding:6px 12px; font-size:11px; margin-top:6px; }
+  .sol b{ color:#15803d; }
+  .lockbar { text-align:center; font-weight:bold; letter-spacing:1px; font-size:15px; margin:6px 0; }
+
+  .title { text-align:center; font-size:20px; font-weight:bold; color:#16202e; margin:2px 0 8px; }
+  .epnum { display:inline-block; background:#16202e; color:#fff; border-radius:16px; padding:2px 12px; font-size:12px; letter-spacing:1px; }
+  .foot { text-align:center; color:#94a3b8; font-size:10px; margin-top:8px; }
+  .toend { text-align:center; font-weight:bold; color:#16202e; letter-spacing:1px; margin:6px 0 2px; }
+</style></head><body>
+
+<!-- ============ SHARED CHARACTER LIBRARY ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<!-- CHLOE : red beanie, ponytail, blue jacket -->
+<symbol id="chloe" viewBox="0 0 120 150">
+  <path d="M34 150 Q34 100 60 96 Q86 100 86 150 Z" fill="#2b6cb0"/>
+  <rect x="28" y="104" width="14" height="34" rx="7" fill="#2b6cb0"/>
+  <rect x="78" y="104" width="14" height="34" rx="7" fill="#2b6cb0"/>
+  <circle cx="35" cy="138" r="7" fill="#ffe0bd"/><circle cx="85" cy="138" r="7" fill="#ffe0bd"/>
+  <ellipse cx="94" cy="74" rx="12" ry="22" fill="#7b4a2a"/>
+  <circle cx="60" cy="60" r="34" fill="#ffe0bd"/>
+  <path d="M26 56 Q26 20 60 20 Q94 20 94 56 Z" fill="#e53e73"/>
+  <rect x="23" y="52" width="74" height="11" rx="5" fill="#c53060"/>
+  <circle cx="60" cy="17" r="7" fill="#fff"/>
+  <circle cx="49" cy="62" r="4.2" fill="#2a2a2a"/><circle cx="71" cy="62" r="4.2" fill="#2a2a2a"/>
+  <circle cx="50.5" cy="60.5" r="1.3" fill="#fff"/><circle cx="72.5" cy="60.5" r="1.3" fill="#fff"/>
+  <path d="M50 74 Q60 83 70 74" stroke="#b83280" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="43" cy="71" r="4" fill="#ffb3c1" opacity=".7"/><circle cx="77" cy="71" r="4" fill="#ffb3c1" opacity=".7"/>
+</symbol>
+
+<!-- LEO : green beanie, orange jacket, smaller -->
+<symbol id="leo" viewBox="0 0 120 150">
+  <path d="M36 150 Q36 104 60 100 Q84 104 84 150 Z" fill="#ea7317"/>
+  <rect x="30" y="108" width="13" height="32" rx="6.5" fill="#ea7317"/>
+  <rect x="77" y="108" width="13" height="32" rx="6.5" fill="#ea7317"/>
+  <circle cx="36" cy="140" r="6.5" fill="#ffe0bd"/><circle cx="84" cy="140" r="6.5" fill="#ffe0bd"/>
+  <circle cx="60" cy="66" r="32" fill="#ffe0bd"/>
+  <path d="M29 62 Q29 28 60 28 Q91 28 91 62 Z" fill="#2f9e44"/>
+  <rect x="26" y="58" width="68" height="10" rx="5" fill="#237a35"/>
+  <circle cx="60" cy="26" r="6.5" fill="#fff"/>
+  <circle cx="50" cy="68" r="4" fill="#2a2a2a"/><circle cx="70" cy="68" r="4" fill="#2a2a2a"/>
+  <circle cx="51.3" cy="66.6" r="1.2" fill="#fff"/><circle cx="71.3" cy="66.6" r="1.2" fill="#fff"/>
+  <path d="M50 79 Q60 88 70 79" stroke="#b45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="44" cy="76" r="3.6" fill="#ffb3c1" opacity=".7"/><circle cx="76" cy="76" r="3.6" fill="#ffb3c1" opacity=".7"/>
+</symbol>
+
+<!-- SNOW FOX -->
+<symbol id="fox" viewBox="0 0 120 150">
+  <path d="M40 148 Q30 120 52 112 L70 112 Q92 120 82 148 Z" fill="#f08c2e"/>
+  <path d="M78 140 Q108 132 100 108 Q92 118 78 120 Z" fill="#f08c2e"/><path d="M92 124 Q102 120 99 112 Q95 118 88 120 Z" fill="#fff"/>
+  <circle cx="60" cy="66" r="32" fill="#f08c2e"/>
+  <path d="M30 44 L26 14 L52 34 Z" fill="#f08c2e"/><path d="M90 44 L94 14 L68 34 Z" fill="#f08c2e"/>
+  <path d="M33 40 L31 22 L46 34 Z" fill="#ffd8a8"/><path d="M87 40 L89 22 L74 34 Z" fill="#ffd8a8"/>
+  <path d="M60 62 Q40 74 44 92 Q60 100 76 92 Q80 74 60 62 Z" fill="#fff"/>
+  <circle cx="49" cy="62" r="4.4" fill="#2a2a2a"/><circle cx="71" cy="62" r="4.4" fill="#2a2a2a"/>
+  <circle cx="50.4" cy="60.4" r="1.3" fill="#fff"/><circle cx="72.4" cy="60.4" r="1.3" fill="#fff"/>
+  <ellipse cx="60" cy="80" rx="5" ry="4" fill="#3a2a1a"/>
+  <path d="M60 84 Q60 90 54 90 M60 84 Q60 90 66 90" stroke="#3a2a1a" stroke-width="2" fill="none"/>
+  <rect x="40" y="100" width="40" height="10" rx="4" fill="#c92a2a"/>
+</symbol>
+
+<!-- SNOW OWL -->
+<symbol id="owl" viewBox="0 0 120 150">
+  <ellipse cx="60" cy="86" rx="42" ry="48" fill="#f2f6fb"/>
+  <ellipse cx="60" cy="86" rx="30" ry="38" fill="#fff"/>
+  <path d="M22 54 L34 30 L46 52 Z" fill="#f2f6fb"/><path d="M98 54 L86 30 L74 52 Z" fill="#f2f6fb"/>
+  <circle cx="45" cy="66" r="17" fill="#fff8e1"/><circle cx="75" cy="66" r="17" fill="#fff8e1"/>
+  <circle cx="45" cy="66" r="9" fill="#3a2a1a"/><circle cx="75" cy="66" r="9" fill="#3a2a1a"/>
+  <circle cx="47" cy="63" r="3" fill="#fff"/><circle cx="77" cy="63" r="3" fill="#fff"/>
+  <path d="M53 76 L60 88 L67 76 Z" fill="#f6a935"/>
+  <path d="M22 100 Q10 108 20 120" stroke="#dbe6f0" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M98 100 Q110 108 100 120" stroke="#dbe6f0" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M50 132 L50 142 M58 132 L58 142 M62 132 L62 142 M70 132 L70 142" stroke="#f6a935" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+
+<!-- SNOW WOMBAT -->
+<symbol id="wombat" viewBox="0 0 120 150">
+  <ellipse cx="60" cy="96" rx="46" ry="40" fill="#b7a99a"/>
+  <ellipse cx="60" cy="104" rx="34" ry="28" fill="#e7ded3"/>
+  <circle cx="30" cy="62" r="13" fill="#b7a99a"/><circle cx="90" cy="62" r="13" fill="#b7a99a"/>
+  <circle cx="30" cy="62" r="6" fill="#8a7c6c"/><circle cx="90" cy="62" r="6" fill="#8a7c6c"/>
+  <ellipse cx="60" cy="70" rx="40" ry="34" fill="#c9bcac"/>
+  <circle cx="46" cy="66" r="4.4" fill="#2a2a2a"/><circle cx="74" cy="66" r="4.4" fill="#2a2a2a"/>
+  <circle cx="47.4" cy="64.4" r="1.3" fill="#fff"/><circle cx="75.4" cy="64.4" r="1.3" fill="#fff"/>
+  <ellipse cx="60" cy="80" rx="12" ry="9" fill="#8a7c6c"/>
+  <ellipse cx="60" cy="78" rx="6" ry="4" fill="#3a2a1a"/>
+  <path d="M60 86 L60 92 M52 128 L52 138 M68 128 L68 138" stroke="#8a7c6c" stroke-width="5" stroke-linecap="round"/>
+</symbol>
+
+<!-- SNOW DRAGON -->
+<symbol id="dragon" viewBox="0 0 120 150">
+  <path d="M40 148 Q34 120 46 108 Q40 90 58 84 L70 84 Q96 92 92 120 Q100 138 84 148 Z" fill="#5aa9e6"/>
+  <path d="M58 90 Q40 92 30 78 Q26 62 40 58 Q44 44 60 46 Q80 42 86 60 Q98 66 92 82 Q84 94 66 90 Z" fill="#74c0fc"/>
+  <path d="M40 50 L34 30 L52 44 Z" fill="#a5d8ff"/><path d="M80 50 L86 30 L68 44 Z" fill="#a5d8ff"/>
+  <ellipse cx="60" cy="70" rx="30" ry="24" fill="#89ccf2"/>
+  <ellipse cx="60" cy="82" rx="20" ry="12" fill="#bfe3ff"/>
+  <circle cx="49" cy="64" r="5" fill="#1a3a5a"/><circle cx="71" cy="64" r="5" fill="#1a3a5a"/>
+  <circle cx="50.6" cy="62.2" r="1.5" fill="#fff"/><circle cx="72.6" cy="62.2" r="1.5" fill="#fff"/>
+  <circle cx="52" cy="80" r="2.4" fill="#3a6a8a"/><circle cx="68" cy="80" r="2.4" fill="#3a6a8a"/>
+  <path d="M50 88 Q60 94 70 88" stroke="#2a5a7a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M92 96 Q116 92 112 74 Q104 88 90 86 Z" fill="#a5d8ff"/>
+</symbol>
+
+<!-- PINE TREE -->
+<symbol id="pine" viewBox="0 0 60 90">
+  <rect x="26" y="66" width="8" height="20" fill="#7b4a2a"/>
+  <path d="M30 6 L48 40 L12 40 Z" fill="#2f7a44"/>
+  <path d="M30 24 L52 60 L8 60 Z" fill="#2f8a4a"/>
+  <path d="M30 44 L56 82 L4 82 Z" fill="#37994f"/>
+  <circle cx="20" cy="50" r="2.4" fill="#fff"/><circle cx="40" cy="66" r="2.4" fill="#fff"/><circle cx="30" cy="34" r="2" fill="#fff"/>
+</symbol>
+
+<!-- MOUNTAIN -->
+<symbol id="mtn" viewBox="0 0 200 90">
+  <path d="M0 90 L60 18 L100 60 L140 24 L200 90 Z" fill="#cdddec"/>
+  <path d="M60 18 L74 34 L52 40 Z" fill="#fff"/><path d="M140 24 L156 46 L126 50 Z" fill="#fff"/>
+</symbol>
+
+<!-- SNOWFLAKE deco -->
+<symbol id="flake" viewBox="0 0 40 40">
+  <g stroke="#fff" stroke-width="3" stroke-linecap="round">
+   <path d="M20 4 L20 36 M4 20 L36 20 M8 8 L32 32 M32 8 L8 32"/>
+  </g>
+</symbol>
+
+</defs></svg>
+<!-- ========== COVER ========== -->
+<div class="page">
+<div class="cover" style="background:linear-gradient(160deg,#1e3a5f,#2c5a8a 50%,#5b8bc0);">
+  <div class="kick">Chloe &amp; Leo · Falls Creek Comics · Book One</div>
+  <h1>The Secret of the Golden Snowflake</h1>
+  <div class="sub">A snow-mountain mystery told in pictures — solve the maths, crack the code!</div>
+  <div class="cast">
+    <svg><use href="#chloe"/></svg><svg><use href="#leo"/></svg><svg><use href="#fox"/></svg>
+  </div>
+  <div class="byline">📖 Read the panels · 🔓 solve each CLUE · turn the page to go on!</div>
+</div>
+<p style="text-align:center;font-size:11.5px;color:#475569;margin-top:14px;">
+Adding · Subtracting · Times · Doubling · Shapes · Money · Patterns · Counting Ways</p>
+</div>
+
+<!-- ========== PROLOGUE + EP1 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">PROLOGUE → EP 1</span> &nbsp;The Note &amp; The Clock Tower</div>
+
+<div class="strip">
+  <div class="panel tall night">
+    <div class="cap">Falls Creek Village — the first snowy night…</div>
+    <div class="snow2"></div><div class="snow"></div>
+    <svg class="fig s-md" style="left:12px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:96px;"><use href="#leo"/></svg>
+    <div class="bub bl" style="right:8px;top:34px;">There's a note in my ski boot… with a little <b>fox</b> on it!</div>
+    <svg style="position:absolute;right:10px;bottom:12px;width:30px;height:30px;"><use href="#flake"/></svg>
+  </div>
+  <div class="panel tall indoor">
+    <div class="cap">The note read…</div>
+    <div style="position:absolute;top:34px;left:14px;right:14px;background:#fff;border:2px dashed #b45309;border-radius:8px;padding:8px;font-size:10.5px;font-style:italic;color:#7a5a00;">
+      "I hid the <b>Golden Snowflake</b> high on this mountain. Follow my riddles… Your first clue waits where the Village clock counts the hours. — The Snow Fox 🦊"</div>
+    <svg class="fig s-sm" style="right:8px;bottom:4px;"><use href="#fox"/></svg>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="panel p2 sky">
+    <div class="cap">Next morning — the clock tower!</div>
+    <div class="snow"></div>
+    <svg class="fig s-md" style="left:10px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:92px;"><use href="#leo"/></svg>
+    <div style="position:absolute;right:14px;top:24px;width:56px;height:56px;background:#fff;border:3px solid #16202e;border-radius:50%;">
+      <div style="position:absolute;top:2px;left:22px;font-size:9px;">12</div>
+      <div style="position:absolute;top:22px;left:2px;width:24px;height:3px;background:#16202e;transform-origin:right;transform:rotate(200deg);"></div>
+      <div style="position:absolute;top:24px;left:24px;width:20px;height:3px;background:#c92a2a;transform-origin:left;"></div>
+    </div>
+    <div class="bub bl" style="left:40px;bottom:70px;">Answer the Fox's riddles and a secret word appears!</div>
+  </div>
+  <div class="panel sky">
+    <div class="snow"></div>
+    <div class="sfx" style="right:16px;top:20px;color:#ffd43b;">TICK!</div>
+    <svg class="fig s-sm" style="left:30px;"><use href="#leo"/></svg>
+    <div class="bub br" style="left:8px;top:14px;">Bring it on, Fox!</div>
+  </div>
+</div>
+
+<div class="clue">
+  <div class="h">🔓 CLUE 1 — The Clock Tower Riddles <span style="font-weight:normal;font-size:11px;">(each answer lights up one golden letter)</span></div>
+  <ol>
+    <li>The chairlift carried 8 skiers up, then 5 more hopped on. How many riders in all?</li>
+    <li>15 icicles hung from the roof; 6 melted. How many are left?</li>
+    <li>A gondola has 3 cabins, each holds 4 people. How many can ride at once? (×)</li>
+    <li>Leo made 7 snowballs, then the same again — <b>double</b> 7 is…?</li>
+    <li>The clock chimed 9, then 2 hours later chimed the hour. What hour?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) 13 · 2) 9 · 3) 12 · 4) 14 · 5) 11 → the letters spell <b>W-O-M-B-A-T</b> 🐾 → next stop: <i>Wombat's Ramble!</i></div>
+</div>
+<div class="toend">— TO BE CONTINUED · a flash of orange fur by the ticket booth… —</div>
+</div>
+
+<!-- ========== EP2 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EPISODE 2</span> &nbsp;The Frozen Window</div>
+
+<div class="strip">
+  <div class="panel p2 sky">
+    <div class="cap">Halfway down Wombat's Ramble — a tiny snow-gum hut.</div>
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:8px;"><use href="#pine"/></svg>
+    <svg class="fig s-md" style="left:60px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:150px;"><use href="#leo"/></svg>
+    <div style="position:absolute;right:12px;top:20px;width:50px;height:56px;background:#cfe8ff;border:3px solid #16202e;">
+      <svg style="position:absolute;top:10px;left:12px;width:26px;height:26px;"><use href="#flake"/></svg></div>
+    <div class="bub bl" style="left:70px;bottom:78px;">The Fox left a window of <b>shapes</b>!</div>
+  </div>
+  <div class="panel sky">
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:26px;"><use href="#leo"/></svg>
+    <div class="bub br" style="left:6px;top:12px;">Melt the frost… and an arrow appears!</div>
+    <div class="sfx" style="right:8px;bottom:44px;font-size:20px;color:#a5d8ff;">shimmer…</div>
+  </div>
+</div>
+
+<div class="clue">
+  <div class="h">🔓 CLUE 2 — The Window of Shapes</div>
+  <ol>
+    <li>The Fox drew 3 snowflakes, each with 6 points. How many points in all? (×)</li>
+    <li>1 triangle (3 sides) + 1 square (4 sides) = how many sides?</li>
+    <li>Which has a line of symmetry? &nbsp;⭕ circle · ⬜ square · the letter <b>F</b></li>
+    <li>The window is a rectangle 5 tiles long, 3 wide. Perimeter (all around)? (long+short)×2</li>
+    <li>How many corners does the square frame have?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) 18 · 2) 7 · 3) circle &amp; square · 4) 16 · 5) 4 → the arrow points down to <b>Cloud Nine café!</b></div>
+</div>
+<div class="toend">— TO BE CONTINUED · the paw prints march in a perfect pattern… —</div>
+</div>
+
+<!-- ========== EP3 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EPISODE 3</span> &nbsp;Trouble at Cloud Nine Café</div>
+
+<div class="strip">
+  <div class="panel p2 indoor">
+    <div class="cap">Cloud Nine café — warm, and smelling of chocolate.</div>
+    <svg class="fig s-md" style="left:10px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:92px;"><use href="#leo"/></svg>
+    <div class="bub bl" style="right:8px;top:20px;">A customer in an <b>orange scarf</b> left this puzzle… and a wooden box!</div>
+  </div>
+  <div class="panel indoor">
+    <svg class="fig s-sm" style="right:20px;"><use href="#fox"/></svg>
+    <div class="bub br" style="left:6px;top:12px;">Underline · decide · write. Detective style!</div>
+  </div>
+</div>
+
+<div class="clue">
+  <div class="h">🔓 CLUE 3 — The Café Till Riddles</div>
+  <ol>
+    <li>A hot chocolate is $4. Chloe and Leo buy one each — total?</li>
+    <li>Leo pays for a $6.50 sandwich with $10. What change?</li>
+    <li>A bowl of chips is $5. How much for 3 bowls? (×)</li>
+    <li>Cookies are $2 each. How many for exactly $12?</li>
+    <li>Gloves $8, beanie $7, scarf $5 — with $20, which TWO can you buy? List all pairs.</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) $8 · 2) $3.50 · 3) $15 · 4) 6 · 5) gloves+beanie $15, gloves+scarf $13, beanie+scarf $12 — all three! → inside the box: a brass <b>key</b> + a warning about a TEN-number padlock…</div>
+</div>
+<div class="toend">— TO BE CONTINUED · to the old Cattleman's Hut! —</div>
+</div>
+
+<!-- ========== BIG TEST 1 ========== -->
+<div class="page">
+<div class="title" style="color:#b91c1c;"><span class="epnum" style="background:#b91c1c;">🔒 BIG CHALLENGE 1</span> &nbsp;The Locked Cattleman's Hut</div>
+
+<div class="strip">
+  <div class="panel p3 dusk">
+    <div class="cap">Frying Pan Spur — an old hut, and a HUGE padlock with ten dials.</div>
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:8px;"><use href="#pine"/></svg>
+    <svg class="fig s-md" style="left:70px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:160px;"><use href="#leo"/></svg>
+    <div style="position:absolute;right:24px;top:30px;font-size:30px;">🔒</div>
+    <div class="bub bl" style="left:80px;bottom:80px;">Every answer turns one dial. Ready, Leo?</div>
+  </div>
+</div>
+
+<div class="clue" style="border-color:#ef4444;background:#fff5f5;">
+  <div class="h" style="color:#b91c1c;">🔒 THE TEN-DIAL PADLOCK — mixes Episodes 1–3</div>
+  <ol style="columns:2;">
+    <li>9 + 8 = ?</li><li>6 × 3 = ?</li>
+    <li>Sides on 4 triangles?</li><li>Perimeter of a square, side 5 cm?</li>
+    <li>18 snowballs, throw 7 — how many left?</li><li>Two hot dogs at $3 each — total?</li>
+    <li>Pay $10 for a $4.50 map — change?</li><li>Does "A" have a line of symmetry?</li>
+    <li>Double 9?</li><li>6 people per gondola, 3 gondolas — how many?</li>
+  </ol>
+  <div class="sol"><b>Padlock code:</b> 17 · 18 · 12 · 20 cm · 11 · $6 · $5.50 · Yes · 18 · 18 &nbsp;| &nbsp;<b>Rank:</b> 8–10 🦊 Fox Detective · 5–7 great · under 5 re-read Ep 1–3!</div>
+</div>
+<div class="lockbar" style="color:#b91c1c;">CLUNK! 🔓 The hut opens — inside, half a map: "Follow the coloured flags…"</div>
+<div class="toend">— TO BE CONTINUED —</div>
+</div>
+
+<!-- ========== EP4 + EP5 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EP 4 → EP 5</span> &nbsp;Flags &amp; the Gondola Maze</div>
+
+<div class="strip">
+  <div class="panel sky">
+    <div class="cap">Along Halley's Comet — a trail of coloured flags.</div>
+    <div class="snow"></div>
+    <div style="position:absolute;top:24px;left:10px;font-size:16px;letter-spacing:3px;">🚩🟦🚩🟦🚩</div>
+    <svg class="fig s-sm" style="left:60px;"><use href="#leo"/></svg>
+    <div class="bub br" style="right:6px;top:12px;">Find what changes each time!</div>
+  </div>
+  <div class="panel night">
+    <div class="cap">Near the Summit — a misty maze of gondolas.</div>
+    <svg class="fig s-sm" style="left:14px;"><use href="#chloe"/></svg>
+    <div class="bub bl" style="right:6px;top:20px;">List every path — neatly!</div>
+    <svg style="position:absolute;right:10px;bottom:10px;width:26px;height:26px;"><use href="#flake"/></svg>
+  </div>
+</div>
+
+<div class="clue">
+  <div class="h">🔓 CLUE 4 — The Pattern Flags</div>
+  <ol>
+    <li>red, blue, red, blue, red, ___ ?</li>
+    <li>5, 10, 15, 20, ___ ?</li>
+    <li>2, 4, 6, 8, ___ ? (what's the jump?)</li>
+    <li>Anna faster than Chloe; Chloe faster than Leo. Who's slowest?</li>
+    <li>Flags hidden: day1 = 2, day2 = 4, day3 = 6… day 5 = ?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) blue · 2) 25 · 3) +2, next 10 · 4) Leo · 5) 10 → the last flag points to the <b>Summit!</b></div>
+</div>
+<div class="clue">
+  <div class="h">🔓 CLUE 5 — The Gondola Maze</div>
+  <ol>
+    <li>Red, blue, green gondolas; you &amp; Leo each ride a different one — how many combos?</li>
+    <li>Lift up 15 min, ski down 10 min. One round trip? Three round trips?</li>
+    <li>Each sign has 6 points — how many signs make 30 points?</li>
+    <li>Fold a map in half 2 times → how many sections? 3 folds?</li>
+    <li>3 different energy bars — how many pairs?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) 6 · 2) 25 min; 75 min · 3) 5 · 4) 4; 8 · 5) 3 → the safe gondola rises to the top!</div>
+</div>
+<div class="toend">— TO BE CONTINUED · the treasure chest waits behind one last lock… —</div>
+</div>
+
+<!-- ========== FINALE ========== -->
+<div class="page">
+<div class="title" style="color:#a16207;"><span class="epnum" style="background:#a16207;">🏆 GRAND FINALE</span> &nbsp;The Summit Vault</div>
+
+<div class="strip">
+  <div class="panel p3 dawn">
+    <div class="cap">The peak of Falls Creek — the Golden Snowflake within reach!</div>
+    <div class="snow"></div>
+    <svg class="fig s-md" style="left:20px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:110px;"><use href="#leo"/></svg>
+    <svg class="fig s-sm" style="right:16px;"><use href="#fox"/></svg>
+    <div style="position:absolute;right:90px;top:24px;font-size:26px;">❄️🏆</div>
+    <div class="bub bl" style="left:26px;bottom:82px;">Fifteen riddles guard the treasure. Deep breath — let's go!</div>
+  </div>
+</div>
+
+<div class="clue" style="border-color:#eab308;background:#fffbeb;">
+  <div class="h" style="color:#a16207;">🏆 THE FIFTEEN-NUMBER VAULT — everything, easy → hard (30 min)</div>
+  <ol style="columns:2;">
+    <li>12 + 7 = ?</li><li>15 − 9 = ?</li><li>5 × 4 = ?</li><li>Double 8?</li>
+    <li>Sides on 3 squares?</li><li>Perimeter: rectangle 6×2 cm?</li><li>Does "H" have symmetry?</li>
+    <li>Two cocoas $4 each, pay $10 — change?</li><li>Pencils $2 each — how many for $12?</li>
+    <li>4, 8, 12, 16, ___ ?</li><li>1, 2, 4, 8, ___ ? (doubles)</li>
+    <li>Sam &gt; Kim &gt; Jo in height — who's shortest?</li>
+    <li>Red/blue/green scarves, 2 kids, different — combos?</li>
+    <li>Lift up 12 min + down 8 min — round trip?</li><li>Each star 5 points — how many make 20?</li>
+  </ol>
+  <div class="sol"><b>Vault code:</b> 19·6·20·16·12·16 cm·Yes·$2·6·20·16·Jo·6·20 min·4 &nbsp;|&nbsp; <b>13–15</b> 🏆 Keeper of the Golden Snowflake!</div>
+</div>
+
+<div class="strip">
+  <div class="panel dawn">
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:14px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:70px;"><use href="#leo"/></svg>
+    <div class="bub bl" style="right:6px;top:12px;">We did it!! ✨</div>
+  </div>
+  <div class="panel dawn">
+    <svg class="fig s-md" style="right:14px;"><use href="#fox"/></svg>
+    <div class="cap bot">"You never gave up — THAT is the real treasure." 🦊 …and the fox winked, and was gone.</div>
+  </div>
+</div>
+<div class="toend" style="color:#a16207;">✦ END OF BOOK ONE ✦ &nbsp; Next: Book Two · The Clock of the Snow Owl 🦉</div>
+<div class="foot">The Falls Creek Comics · Book 1 · for Chloe &amp; Leo · 2026-07-02</div>
+</div>
+</body></html>

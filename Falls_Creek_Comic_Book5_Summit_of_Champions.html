@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 10mm; }
+  * { box-sizing: border-box; }
+  body { font-family:"Comic Sans MS","Segoe UI","WenQuanYi Zen Hei",sans-serif; margin:0; color:#1a2330; background:#fff; font-size:12px; }
+  .page { page-break-after: always; padding: 4px 2px; }
+  .page:last-child { page-break-after: auto; }
+
+  /* ---- Cover ---- */
+  .cover { text-align:center; color:#fff; border-radius:18px; padding:34px 20px 26px; position:relative; overflow:hidden; }
+  .cover .kick { letter-spacing:3px; font-size:12px; text-transform:uppercase; opacity:.9; }
+  .cover h1 { font-size:34px; margin:8px 12px 6px; text-shadow:0 3px 12px rgba(0,0,0,.35); }
+  .cover .sub { font-size:15px; font-style:italic; opacity:.95; }
+  .cover .cast { margin-top:16px; }
+  .cover .cast svg { width:88px; height:104px; vertical-align:bottom; margin:0 -2px; filter: drop-shadow(0 4px 6px rgba(0,0,0,.25)); }
+  .cover .byline { margin-top:14px; font-size:12px; background:rgba(255,255,255,.18); display:inline-block; padding:7px 16px; border-radius:20px; }
+
+  /* ---- Comic grid ---- */
+  .strip { display:flex; gap:8px; margin-bottom:8px; }
+  .strip.rev { }
+  .panel { position:relative; border:3px solid #16202e; border-radius:8px; overflow:hidden; min-height:150px; flex:1; box-shadow:3px 3px 0 rgba(22,32,46,.15); }
+  .panel.tall { min-height:190px; }
+  .p2 { flex:2; } .p3 { flex:3; }
+
+  /* backgrounds */
+  .sky   { background:linear-gradient(#bfe3ff 0%,#e8f6ff 62%,#ffffff 100%); }
+  .dusk  { background:linear-gradient(#ffd9a0 0%,#ffb3c1 45%,#c7e6ff 100%); }
+  .dawn  { background:linear-gradient(#f9c6d6 0%,#ffe3b0 55%,#cfeaff 100%); }
+  .night { background:linear-gradient(#1e2a52 0%,#3a4a86 70%,#93a7d8 100%); }
+  .cave  { background:linear-gradient(#12332a 0%,#1c5045 70%,#2c7a63 100%); }
+  .warm  { background:linear-gradient(#7a2e0e 0%,#c26518 55%,#f6b26b 100%); }
+  .rosy  { background:linear-gradient(#7a1533 0%,#c23a6a 55%,#f7a8c6 100%); }
+  .indoor{ background:linear-gradient(#fde8c8 0%,#f6d9a8 100%); }
+  /* snow floor */
+  .snow { position:absolute; left:-10%; right:-10%; bottom:-30px; height:70px; background:#fff; border-radius:50%/60px; box-shadow:0 -3px 0 #e2eef7; }
+  .snow2{ position:absolute; left:-10%; right:-10%; bottom:-46px; height:70px; background:#eaf4fb; border-radius:50%/60px; }
+
+  /* characters positioned in panels */
+  .fig { position:absolute; bottom:6px; }
+  .fig svg { display:block; }
+  .s-sm svg{ width:58px; height:68px;} .s-md svg{ width:78px; height:92px;} .s-lg svg{ width:100px; height:118px;}
+
+  /* speech bubble */
+  .bub { position:absolute; background:#fff; border:2.5px solid #16202e; border-radius:14px; padding:5px 9px; font-size:11px; max-width:62%; line-height:1.3; box-shadow:2px 2px 0 rgba(22,32,46,.12); }
+  .bub:after { content:""; position:absolute; width:0; height:0; }
+  .bub.bl:after{ left:16px; bottom:-12px; border:7px solid transparent; border-top-color:#16202e; }
+  .bub.br:after{ right:16px; bottom:-12px; border:7px solid transparent; border-top-color:#16202e; }
+  .bub b{ color:#b45309; }
+  /* narration caption */
+  .cap { position:absolute; top:0; left:0; right:0; background:#fff3c4; border-bottom:2px solid #eab308; padding:4px 8px; font-size:10.5px; font-style:italic; color:#7a5a00; }
+  .cap.bot { top:auto; bottom:0; border-bottom:none; border-top:2px solid #eab308; }
+  /* sound effect */
+  .sfx { position:absolute; font-weight:bold; font-size:26px; color:#fff; transform:rotate(-10deg); text-shadow:2px 2px 0 #16202e,-1px -1px 0 #16202e; letter-spacing:1px; }
+
+  /* clue scroll (puzzle) */
+  .clue { border:3px dashed #f59e0b; background:#fffbeb; border-radius:12px; padding:8px 16px; margin:8px 0; }
+  .clue .h { font-weight:bold; color:#b45309; font-size:14px; }
+  .clue ol { margin:6px 0 4px 2px; padding-left:22px; }
+  .clue li { margin:4px 0; font-size:11.5px; }
+  .sol { background:#dcfce7; border-left:4px solid #22c55e; border-radius:6px; padding:6px 12px; font-size:11px; margin-top:6px; }
+  .sol b{ color:#15803d; }
+  .lockbar { text-align:center; font-weight:bold; letter-spacing:1px; font-size:15px; margin:6px 0; }
+
+  .title { text-align:center; font-size:20px; font-weight:bold; color:#16202e; margin:2px 0 8px; }
+  .epnum { display:inline-block; background:#16202e; color:#fff; border-radius:16px; padding:2px 12px; font-size:12px; letter-spacing:1px; }
+  .foot { text-align:center; color:#94a3b8; font-size:10px; margin-top:8px; }
+  .toend { text-align:center; font-weight:bold; color:#16202e; letter-spacing:1px; margin:6px 0 2px; }
+</style></head><body>
+
+<!-- ============ SHARED CHARACTER LIBRARY ============ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+
+<!-- CHLOE : red beanie, ponytail, blue jacket -->
+<symbol id="chloe" viewBox="0 0 120 150">
+  <path d="M34 150 Q34 100 60 96 Q86 100 86 150 Z" fill="#2b6cb0"/>
+  <rect x="28" y="104" width="14" height="34" rx="7" fill="#2b6cb0"/>
+  <rect x="78" y="104" width="14" height="34" rx="7" fill="#2b6cb0"/>
+  <circle cx="35" cy="138" r="7" fill="#ffe0bd"/><circle cx="85" cy="138" r="7" fill="#ffe0bd"/>
+  <ellipse cx="94" cy="74" rx="12" ry="22" fill="#7b4a2a"/>
+  <circle cx="60" cy="60" r="34" fill="#ffe0bd"/>
+  <path d="M26 56 Q26 20 60 20 Q94 20 94 56 Z" fill="#e53e73"/>
+  <rect x="23" y="52" width="74" height="11" rx="5" fill="#c53060"/>
+  <circle cx="60" cy="17" r="7" fill="#fff"/>
+  <circle cx="49" cy="62" r="4.2" fill="#2a2a2a"/><circle cx="71" cy="62" r="4.2" fill="#2a2a2a"/>
+  <circle cx="50.5" cy="60.5" r="1.3" fill="#fff"/><circle cx="72.5" cy="60.5" r="1.3" fill="#fff"/>
+  <path d="M50 74 Q60 83 70 74" stroke="#b83280" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="43" cy="71" r="4" fill="#ffb3c1" opacity=".7"/><circle cx="77" cy="71" r="4" fill="#ffb3c1" opacity=".7"/>
+</symbol>
+
+<!-- LEO : green beanie, orange jacket, smaller -->
+<symbol id="leo" viewBox="0 0 120 150">
+  <path d="M36 150 Q36 104 60 100 Q84 104 84 150 Z" fill="#ea7317"/>
+  <rect x="30" y="108" width="13" height="32" rx="6.5" fill="#ea7317"/>
+  <rect x="77" y="108" width="13" height="32" rx="6.5" fill="#ea7317"/>
+  <circle cx="36" cy="140" r="6.5" fill="#ffe0bd"/><circle cx="84" cy="140" r="6.5" fill="#ffe0bd"/>
+  <circle cx="60" cy="66" r="32" fill="#ffe0bd"/>
+  <path d="M29 62 Q29 28 60 28 Q91 28 91 62 Z" fill="#2f9e44"/>
+  <rect x="26" y="58" width="68" height="10" rx="5" fill="#237a35"/>
+  <circle cx="60" cy="26" r="6.5" fill="#fff"/>
+  <circle cx="50" cy="68" r="4" fill="#2a2a2a"/><circle cx="70" cy="68" r="4" fill="#2a2a2a"/>
+  <circle cx="51.3" cy="66.6" r="1.2" fill="#fff"/><circle cx="71.3" cy="66.6" r="1.2" fill="#fff"/>
+  <path d="M50 79 Q60 88 70 79" stroke="#b45309" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="44" cy="76" r="3.6" fill="#ffb3c1" opacity=".7"/><circle cx="76" cy="76" r="3.6" fill="#ffb3c1" opacity=".7"/>
+</symbol>
+
+<!-- SNOW FOX -->
+<symbol id="fox" viewBox="0 0 120 150">
+  <path d="M40 148 Q30 120 52 112 L70 112 Q92 120 82 148 Z" fill="#f08c2e"/>
+  <path d="M78 140 Q108 132 100 108 Q92 118 78 120 Z" fill="#f08c2e"/><path d="M92 124 Q102 120 99 112 Q95 118 88 120 Z" fill="#fff"/>
+  <circle cx="60" cy="66" r="32" fill="#f08c2e"/>
+  <path d="M30 44 L26 14 L52 34 Z" fill="#f08c2e"/><path d="M90 44 L94 14 L68 34 Z" fill="#f08c2e"/>
+  <path d="M33 40 L31 22 L46 34 Z" fill="#ffd8a8"/><path d="M87 40 L89 22 L74 34 Z" fill="#ffd8a8"/>
+  <path d="M60 62 Q40 74 44 92 Q60 100 76 92 Q80 74 60 62 Z" fill="#fff"/>
+  <circle cx="49" cy="62" r="4.4" fill="#2a2a2a"/><circle cx="71" cy="62" r="4.4" fill="#2a2a2a"/>
+  <circle cx="50.4" cy="60.4" r="1.3" fill="#fff"/><circle cx="72.4" cy="60.4" r="1.3" fill="#fff"/>
+  <ellipse cx="60" cy="80" rx="5" ry="4" fill="#3a2a1a"/>
+  <path d="M60 84 Q60 90 54 90 M60 84 Q60 90 66 90" stroke="#3a2a1a" stroke-width="2" fill="none"/>
+  <rect x="40" y="100" width="40" height="10" rx="4" fill="#c92a2a"/>
+</symbol>
+
+<!-- SNOW OWL -->
+<symbol id="owl" viewBox="0 0 120 150">
+  <ellipse cx="60" cy="86" rx="42" ry="48" fill="#f2f6fb"/>
+  <ellipse cx="60" cy="86" rx="30" ry="38" fill="#fff"/>
+  <path d="M22 54 L34 30 L46 52 Z" fill="#f2f6fb"/><path d="M98 54 L86 30 L74 52 Z" fill="#f2f6fb"/>
+  <circle cx="45" cy="66" r="17" fill="#fff8e1"/><circle cx="75" cy="66" r="17" fill="#fff8e1"/>
+  <circle cx="45" cy="66" r="9" fill="#3a2a1a"/><circle cx="75" cy="66" r="9" fill="#3a2a1a"/>
+  <circle cx="47" cy="63" r="3" fill="#fff"/><circle cx="77" cy="63" r="3" fill="#fff"/>
+  <path d="M53 76 L60 88 L67 76 Z" fill="#f6a935"/>
+  <path d="M22 100 Q10 108 20 120" stroke="#dbe6f0" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M98 100 Q110 108 100 120" stroke="#dbe6f0" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M50 132 L50 142 M58 132 L58 142 M62 132 L62 142 M70 132 L70 142" stroke="#f6a935" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+
+<!-- SNOW WOMBAT -->
+<symbol id="wombat" viewBox="0 0 120 150">
+  <ellipse cx="60" cy="96" rx="46" ry="40" fill="#b7a99a"/>
+  <ellipse cx="60" cy="104" rx="34" ry="28" fill="#e7ded3"/>
+  <circle cx="30" cy="62" r="13" fill="#b7a99a"/><circle cx="90" cy="62" r="13" fill="#b7a99a"/>
+  <circle cx="30" cy="62" r="6" fill="#8a7c6c"/><circle cx="90" cy="62" r="6" fill="#8a7c6c"/>
+  <ellipse cx="60" cy="70" rx="40" ry="34" fill="#c9bcac"/>
+  <circle cx="46" cy="66" r="4.4" fill="#2a2a2a"/><circle cx="74" cy="66" r="4.4" fill="#2a2a2a"/>
+  <circle cx="47.4" cy="64.4" r="1.3" fill="#fff"/><circle cx="75.4" cy="64.4" r="1.3" fill="#fff"/>
+  <ellipse cx="60" cy="80" rx="12" ry="9" fill="#8a7c6c"/>
+  <ellipse cx="60" cy="78" rx="6" ry="4" fill="#3a2a1a"/>
+  <path d="M60 86 L60 92 M52 128 L52 138 M68 128 L68 138" stroke="#8a7c6c" stroke-width="5" stroke-linecap="round"/>
+</symbol>
+
+<!-- SNOW DRAGON -->
+<symbol id="dragon" viewBox="0 0 120 150">
+  <path d="M40 148 Q34 120 46 108 Q40 90 58 84 L70 84 Q96 92 92 120 Q100 138 84 148 Z" fill="#5aa9e6"/>
+  <path d="M58 90 Q40 92 30 78 Q26 62 40 58 Q44 44 60 46 Q80 42 86 60 Q98 66 92 82 Q84 94 66 90 Z" fill="#74c0fc"/>
+  <path d="M40 50 L34 30 L52 44 Z" fill="#a5d8ff"/><path d="M80 50 L86 30 L68 44 Z" fill="#a5d8ff"/>
+  <ellipse cx="60" cy="70" rx="30" ry="24" fill="#89ccf2"/>
+  <ellipse cx="60" cy="82" rx="20" ry="12" fill="#bfe3ff"/>
+  <circle cx="49" cy="64" r="5" fill="#1a3a5a"/><circle cx="71" cy="64" r="5" fill="#1a3a5a"/>
+  <circle cx="50.6" cy="62.2" r="1.5" fill="#fff"/><circle cx="72.6" cy="62.2" r="1.5" fill="#fff"/>
+  <circle cx="52" cy="80" r="2.4" fill="#3a6a8a"/><circle cx="68" cy="80" r="2.4" fill="#3a6a8a"/>
+  <path d="M50 88 Q60 94 70 88" stroke="#2a5a7a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M92 96 Q116 92 112 74 Q104 88 90 86 Z" fill="#a5d8ff"/>
+</symbol>
+
+<!-- PINE TREE -->
+<symbol id="pine" viewBox="0 0 60 90">
+  <rect x="26" y="66" width="8" height="20" fill="#7b4a2a"/>
+  <path d="M30 6 L48 40 L12 40 Z" fill="#2f7a44"/>
+  <path d="M30 24 L52 60 L8 60 Z" fill="#2f8a4a"/>
+  <path d="M30 44 L56 82 L4 82 Z" fill="#37994f"/>
+  <circle cx="20" cy="50" r="2.4" fill="#fff"/><circle cx="40" cy="66" r="2.4" fill="#fff"/><circle cx="30" cy="34" r="2" fill="#fff"/>
+</symbol>
+
+<!-- MOUNTAIN -->
+<symbol id="mtn" viewBox="0 0 200 90">
+  <path d="M0 90 L60 18 L100 60 L140 24 L200 90 Z" fill="#cdddec"/>
+  <path d="M60 18 L74 34 L52 40 Z" fill="#fff"/><path d="M140 24 L156 46 L126 50 Z" fill="#fff"/>
+</symbol>
+
+<!-- SNOWFLAKE deco -->
+<symbol id="flake" viewBox="0 0 40 40">
+  <g stroke="#fff" stroke-width="3" stroke-linecap="round">
+   <path d="M20 4 L20 36 M4 20 L36 20 M8 8 L32 32 M32 8 L8 32"/>
+  </g>
+</symbol>
+
+</defs></svg>
+<!-- ========== COVER ========== -->
+<div class="page">
+<div class="cover" style="background:linear-gradient(160deg,#7a1533,#b91c5c 50%,#f472b6);">
+  <div class="kick">Chloe &amp; Leo · Falls Creek Comics · Book Five · FINALE</div>
+  <h1>The Summit of Champions</h1>
+  <div class="sub">The highest peak, the hardest riddles, the greatest treasure of all!</div>
+  <div class="cast"><svg><use href="#chloe"/></svg><svg><use href="#fox"/></svg><svg><use href="#leo"/></svg></div>
+  <div class="byline">🏆 Right Angles · Direction &amp; Grids · Chance · Roman Numerals · GRAND Test</div>
+</div>
+</div>
+
+<!-- ========== PROLOGUE + EP1 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">PROLOGUE → EP 1</span> &nbsp;The Peak · The Corner of Right Angles</div>
+<div class="strip">
+  <div class="panel tall rosy">
+    <div class="cap">Fifth morning — the Snow Fox waits at the tallest peak.</div>
+    <div class="snow"></div>
+    <svg class="fig s-md" style="left:10px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:96px;"><use href="#leo"/></svg>
+    <div class="bub bl" style="right:8px;top:30px;">One mountain remains — become true Champions!</div>
+  </div>
+  <div class="panel tall rosy">
+    <svg class="fig s-lg" style="right:10px;"><use href="#fox"/></svg>
+    <div class="bub br" style="left:8px;top:22px;">A <b>right angle</b> is a perfect square corner — like an L!</div>
+  </div>
+</div>
+<div class="clue">
+  <div class="h">🔓 CLUE 1 — Right Angles</div>
+  <ol>
+    <li>How many right angles does a square have?</li>
+    <li>Does the corner of a book make a right angle?</li>
+    <li>Clock hands at 3 o'clock — a right angle, or bigger?</li>
+    <li>How many right angles does a rectangle have?</li>
+    <li>Pointy tip of a pizza slice — smaller or bigger than a right angle?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) 4 · 2) yes · 3) a right angle · 4) 4 · 5) smaller</div>
+</div>
+<div class="toend">— TO BE CONTINUED · a champion never gets lost… —</div>
+</div>
+
+<!-- ========== EP2 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EPISODE 2</span> &nbsp;The Compass and the Grid</div>
+<div class="strip">
+  <div class="panel p2 sky">
+    <div class="cap">A snowfield marked like a giant chessboard.</div>
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:12px;"><use href="#fox"/></svg>
+    <svg class="fig s-md" style="left:92px;"><use href="#chloe"/></svg>
+    <div style="position:absolute;right:12px;top:20px;font-size:11px;font-family:monospace;color:#333;">N<br>W·E<br>S</div>
+    <div class="bub bl" style="left:16px;bottom:80px;">Count across first, then up!</div>
+  </div>
+  <div class="panel sky">
+    <svg class="fig s-sm" style="right:16px;"><use href="#leo"/></svg>
+    <div class="bub br" style="left:6px;top:12px;">Face North, turn right → East!</div>
+  </div>
+</div>
+<div class="clue">
+  <div class="h">🔓 CLUE 2 — Compass &amp; Grid <span style="font-weight:normal;font-size:10.5px;">(grid: 🦊 at across 2/up 3 · ⛄ at 2/2 · 🎁 at 4/1)</span></div>
+  <ol>
+    <li>Face North, turn right — which way now?</li>
+    <li>What is at "across 2, up 2"?</li>
+    <li>Opposite of East?</li>
+    <li>Move ⛄ (across 2, up 2) one square East — new "across" number?</li>
+    <li>Walk North, then about-face — which way now?</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) East · 2) the snowman ⛄ · 3) West · 4) across 3 · 5) South</div>
+</div>
+<div class="toend">— TO BE CONTINUED · now, the trickiest idea — CHANCE! —</div>
+</div>
+
+<!-- ========== EP3 ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EPISODE 3</span> &nbsp;The Game of Chance</div>
+<div class="strip">
+  <div class="panel p2 sky">
+    <div class="cap">A frozen lake — likely, unlikely, certain, impossible.</div>
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:12px;"><use href="#fox"/></svg>
+    <svg class="fig s-md" style="left:92px;"><use href="#leo"/></svg>
+    <div style="position:absolute;right:16px;top:22px;font-size:20px;">🔴🔴🔵</div>
+    <div class="bub bl" style="left:16px;bottom:80px;">More red marbles → red is more likely!</div>
+  </div>
+  <div class="panel sky">
+    <svg class="fig s-sm" style="right:16px;"><use href="#chloe"/></svg>
+    <div class="bub br" style="left:6px;top:12px;">Snow falling UP? Impossible!</div>
+  </div>
+</div>
+<div class="clue">
+  <div class="h">🔓 CLUE 3 — Likely or Unlikely?</div>
+  <ol>
+    <li>Bag: 9 red, 1 blue. Grab one — which colour more likely?</li>
+    <li>Snow falling UP into the sky — certain, likely, or impossible?</li>
+    <li>Tomorrow comes after today — certain or impossible?</li>
+    <li>A bag of only white marbles — pick one, certainly what colour?</li>
+    <li>5 red + 5 green — equally likely to pick either? (yes/no)</li>
+  </ol>
+  <div class="sol"><b>Solutions:</b> 1) red · 2) impossible · 3) certain · 4) white · 5) yes</div>
+</div>
+<div class="toend">— TO BE CONTINUED · an archway of ten runes… —</div>
+</div>
+
+<!-- ========== BIG CHALLENGE ========== -->
+<div class="page">
+<div class="title" style="color:#b91c1c;"><span class="epnum" style="background:#b91c1c;">🔒 BIG CHALLENGE 1</span> &nbsp;The Archway of Ten</div>
+<div class="strip">
+  <div class="panel p3 rosy">
+    <div class="cap">Ten glowing runes seal the way to the summit.</div>
+    <div class="snow"></div>
+    <svg class="fig s-md" style="left:28px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:118px;"><use href="#leo"/></svg>
+    <svg class="fig s-sm" style="right:18px;"><use href="#fox"/></svg>
+    <div style="position:absolute;right:98px;top:24px;font-size:26px;">🔒</div>
+  </div>
+</div>
+<div class="clue" style="border-color:#ef4444;background:#fff5f5;">
+  <div class="h" style="color:#b91c1c;">🔒 THE ARCHWAY OF TEN — mixes Episodes 1–3</div>
+  <ol style="columns:2;">
+    <li>Right angles in a square?</li><li>Does an "L" show a right angle?</li>
+    <li>Face North, turn right — way?</li><li>Opposite of West?</li>
+    <li>Grid: count across or up first?</li><li>8 red, 2 blue — more likely?</li>
+    <li>A fish flying a plane — possible or impossible?</li><li>Right angles in a rectangle?</li>
+    <li>Bag of only green — certainly pick what?</li><li>Face South, about-face — way?</li>
+  </ol>
+  <div class="sol"><b>Archway code:</b> 4 · yes · East · East · across · red · impossible · 4 · green · North &nbsp;|&nbsp; <b>8–10</b> 🦊 Champion-Level!</div>
+</div>
+<div class="lockbar" style="color:#b91c1c;">✨ The arch opens — one last idea: the ancient Roman numbers!</div>
+<div class="toend">— TO BE CONTINUED —</div>
+</div>
+
+<!-- ========== EP4 + FINALE INTRO ========== -->
+<div class="page">
+<div class="title"><span class="epnum">EPISODE 4</span> &nbsp;The Ancient Numbers</div>
+<div class="strip">
+  <div class="panel p2 dusk">
+    <div class="cap">A ring of ancient carved stones. I=1, V=5, X=10.</div>
+    <div class="snow"></div>
+    <svg class="fig s-sm" style="left:12px;"><use href="#fox"/></svg>
+    <svg class="fig s-md" style="left:92px;"><use href="#chloe"/></svg>
+    <div style="position:absolute;right:14px;top:22px;font-size:18px;font-weight:bold;color:#7a1533;">I V X</div>
+    <div class="bub bl" style="left:16px;bottom:80px;">VI = 5 and 1 more = 6!</div>
+  </div>
+  <div class="panel dusk">
+    <svg class="fig s-sm" style="right:16px;"><use href="#leo"/></svg>
+    <div class="bub br" style="left:6px;top:12px;">Cool — number letters!</div>
+  </div>
+</div>
+<div class="clue">
+  <div class="h">🔓 CLUE 4 — Ancient Numbers</div>
+  <ol><li>What is <b>III</b>?</li><li>What is <b>V</b>?</li><li>What is <b>X</b>?</li><li>What is <b>VII</b>?</li><li>Write 2 in Roman numerals.</li></ol>
+  <div class="sol"><b>Solutions:</b> 1) 3 · 2) 5 · 3) 10 · 4) 7 · 5) II → a stairway of light rises to the peak!</div>
+</div>
+<div class="toend">— TO BE CONTINUED · the Champion's Cup, ringed with fifteen locks… —</div>
+</div>
+
+<!-- ========== GRAND FINALE ========== -->
+<div class="page">
+<div class="title" style="color:#a16207;"><span class="epnum" style="background:#a16207;">🏆🏆 GRAND FINALE</span> &nbsp;The Champion's Cup</div>
+<div class="strip">
+  <div class="panel p3 dawn">
+    <div class="cap">The Summit of Falls Creek — everything from all FIVE books!</div>
+    <div class="snow"></div>
+    <svg class="fig s-md" style="left:18px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:108px;"><use href="#leo"/></svg>
+    <svg class="fig s-sm" style="right:16px;"><use href="#fox"/></svg>
+    <div style="position:absolute;right:92px;top:20px;font-size:26px;">🏆</div>
+    <div class="bub bl" style="left:24px;bottom:82px;">The ultimate 15! Deep breath, Champions!</div>
+  </div>
+</div>
+<div class="clue" style="border-color:#eab308;background:#fffbeb;">
+  <div class="h" style="color:#a16207;">🏆🏆 THE CHAMPION'S CUP — one from each big idea (30–40 min)</div>
+  <ol style="columns:2;">
+    <li><b>(1)</b> 13 + 9 = ?</li><li><b>(1)</b> 4 × 5 = ?</li>
+    <li><b>(1)</b> Perimeter: 7×3 cm rectangle?</li><li><b>(2)</b> It's 8:00 — time in 3 hours?</li>
+    <li><b>(2)</b> By 5s: 20, 25, 30, ___ ?</li><li><b>(2)</b> Is 17 odd or even?</li>
+    <li><b>(3)</b> Half of 12?</li><li><b>(3)</b> Share 20 between 4 — each?</li>
+    <li><b>(3)</b> Grams in 1 kg?</li><li><b>(4)</b> In 253, how many hundreds?</li>
+    <li><b>(4)</b> Round 47.</li><li><b>(4)</b> Faces on a cube?</li>
+    <li><b>(5)</b> Right angles in a square?</li><li><b>(5)</b> 7 red, 3 blue — more likely?</li>
+    <li><b>(5)</b> What is Roman numeral VII?</li>
+  </ol>
+  <div class="sol"><b>Cup code:</b> 22·20·20 cm·11:00·35·odd·6·5·1000·2·50·6·4·red·7 &nbsp;|&nbsp; <b>13–15</b> 🏆🏆 GRAND CHAMPION OF THE SNOW!</div>
+</div>
+<div class="strip">
+  <div class="panel dawn"><div class="snow"></div>
+    <div class="sfx" style="left:16px;top:14px;color:#ffd43b;">TA-DA!</div>
+    <svg class="fig s-sm" style="left:20px;bottom:6px;"><use href="#chloe"/></svg>
+    <svg class="fig s-sm" style="left:76px;bottom:6px;"><use href="#leo"/></svg>
+    <div class="bub br" style="right:6px;top:10px;">CHAMPIONS!! 🏅🏅</div></div>
+  <div class="panel dawn">
+    <svg class="fig s-sm" style="left:8px;"><use href="#owl"/></svg>
+    <svg class="fig s-sm" style="left:60px;"><use href="#wombat"/></svg>
+    <svg class="fig s-sm" style="right:8px;"><use href="#dragon"/></svg>
+    <div class="cap bot">All the friends cheer! "You never gave up — THAT makes a true Champion." 🦊</div></div>
+</div>
+<div class="toend" style="color:#a16207;">✦ THE END ✦ Champions of the Snow — thank you for reading! 🦊❄️🏆</div>
+<div class="foot">The Falls Creek Comics · Book 5 · for Chloe &amp; Leo · 2026-07-02</div>
+</div>
+</body></html>
