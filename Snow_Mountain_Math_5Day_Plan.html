@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Helvetica Neue", Arial, "WenQuanYi Zen Hei", sans-serif;
+    color: #1f2933; line-height: 1.6; font-size: 12.5px; margin: 0;
+  }
+  .cover {
+    text-align: center; padding: 34px 20px 26px;
+    background: linear-gradient(135deg,#e0f2fe 0%,#f0f9ff 100%);
+    border-radius: 16px; margin-bottom: 22px; border: 2px solid #bae6fd;
+  }
+  .cover h1 { font-size: 30px; margin: 0 0 6px; color: #0369a1; }
+  .cover .sub { font-size: 14px; color: #0c4a6e; }
+  .meta { margin: 16px auto 0; max-width: 560px; text-align: left;
+    background: #fff; border-radius: 10px; padding: 12px 18px; font-size: 12px; color:#334155;}
+  .meta div { margin: 3px 0; }
+
+  h2 { color: #0369a1; border-bottom: 3px solid #7dd3fc; padding-bottom: 5px;
+    margin-top: 24px; font-size: 19px; page-break-after: avoid; }
+  h3 { color: #0284c7; font-size: 15px; margin: 15px 0 5px; page-break-after: avoid; }
+  h4 { color:#7c3aed; font-size:13.5px; margin: 12px 0 4px;}
+
+  .day { page-break-before: always; }
+  .badge { display:inline-block; background:#0ea5e9; color:#fff; border-radius:20px;
+    padding:2px 12px; font-size:12px; font-weight:600; margin-right:8px;}
+  .diff { color:#f59e0b; letter-spacing:2px; font-size:14px; }
+
+  .learn { background:#eef2ff; border-left:4px solid #6366f1; padding:10px 16px;
+    border-radius:6px; margin:10px 0; }
+  .learn p { margin: 6px 0; }
+  .learn .key { background:#fff; border:1px solid #c7d2fe; border-radius:6px;
+    padding:6px 12px; margin:8px 0; font-weight:600; color:#4338ca;}
+  .example { background:#faf5ff; border:1px dashed #d8b4fe; border-radius:6px;
+    padding:6px 12px; margin:8px 0; font-size:12px;}
+
+  .game { background:#fef9c3; border-left:4px solid #facc15; padding:8px 14px;
+    border-radius:6px; margin:10px 0; font-size:12px;}
+
+  ol { margin: 6px 0 6px 4px; padding-left: 22px; }
+  ol li { margin: 6px 0; }
+
+  .quiz { background:#fff7ed; border:2px solid #fdba74; border-radius:10px;
+    padding:10px 16px; margin:12px 0; }
+  .quiz h3 { color:#c2410c; margin-top:4px;}
+  .test { background:#fef2f2; border:2px solid #fca5a5; border-radius:10px;
+    padding:12px 18px; margin:14px 0; page-break-inside: avoid;}
+  .test h2 { color:#b91c1c; border-color:#fca5a5;}
+
+  .answers { background:#dcfce7; border-left:4px solid #22c55e; padding:8px 14px;
+    border-radius:6px; margin:10px 0 4px; font-size:12px;}
+  .answers b { color:#15803d; }
+
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 12px; }
+  th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: center; }
+  th { background: #e0f2fe; color:#0c4a6e; }
+
+  .rules { background:#f1f5f9; border-radius:10px; padding:12px 18px; margin: 12px 0; font-size:12px;}
+  .rules li { margin: 5px 0; }
+  .tips { background:#fdf2f8; border:1px dashed #f9a8d4; border-radius:10px;
+    padding:12px 18px; margin-top:18px; font-size:12px;}
+  .footer { text-align:center; color:#94a3b8; font-size:11px; margin-top:22px; }
+  .wordbox { background:#ecfeff; border:1px solid #a5f3fc; border-radius:6px;
+    padding:6px 12px; margin:8px 0; font-size:11.5px; color:#155e75;}
+  .wordbox b { color:#0e7490;}
+</style>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<div class="cover">
+  <h1>⛷️ Snow Mountain Math Adventure</h1>
+  <div class="sub">A 5-Day Learn-&amp;-Play Handbook · Year 3 AMC Prep</div>
+  <div class="meta">
+    <div><b>For:</b> Chloe &amp; a friend — learning together on the ski trip</div>
+    <div><b>Each day:</b> Read &amp; Learn → Warm-up game → Practice → Daily Quiz</div>
+    <div><b>Big Test 1:</b> after Day 3 &nbsp;·&nbsp; <b>Final Big Test:</b> after Day 5</div>
+    <div><b>Time:</b> 20–25 minutes a day &nbsp;·&nbsp; <b>Difficulty:</b> Easy → Hard</div>
+  </div>
+</div>
+
+<!-- ============ HOW TO PLAY ============ -->
+<h2>🎿 How to Use This Handbook</h2>
+<div class="rules">
+<ul>
+  <li>📖 <b>Read &amp; Learn first:</b> Each day starts with a short lesson the kids can read out loud together.</li>
+  <li>🎮 <b>Then play:</b> A warm-up game turns the idea into something you can see and touch.</li>
+  <li>✏️ <b>Practice:</b> Work through the examples together, talking about each one.</li>
+  <li>🧩 <b>Daily Quiz:</b> 5 quick questions to check what stuck. +1 snowflake ❄️ for each correct answer — no penalty for wrong answers (just like the real AMC!).</li>
+  <li>🏆 <b>Big Tests:</b> After Day 3 and after Day 5. These mix everything learned so far. Take your time!</li>
+  <li>📣 <b>Golden rule:</b> Whoever answers explains "how I thought about it." Explaining it clearly earns a bonus ❄️.</li>
+</ul>
+</div>
+
+<!-- ============ DAY 1 ============ -->
+<div class="day">
+<h2>📅 Day 1 — Numbers on the Mountain</h2>
+<span class="badge">Warm-up</span><span class="diff">★</span>
+
+<h3>📖 Read &amp; Learn: Adding, Taking Away, and Times</h3>
+<div class="learn">
+  <p><b>Adding</b> means putting groups together. <b>Subtracting</b> (taking away) means removing some. When you add, the number gets <i>bigger</i>; when you take away, it gets <i>smaller</i>.</p>
+  <div class="key">💡 Tip: To add 8 + 5, start at the bigger number (8) and count up 5: 9, 10, 11, 12, 13.</div>
+  <p><b>Times (multiplication)</b> is a fast way to add the same number many times. "4 groups of 3" is 3 + 3 + 3 + 3 = 12, which we write as <b>4 × 3 = 12</b>.</p>
+  <div class="example">🎈 Example: A ski lift has 3 cars. Each car holds 4 people. That's 3 groups of 4 = 4 + 4 + 4 = 12 people. Faster: 3 × 4 = 12.</div>
+  <div class="key">💡 The "counting-on" trick and the "groups" idea are the two most useful tools in the whole competition.</div>
+</div>
+<div class="wordbox"><b>Words to know:</b> <b>sum</b> = the answer to an addition · <b>difference</b> = the answer to a subtraction · <b>double</b> = add a number to itself (double 6 = 12).</div>
+
+<div class="game">🎮 <b>Warm-up game "Count the Cable Cars":</b> On the lift, count towers and pine trees you pass. Then double it — how many if there were twice as many?</div>
+
+<h4>✏️ Practice together</h4>
+<ol>
+  <li>There are 8 skiers on the slope. 5 more arrive. How many now?</li>
+  <li>You have 15 snowballs and throw 6. How many are left?</li>
+  <li>Each cable car seats 4 people. How many people in 3 cars? (Use ×)</li>
+  <li>What is double 7?</li>
+  <li>You start skiing at 9:00 and ski for 2 hours. What time is it now?</li>
+</ol>
+<div class="answers"><b>Practice answers:</b> 1) 13 &nbsp; 2) 9 &nbsp; 3) 12 (3×4) &nbsp; 4) 14 &nbsp; 5) 11:00</div>
+
+<div class="quiz">
+<h3>🧩 Day 1 Daily Quiz (5 questions)</h3>
+<ol>
+  <li>7 + 6 = ?</li>
+  <li>20 − 8 = ?</li>
+  <li>5 groups of 2 is the same as 5 × 2 = ?</li>
+  <li>Which is bigger: double 4, or 3 + 4?</li>
+  <li>A gondola makes 2 trips before lunch and 3 after. How many trips in total?</li>
+</ol>
+<div class="answers"><b>Quiz answers:</b> 1) 13 &nbsp; 2) 12 &nbsp; 3) 10 &nbsp; 4) double 4 = 8, and 3+4 = 7, so <b>double 4</b> is bigger &nbsp; 5) 5</div>
+</div>
+</div>
+
+<!-- ============ DAY 2 ============ -->
+<div class="day">
+<h2>📅 Day 2 — The Shape of a Snowflake</h2>
+<span class="badge">Geometry</span><span class="diff">★★</span>
+
+<h3>📖 Read &amp; Learn: Shapes, Sides, and Symmetry</h3>
+<div class="learn">
+  <p>Every flat shape is made of <b>sides</b> (straight edges) and <b>corners</b> (where two sides meet, also called <i>vertices</i>). A triangle has 3 sides and 3 corners. A square has 4 of each. A circle has no straight sides at all!</p>
+  <div class="key">💡 To find how many sides several shapes have, count one shape's sides, then use times. 3 triangles = 3 × 3 = 9 sides.</div>
+  <p><b>Symmetry</b> means one half is a mirror of the other. If you fold the shape along a line and both halves match exactly, it has a <b>line of symmetry</b>.</p>
+  <div class="example">🎈 Example: A real snowflake has 6 matching points arranged like a star — it is very symmetrical. A square can be folded 4 different ways and still match. The letter <b>F</b> can't be folded to match, so it is <i>not</i> symmetrical.</div>
+  <p><b>Perimeter</b> is the distance all the way around the outside of a shape. For a rectangle, add up all four sides.</p>
+  <div class="key">💡 Rectangle perimeter shortcut: (long side + short side) × 2.</div>
+</div>
+<div class="wordbox"><b>Words to know:</b> <b>side/edge</b> = a straight line of a shape · <b>vertex</b> = a corner · <b>symmetry</b> = both halves match · <b>perimeter</b> = distance around the outside.</div>
+
+<div class="game">🎮 <b>Warm-up game "Find Symmetry":</b> Look at gloves, goggles and cabin windows. Fold a paper napkin — which folds make both halves match? Count how many symmetrical things you can spot in one minute.</div>
+
+<h4>✏️ Practice together</h4>
+<ol>
+  <li>A snowflake has 6 points. How many points do 3 snowflakes have? (Use ×)</li>
+  <li>A triangle has 3 sides and a square has 4 sides. How many sides altogether?</li>
+  <li>Which of these has a line of symmetry? ⭕ circle · ⬜ square · letter F</li>
+  <li>How many corners (vertices) does a rectangle have?</li>
+  <li>A cabin window is a rectangle, 5 squares long and 3 squares wide. What is the perimeter (in squares)?</li>
+</ol>
+<div class="answers"><b>Practice answers:</b> 1) 18 (3×6) &nbsp; 2) 7 &nbsp; 3) circle &amp; square &nbsp; 4) 4 &nbsp; 5) 16 ((5+3)×2)</div>
+
+<div class="quiz">
+<h3>🧩 Day 2 Daily Quiz (5 questions)</h3>
+<ol>
+  <li>How many sides does a triangle have?</li>
+  <li>2 squares have how many sides in total?</li>
+  <li>Does a circle have a line of symmetry — yes or no?</li>
+  <li>A square has sides of 4 cm each. What is its perimeter?</li>
+  <li>A shape has 5 sides. It is called a pentagon. How many corners does it have?</li>
+</ol>
+<div class="answers"><b>Quiz answers:</b> 1) 3 &nbsp; 2) 8 &nbsp; 3) Yes (many, actually!) &nbsp; 4) 16 cm (4×4) &nbsp; 5) 5 (a shape has the same number of sides and corners)</div>
+</div>
+</div>
+
+<!-- ============ DAY 3 ============ -->
+<div class="day">
+<h2>📅 Day 3 — Shopping at the Ski Resort</h2>
+<span class="badge">Money</span><span class="diff">★★★</span>
+
+<h3>📖 Read &amp; Learn: Money and Word Problems</h3>
+<div class="learn">
+  <p>Money uses <b>dollars ($)</b> and <b>cents (¢)</b>. 100 cents make 1 dollar. When we write <b>$6.50</b>, the part after the dot is the cents — so that's 6 dollars and 50 cents.</p>
+  <div class="key">💡 <b>Change</b> is what you get back. Change = money you gave − price. If you pay $10 for a $6.50 item, change = 10 − 6.50 = $3.50.</div>
+  <p><b>Word problems</b> hide the maths inside a story. Read it like a detective:</p>
+  <div class="example">
+    🔍 <b>3-step detective plan:</b><br>
+    1. <b>Underline</b> the numbers and important words (<i>each, total, left, more, change</i>).<br>
+    2. <b>Decide</b> the action — add, take away, or times?<br>
+    3. <b>Write</b> the number sentence and solve it.
+  </div>
+  <p>Watch the key words: <b>"altogether / total"</b> usually means add. <b>"left / change / how many more"</b> usually means take away. <b>"each … how many in all"</b> usually means times.</p>
+</div>
+<div class="wordbox"><b>Words to know:</b> <b>total</b> = everything added up · <b>change</b> = money given back · <b>cost</b> = price you pay · <b>each</b> = for every one.</div>
+
+<div class="game">🎮 <b>Warm-up game "Shopkeeper":</b> One is the shopkeeper, one is the customer. Use real coins. Buy things, work out the total, and hand back the correct change. Then swap roles.</div>
+
+<h4>✏️ Practice together</h4>
+<ol>
+  <li>A hot chocolate is $4. Both of you buy one. How much altogether?</li>
+  <li>Chloe has $10 and buys a $6.50 sandwich. How much change does she get?</li>
+  <li>A sled rents for $5 per hour. How much for 3 hours? (Use ×)</li>
+  <li>A snack pack costs $3. How many packs can you buy with $12?</li>
+  <li>Gloves $8, hat $7, scarf $5. With $20, which TWO items can you buy? List all the possibilities.</li>
+</ol>
+<div class="answers"><b>Practice answers:</b> 1) $8 &nbsp; 2) $3.50 &nbsp; 3) $15 &nbsp; 4) 4 packs (12÷3) &nbsp; 5) gloves+hat ($15), gloves+scarf ($13), hat+scarf ($12) — all three pairs work!</div>
+
+<div class="quiz">
+<h3>🧩 Day 3 Daily Quiz (5 questions)</h3>
+<ol>
+  <li>How many cents are in one dollar?</li>
+  <li>You buy two $3 juices. What is the total?</li>
+  <li>You pay $5 for a $2 apple. What is your change?</li>
+  <li>Muffins are $2 each. How much do 4 muffins cost?</li>
+  <li>In the sentence "How many are <i>left</i>?", should you add or take away?</li>
+</ol>
+<div class="answers"><b>Quiz answers:</b> 1) 100 &nbsp; 2) $6 &nbsp; 3) $3 &nbsp; 4) $8 (4×2) &nbsp; 5) take away (subtract)</div>
+</div>
+</div>
+
+<!-- ============ BIG TEST 1 ============ -->
+<div class="test">
+<h2>🏆 BIG TEST 1 — After Day 3</h2>
+<p><b>Mixes Days 1–3.</b> 10 questions. Take your time, work together or race — your choice. +1 ❄️ each, no penalty for wrong answers.</p>
+<ol>
+  <li>9 + 8 = ?</li>
+  <li>What is 6 × 3?</li>
+  <li>How many sides do 4 triangles have altogether?</li>
+  <li>A square's side is 5 cm. What is its perimeter?</li>
+  <li>You have 18 marbles and give away 7. How many are left?</li>
+  <li>Two hot dogs cost $3 each. What is the total?</li>
+  <li>You pay $10 for a $4.50 book. What change do you get?</li>
+  <li>Does the letter "A" have a line of symmetry — yes or no?</li>
+  <li>Double 9 = ?</li>
+  <li>A gondola holds 6 people. How many people fit in 3 gondolas?</li>
+</ol>
+<div class="answers"><b>Big Test 1 answers:</b> 1) 17 &nbsp; 2) 18 &nbsp; 3) 12 (4×3) &nbsp; 4) 20 cm &nbsp; 5) 11 &nbsp; 6) $6 &nbsp; 7) $5.50 &nbsp; 8) Yes &nbsp; 9) 18 &nbsp; 10) 18 (3×6)
+<br><b>Score:</b> 8–10 = Snow Star ⭐ · 5–7 = Great work, review the misses · under 5 = re-read those days, no worries!</div>
+</div>
+
+<!-- ============ DAY 4 ============ -->
+<div class="day">
+<h2>📅 Day 4 — The Slope of Patterns</h2>
+<span class="badge">Logic</span><span class="diff">★★★★</span>
+
+<h3>📖 Read &amp; Learn: Patterns and Clever Thinking</h3>
+<div class="learn">
+  <p>A <b>pattern</b> is something that repeats or grows by a rule. To crack a pattern, ask: <i>"What changes from one to the next?"</i></p>
+  <div class="example">🎈 Colours that repeat: red, blue, red, blue… the rule is "repeat every 2". So the next one is red's turn or blue's turn — just keep the cycle going.</div>
+  <div class="example">🎈 Numbers that grow: 5, 10, 15, 20… the rule is "+5 each time". The next number is 25.</div>
+  <div class="key">💡 For growing number patterns, find the "jump" (how much it goes up each time), then keep jumping.</div>
+  <p><b>Logic puzzles</b> give you clues, and you use them like stepping stones. Line the facts up in order.</p>
+  <div class="example">🔍 "Anna is faster than Chloe. Chloe is faster than Lily." Put them in order fastest → slowest: Anna, Chloe, Lily. So Lily is slowest.</div>
+  <div class="key">💡 Drawing a little line or list often makes logic puzzles easy to see.</div>
+</div>
+<div class="wordbox"><b>Words to know:</b> <b>pattern</b> = a repeating or growing rule · <b>sequence</b> = numbers in order following a rule · <b>predict</b> = work out what comes next.</div>
+
+<div class="game">🎮 <b>Warm-up game "Who's Fastest":</b> Make up three skier friends and give two clues about who is faster. Can the other person work out the order? Then swap.</div>
+
+<h4>✏️ Practice together</h4>
+<ol>
+  <li>Slope flags: red, blue, red, blue, red, ___ — what colour comes next?</li>
+  <li>Number pattern: 5, 10, 15, 20, ___ — what comes next?</li>
+  <li>Pattern: 2, 4, 6, 8, ___ — what is the jump, and what comes next?</li>
+  <li>Anna is faster than Chloe. Chloe is faster than Lily. Who is slowest?</li>
+  <li>Day 1: 2 runs, Day 2: 4 runs, Day 3: 6 runs. At this rate, how many on Day 5?</li>
+</ol>
+<div class="answers"><b>Practice answers:</b> 1) blue &nbsp; 2) 25 &nbsp; 3) jump is +2, next is 10 &nbsp; 4) Lily &nbsp; 5) 10 (2,4,6,8,10)</div>
+
+<div class="quiz">
+<h3>🧩 Day 4 Daily Quiz (5 questions)</h3>
+<ol>
+  <li>Pattern: 3, 6, 9, 12, ___ — what comes next?</li>
+  <li>Pattern: ▲ ● ▲ ● ▲ ___ — what shape is next?</li>
+  <li>Pattern: 10, 20, 30, ___ — what comes next?</li>
+  <li>Ben has more sweets than Mia. Mia has more than Tom. Who has the most?</li>
+  <li>Pattern: 1, 2, 4, 8, ___ — (the number doubles each time) what comes next?</li>
+</ol>
+<div class="answers"><b>Quiz answers:</b> 1) 15 &nbsp; 2) ▲ (triangle) &nbsp; 3) 40 &nbsp; 4) Ben &nbsp; 5) 16</div>
+</div>
+</div>
+
+<!-- ============ DAY 5 ============ -->
+<div class="day">
+<h2>📅 Day 5 — The Big Mountain Challenge</h2>
+<span class="badge">Mixed</span><span class="diff">★★★★★</span>
+
+<h3>📖 Read &amp; Learn: Counting Ways &amp; Multi-Step Problems</h3>
+<div class="learn">
+  <p>Some questions ask <b>"how many different ways?"</b> The trick is to be organised and list them without missing any or repeating.</p>
+  <div class="example">🎈 Two people each pick a different hat from red, blue, green. Go in order:<br>
+  Red-blue, Red-green, Blue-red, Blue-green, Green-red, Green-blue → <b>6 ways</b>.</div>
+  <div class="key">💡 Being neat and going in order (a to z, small to big) means you never lose a possibility.</div>
+  <p><b>Multi-step problems</b> need more than one calculation. Do one step, write down the answer, then use it for the next step.</p>
+  <div class="example">🎈 Lift up = 15 min, ski down = 10 min. One round trip = 15 + 10 = 25 min. Three round trips = 25 × 3 = 75 min. (Two steps!)</div>
+  <div class="key">💡 <b>Doubling patterns</b> come up a lot: fold a paper once → 2 parts, twice → 4, three times → 8. Each fold doubles.</div>
+</div>
+<div class="wordbox"><b>Words to know:</b> <b>combination</b> = one way of choosing · <b>multi-step</b> = needs more than one calculation · <b>estimate</b> = a smart guess close to the answer.</div>
+
+<div class="game">🎮 <b>Warm-up game "List It All":</b> With 3 different snacks, how many different pairs can you make? List them neatly and count. (Answer: 3 pairs.)</div>
+
+<h4>✏️ Practice together</h4>
+<ol>
+  <li>Red, blue and green hats. Each of you wears a different one. How many combinations?</li>
+  <li>The lift up takes 15 min and skiing down takes 10 min. How long is one round trip? And 3 round trips?</li>
+  <li>Each snowflake has 6 points. How many snowflakes to reach 30 points?</li>
+  <li>Fold a paper in half 2 times, then unfold — how many sections? What about 3 folds?</li>
+  <li>You have 3 different snacks. How many different pairs can you choose?</li>
+</ol>
+<div class="answers"><b>Practice answers:</b> 1) 6 &nbsp; 2) one trip = 25 min; 3 trips = 75 min &nbsp; 3) 5 (30÷6) &nbsp; 4) 2 folds = 4 sections; 3 folds = 8 sections &nbsp; 5) 3 pairs</div>
+
+<div class="quiz">
+<h3>🧩 Day 5 Daily Quiz (5 questions)</h3>
+<ol>
+  <li>You have a red and a blue coat, and a black and a white hat. How many coat+hat outfits can you make?</li>
+  <li>A bus ride is 20 min each way. How long is a return trip?</li>
+  <li>Each pizza is cut into 4 slices. How many slices in 3 pizzas?</li>
+  <li>Fold a paper in half once — how many sections when unfolded?</li>
+  <li>Ways to arrange yourself and one friend in a line (who's first)? How many orders?</li>
+</ol>
+<div class="answers"><b>Quiz answers:</b> 1) 4 (red-black, red-white, blue-black, blue-white) &nbsp; 2) 40 min &nbsp; 3) 12 (3×4) &nbsp; 4) 2 &nbsp; 5) 2 (you first, or friend first)</div>
+</div>
+</div>
+
+<!-- ============ FINAL BIG TEST ============ -->
+<div class="test">
+<h2>🏆🏆 FINAL BIG TEST — After Day 5</h2>
+<p><b>Mixes everything, Days 1–5.</b> 15 questions, easy → hard, just like a real AMC. Give it 30 minutes. +1 ❄️ each, no penalty for wrong answers. Good luck, mountain mathematicians! ⛷️</p>
+<ol>
+  <li>12 + 7 = ?</li>
+  <li>15 − 9 = ?</li>
+  <li>What is 5 × 4?</li>
+  <li>Double 8 = ?</li>
+  <li>How many sides do 3 squares have altogether?</li>
+  <li>A rectangle is 6 cm long and 2 cm wide. What is its perimeter?</li>
+  <li>Does the letter "H" have a line of symmetry — yes or no?</li>
+  <li>Two cocoas cost $4 each. You pay with $10. What change do you get?</li>
+  <li>Pencils are $2 each. How many can you buy with $12?</li>
+  <li>Pattern: 4, 8, 12, 16, ___ — what comes next?</li>
+  <li>Pattern: 1, 2, 4, 8, ___ — (doubles each time) what comes next?</li>
+  <li>Sam is taller than Kim. Kim is taller than Jo. Who is shortest?</li>
+  <li>Red, blue, green scarves — you and a friend each take a different one. How many combinations?</li>
+  <li>A chairlift ride up is 12 min and skiing down is 8 min. How long is one round trip?</li>
+  <li>Each star has 5 points. How many stars make 20 points?</li>
+</ol>
+<div class="answers"><b>Final Big Test answers:</b> 1) 19 &nbsp; 2) 6 &nbsp; 3) 20 &nbsp; 4) 16 &nbsp; 5) 12 (3×4) &nbsp; 6) 16 cm ((6+2)×2) &nbsp; 7) Yes &nbsp; 8) $2 &nbsp; 9) 6 (12÷2) &nbsp; 10) 20 &nbsp; 11) 16 &nbsp; 12) Jo &nbsp; 13) 6 &nbsp; 14) 20 min &nbsp; 15) 4 (20÷5)
+<br><b>Score:</b> 13–15 = 🏆 Snow Mountain Math Star! · 9–12 = 🥈 Brilliant, so close! · 5–8 = 🥉 Great effort — review and try again · under 5 = every mathematician re-reads; you've got this!</div>
+</div>
+
+<!-- ============ SCORE SHEET ============ -->
+<h2 style="page-break-before: always;">🏆 Score Tracker</h2>
+<table>
+  <tr><th>Task</th><th>Chloe ❄️</th><th>Friend ❄️</th></tr>
+  <tr><td>Day 1 Quiz (/5)</td><td></td><td></td></tr>
+  <tr><td>Day 2 Quiz (/5)</td><td></td><td></td></tr>
+  <tr><td>Day 3 Quiz (/5)</td><td></td><td></td></tr>
+  <tr><td><b>Big Test 1 (/10)</b></td><td></td><td></td></tr>
+  <tr><td>Day 4 Quiz (/5)</td><td></td><td></td></tr>
+  <tr><td>Day 5 Quiz (/5)</td><td></td><td></td></tr>
+  <tr><td><b>Final Big Test (/15)</b></td><td></td><td></td></tr>
+  <tr><th>Total</th><th></th><th></th></tr>
+</table>
+
+<div class="tips">
+<h3 style="margin-top:0;">💡 Tips for the Grown-up</h3>
+<ul>
+  <li><b>Read the lesson together first.</b> Let the kids read aloud and put it in their own words — that's where real understanding starts.</li>
+  <li><b>No rush.</b> Stop when they're tired. Math is the seasoning, not the main course.</li>
+  <li><b>Explaining beats answering.</b> "How did you work it out?" is the most powerful question you can ask.</li>
+  <li><b>Different paces are normal.</b> Use team mode when the two kids differ in ability; battle mode when they're close.</li>
+  <li><b>Hide math in real life.</b> Cable car numbers, temperatures, times, prices — questions are everywhere on the mountain.</li>
+</ul>
+</div>
+
+<div class="footer">Have a wonderful trip — and happy math! ⛷️❄️ &nbsp;·&nbsp; Plan date: 2026-07-02</div>
+
+</body>
+</html>
