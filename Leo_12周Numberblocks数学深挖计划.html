@@ -1,0 +1,327 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8">
+<style>
+  @page { size: A4; margin: 14mm 14mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "WenQuanYi Zen Hei","Segoe UI",sans-serif; color:#1f2933; line-height:1.6; font-size:12.5px; margin:0; }
+  .cover { text-align:center; padding:40px 24px 30px; color:#fff; border-radius:16px; margin-bottom:20px;
+    background:linear-gradient(150deg,#1e3a8a 0%,#3b82f6 55%,#93c5fd 100%); }
+  .cover .kick { letter-spacing:3px; font-size:12px; opacity:.9; }
+  .cover h1 { font-size:30px; margin:10px 0 6px; }
+  .cover .sub { font-size:14px; font-style:italic; opacity:.95; }
+  .cover .blocks { font-size:30px; letter-spacing:4px; margin:14px 0 4px; }
+  .cover .meta { margin:14px auto 0; max-width:560px; text-align:left; background:rgba(255,255,255,.14);
+    border-radius:10px; padding:10px 18px; font-size:12px; }
+  h2 { color:#1e3a8a; border-bottom:3px solid #93c5fd; padding-bottom:4px; font-size:18px; margin:18px 0 8px; page-break-after:avoid; }
+  h3 { color:#2563eb; font-size:14.5px; margin:12px 0 4px; page-break-after:avoid; }
+  .week { page-break-before:always; }
+  .wk-head { display:flex; align-items:baseline; gap:10px; border-bottom:3px solid #93c5fd; padding-bottom:6px; margin-bottom:10px;}
+  .wk-num { background:#1e3a8a; color:#fff; border-radius:12px; padding:4px 14px; font-size:14px; font-weight:bold; white-space:nowrap;}
+  .wk-title { font-size:19px; font-weight:bold; color:#1e3a8a; }
+  .wk-goal { font-size:11.5px; color:#64748b; font-style:italic; }
+  .box { border-radius:10px; padding:9px 14px; margin:9px 0; page-break-inside:avoid; }
+  .watch { background:#fdf2f8; border-left:4px solid #ec4899; }
+  .watch b { color:#be185d; }
+  .build { background:#ecfdf5; border-left:4px solid #10b981; }
+  .build b { color:#047857; }
+  .snack { background:#fffbeb; border-left:4px solid #f59e0b; }
+  .snack b { color:#b45309; }
+  .snack ol { margin:4px 0 2px; padding-left:22px; }
+  .snack li { margin:4px 0; }
+  .big { background:#eff6ff; border:2px dashed #3b82f6; }
+  .big b { color:#1d4ed8; }
+  .hint { background:#f5f3ff; border-left:4px solid #8b5cf6; font-size:11.5px; }
+  .hint b { color:#6d28d9; }
+  .obs { margin-top:10px; }
+  table { border-collapse:collapse; width:100%; font-size:11.5px; margin:6px 0; }
+  th,td { border:1px solid #cbd5e1; padding:5px 8px; text-align:left; }
+  th { background:#dbeafe; color:#1e3a8a; }
+  td.c { text-align:center; width:64px; }
+  .rules { background:#f1f5f9; border-radius:10px; padding:10px 16px; margin:10px 0; }
+  .rules li { margin:5px 0; }
+  .warn { background:#fef2f2; border-left:4px solid #ef4444; border-radius:8px; padding:9px 14px; margin:9px 0; }
+  .warn b { color:#b91c1c; }
+  .footer { text-align:center; color:#94a3b8; font-size:11px; margin-top:18px; }
+  .tag { display:inline-block; background:#dbeafe; color:#1e40af; border-radius:14px; padding:1px 10px; font-size:11px; margin-left:6px;}
+  .cert { text-align:center; border:6px double #1e3a8a; border-radius:14px; padding:36px 28px; margin-top:16px; }
+  .cert h1 { color:#1e3a8a; font-size:26px; margin:8px 0; }
+  .cert .line { margin:16px auto 4px; border-bottom:2px solid #94a3b8; width:220px; height:22px;}
+  .cert .lbl { font-size:11px; color:#64748b; }
+</style></head><body>
+
+<!-- ================= COVER ================= -->
+<div class="cover">
+  <div class="kick">NUMBERBLOCKS · 数学深挖计划 · 天赋型 4–5 岁</div>
+  <h1>Leo 的 12 周数学冒险</h1>
+  <div class="sub">看一集 → 拼出来 → 玩三题 → 挖一道大题 → 讲给爸爸妈妈听</div>
+  <div class="blocks">🟥 🟧 🟨 🟩 🟦 🟪</div>
+  <div class="meta">
+    <b>每周节奏(总投入约 1 小时,拆成小块):</b><br>
+    📺 看:本周主题集(他多半已看过,重看有新任务)· 10 分钟<br>
+    🧱 拼:MathLink 方块拼搭任务 · 10–15 分钟<br>
+    🍬 零食题:3 道递进小题,散在一周里 · 每道 2–5 分钟<br>
+    ⭐ 周末大题:1 道开放挑战,让他卡一卡再想通 · 10–20 分钟<br>
+    🗣️ 讲解时刻:做完让 Leo 当小老师讲给你听
+  </div>
+</div>
+
+<h2>📖 给爸爸妈妈:使用原则(比题目更重要)</h2>
+<div class="rules">
+<ul>
+  <li><b>深挖,不抢跑。</b>每周都是把他已有的直觉往下挖三层,不是教下个年级的内容。</li>
+  <li><b>夸过程,不夸聪明。</b>说「你换了一种摆法,这个主意好」,不说「你真聪明」。</li>
+  <li><b>欢迎卡住。</b>大题就是设计来让他卡一会儿的。卡住时不给答案,给一句提示,或者说「我们明天再想想」。<b>卡住→想通</b>的循环,是给天赋孩子最重要的一课。</li>
+  <li><b>他是老师。</b>每道题做完让他讲「你怎么想的?」讲得清 = 真懂了。</li>
+  <li><b>随时可停。</b>他累了、烦了就收。宁可他喊「再来一题!」时结束,也不要他皱眉时坚持。</li>
+  <li><b>三句口头禅:</b>「你怎么知道的?」「还有别的方法吗?」「如果……会怎样?」</li>
+</ul>
+</div>
+<div class="warn"><b>红线:</b>不计时、不比较、不布置任务式作业、答错不纠正对错而是问「你摆给我看看?」——让方块替你说话。</div>
+<div class="footer">建议打印后贴冰箱,每周撕一页 · 2026-07 制定</div>
+
+<!-- ================= WEEK 1 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 1 周</span><span class="wk-title">数字的形状 — 数组</span></div>
+<div class="wk-goal">目标:把「乘法=方块阵」的直觉变成他自己的语言。这是全计划的地基。</div>
+<div class="box watch">📺 <b>看:</b>《Stampolines》(蹦床印花那集,数字跳出各种长方形印子)。任务:看到长方形印子就喊出「几乘几」。</div>
+<div class="box build">🧱 <b>拼:</b>用 12 块方块,拼出<b>所有</b>不同的长方形(1×12、2×6、3×4)。每拼一种,画在纸上留档——这是他的第一份「研究记录」。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>6 块方块能摆成几种长方形?(1×6、2×3)</li>
+  <li>3×4 和 4×3 拼出来的形状一样吗?哪里一样哪里不一样?(转个方向!)</li>
+  <li>先拼 2×5,再添几块能变成 3×5?(添 5 块——乘法表相邻行的秘密)</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「24 块方块能摆出几种长方形?比 12 多还是少?你能保证一种都没漏吗?」</div>
+<div class="box hint">💡 <b>家长提示:</b>看他有没有<b>有序搜索</b>的萌芽(1×24→2×12→3×8→4×6,一个个试过去)。如果乱试,提示一句:「从 1 排开始试,会不会不容易漏?」——「系统地枚举」是数学家的核心习惯,4 岁能沾到边就赢了。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他最兴奋的瞬间</td><td></td></tr><tr><td>他说过最妙的一句话</td><td></td></tr><tr><td>卡住时的反应(琢磨/求助/放弃)</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 2 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 2 周</span><span class="wk-title">双倍魔法 — 指数直觉</span></div>
+<div class="wk-goal">目标:感受「翻倍长得飞快」。指数增长的第一次亲密接触。</div>
+<div class="box watch">📺 <b>看:</b>《Double Trouble》。任务:跟着喊翻倍链 1→2→4→8→16。</div>
+<div class="box build">🧱 <b>拼:</b>拼出翻倍塔:1 块、2 块、4 块、8 块、16 块各一摞,排成一排看「长得多快」。再玩逆向:32 块一直对半分,分几次回到 1?</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>8 的双倍是多少?16 的双倍呢?</li>
+  <li>一张纸对折 1 次几层?2 次?3 次?(先猜再折!)</li>
+  <li>「双倍再双倍」等于乘几?(×4——两步合成一步)</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「今天给你 1 颗葡萄干,以后每天翻倍。第 7 天你能拿几颗?第 10 天呢?什么时候超过 100?」(真的发葡萄干,发到爆为止 😄)</div>
+<div class="box hint">💡 <b>家长提示:</b>核心不是算对 64,是看他<b>惊讶</b>——「怎么突然这么多?!」这个惊讶就是指数直觉。若他想继续算 20 天,陪他算,数字爆炸他会记一辈子。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他最兴奋的瞬间</td><td></td></tr><tr><td>他说过最妙的一句话</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 3 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 3 周</span><span class="wk-title">奇数与偶数 — 第一次「证明」</span></div>
+<div class="wk-goal">目标:不只认得奇偶,还能<b>解释为什么</b>——这是证明思维的起点。</div>
+<div class="box watch">📺 <b>看:</b>《Odds and Evens》。任务:记住偶数是「平头」、奇数是「凸一块」。</div>
+<div class="box build">🧱 <b>拼:</b>把 1–10 都拼成两列,看谁平头、谁凸一块。然后玩「奇偶合体」:凸+凸=?(两个凸块正好咬合→平头!)</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>14 是奇数还是偶数?怎么用方块证明?</li>
+  <li>奇数+奇数=奇还是偶?摆出来看看为什么!</li>
+  <li>偶数+奇数呢?能不能不摆就知道?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「猜想:两个奇数加起来<b>永远</b>是偶数吗?100 以内你敢打包票吗?1000 以内呢?为什么凸块总能咬合?」</div>
+<div class="box hint">💡 <b>家长提示:</b>他说出类似「因为凸出来的那块和另一个凸出来的正好拼上」——恭喜,这就是他人生第一个<b>一般性证明</b>(用结构说明所有情况),比会算一百道题都珍贵。把原话记在下面。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他的「证明」原话</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 4 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 4 周</span><span class="wk-title">正方形数俱乐部</span></div>
+<div class="wk-goal">目标:认识 1、4、9、16、25,并发现它们之间藏着的奇数楼梯。</div>
+<div class="box watch">📺 <b>看:</b>《Square Club》。任务:数出片里出现的所有正方形数。</div>
+<div class="box build">🧱 <b>拼:</b>拼 1×1、2×2、3×3、4×4、5×5。关键一步:把 2×2 变 3×3,<b>数一数添了几块?</b>(5 块,一个 L 形)3×3 变 4×4 呢?(7 块)——L 形一层层包上去!</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>下一个正方形数是多少?(6×6=36)</li>
+  <li>每次变大添的块数:3、5、7、9……你发现了什么?</li>
+  <li>1+3=? 1+3+5=? 1+3+5+7=?(全是正方形数!为什么?用 L 形解释)</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「10×10 的大正方形要多少块?不许一块块数,想个聪明办法。100 是正方形数吗?90 呢?」</div>
+<div class="box hint">💡 <b>家长提示:</b>「奇数相加得平方」是数论里真正优雅的定理,而他用方块就能<b>看见</b>证明(每个 L 形是一个奇数)。如果他眼睛亮了,可以轻轻说一句:「这个秘密,很多大人都不知道。」</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>最妙的一句话</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 5 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 5 周</span><span class="wk-title">倔强的数 — 质数初遇</span></div>
+<div class="wk-goal">目标:自己撞见「有些数只能摆成一排」。不说术语,让他先拥有现象。</div>
+<div class="box watch">📺 <b>看:</b>重看《Stampolines》或任意数组集。任务:留意「哪些数字只会印出一条线」。</div>
+<div class="box build">🧱 <b>拼:</b>逐个试 2–20:每个数能摆成几种长方形?做一张「倔强榜」:只能摆一排的数(2、3、5、7、11、13、17、19)贴红点,摆法最多的数(12、16、18、20)贴金星。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>7 能摆成两排整齐的长方形吗?试试!</li>
+  <li>9 呢?(能!3×3——所以「奇数」不等于「倔强」)</li>
+  <li>找一找 20 以内所有「倔强数」,一共几个?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「21 到 30 之间还有倔强数吗?找出来。然后想一个大问题:倔强数会不会到某个地方就没有了?」</div>
+<div class="box hint">💡 <b>家长提示:</b>他找到 23、29 后,那个大问题(质数是否无穷)是<b>欧几里得级别</b>的问题——不用给答案,就说「数学家证明了永远有,等你长大可以自己证」。在孩子心里挂一个「将来要去解开」的钩子,是最高级的启蒙。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他给「倔强数」起的名字</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 6 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 6 周</span><span class="wk-title">楼梯数 — 三角形数</span></div>
+<div class="wk-goal">目标:认识 1、3、6、10、15 的楼梯形状,玩高斯求和的幼儿版。</div>
+<div class="box watch">📺 <b>看:</b>《Fifteen's Minute of Fame》(15 变楼梯 Step Squad!)。</div>
+<div class="box build">🧱 <b>拼:</b>拼楼梯:1 层、2 层、3 层、4 层、5 层(1、3、6、10、15 块)。魔法时刻:<b>两个一样的楼梯倒扣拼在一起变成什么?</b>(长方形!5 层楼梯×2 = 5×6 长方形)</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>6 层楼梯要几块?(15+6=21)</li>
+  <li>1+2+3+4+5=?用楼梯看出来,不用一个个加</li>
+  <li>10 既能摆楼梯又是 Numberblocks 里的大明星,它还能摆成别的形状吗?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「1+2+3+…+10 等于多少?提示:想想两个楼梯倒扣的魔法。」(10×11÷2=55)</div>
+<div class="box hint">💡 <b>家长提示:</b>这就是高斯 8 岁算 1 加到 100 的故事——算完给他讲这个故事,告诉他「你刚才用的就是高斯的办法」。身份感(我和大数学家想到一块了)对天赋孩子是强燃料。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>最妙的一句话</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 7 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 7 周</span><span class="wk-title">公平分享 — 除法与余数</span></div>
+<div class="wk-goal">目标:除法=乘法反着走;余数是「分不完剩下的」,不是错误。</div>
+<div class="box watch">📺 <b>看:</b>《The Lair of Shares》。</div>
+<div class="box build">🧱 <b>拼:</b>12 块分给 2 个人、3 个人、4 个人、6 个人——每次都刚好!然后 13 块分给 3 个人——<b>剩 1 块怎么办?</b>给「剩下的那块」起个名字。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>15 颗葡萄分给 3 个人,每人几颗?</li>
+  <li>15 颗分给 4 个人呢?剩几颗?</li>
+  <li>「什么数分给 4 个人永远不剩?」——和第 1 周的长方形有什么关系?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「一袋糖不到 20 颗:分给 2 人剩 1 颗,分给 3 人也剩 1 颗,分给 4 人还是剩 1 颗。这袋糖有几颗?」(13 颗;进阶:除了 13 还有吗?——1 颗也算吗?)</div>
+<div class="box hint">💡 <b>家长提示:</b>这是他第一道<b>约束求解</b>题(中国剩余定理的婴儿版)。策略随他:一个数一个数试也很好——试错+验证就是数学工作方式。若他发现「12 能同时被 2、3、4 整除,所以 12+1」,记下来,这是结构洞察。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他的解题策略</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 8 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 8 周</span><span class="wk-title">数的伙伴 — 拆分与凑整</span></div>
+<div class="wk-goal">目标:一个数=很多种拆法;凑十是心算的万能钥匙。</div>
+<div class="box watch">📺 <b>看:</b>《The Whole of Me》(整体与部分之歌)。</div>
+<div class="box build">🧱 <b>拼:</b>把 10 拆成两堆,找出<b>所有</b>拆法(1+9 … 5+5),排成漂亮的墙。再玩三堆:10 拆三堆有多少种?(动手数,答案比想象多!)</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>8+7:先从 7 借几块给 8 凑成 10?(借 2,变 10+5)</li>
+  <li>9+6、8+5 用同样的招</li>
+  <li>17−9:从 17 先减到 10 再减,怎么走?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「不用一块块数,算 25+26。你能找到几种算法?」(凑 50、双倍 25 加 1、拆十位个位……至少三条路)</div>
+<div class="box hint">💡 <b>家长提示:</b>本周专门养<b>「一题多解」</b>。每想出一种新算法就画一颗星,比算对本身更值得庆祝。灵活拆数=未来所有心算与代数变形的地基。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他找到几种算法</td><td class="c"></td></tr><tr><td>最妙的一种</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 9 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 9 周</span><span class="wk-title">十个十是一百 — 位值</span></div>
+<div class="wk-goal">目标:亲手感受「捆成十」的威力,理解 100 不是一个大数字,是 10 个 10。</div>
+<div class="box watch">📺 <b>看:</b>《Ten Again》+《One Hundred》登场集。</div>
+<div class="box build">🧱 <b>拼:</b>把方块 10 个 10 个捆成条(或用乐高),摆出 34 =「3 条 + 4 块」。挑战:摆出 67、90、100。然后问:「234 要怎么摆?」(需要一个新单位:板=100!)</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>52 是几条几块?25 呢?——为什么 52 和 25 不一样?</li>
+  <li>39 再添 1 块会发生什么?(满十进位,亲手捆!)</li>
+  <li>10 条是多少?100 条呢?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「数字只有 0–9 十个,为什么能写出任何大数?如果世界上只有 0 和 1 两个数字,数数会变成什么样?」(1、10、11、100……陪他玩二进制数到 8)</div>
+<div class="box hint">💡 <b>家长提示:</b>二进制那问是给胃口大的孩子的彩蛋,浅尝即止——他若接不住,退回去玩捆十就好。若接住了……你家里有个未来的计算机科学家。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>进位那一刻他的反应</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 10 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 10 周</span><span class="wk-title">比大小与聪明地猜 — 估算</span></div>
+<div class="wk-goal">目标:建立「先估再算」的习惯;误差不是错,是信息。</div>
+<div class="box watch">📺 <b>看:</b>《Blockzilla》(大于号小于号怪兽,永远咬大的那边)。</div>
+<div class="box build">🧱 <b>拼:</b>抓一把方块,先猜几块,再数。玩五轮,记录「猜的」和「真的」差多少——看他的猜越来越准(校准!)。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>47 __ 74:Blockzilla 咬哪边?为什么?</li>
+  <li>不数,猜:这页纸上大概有多少个字?</li>
+  <li>19+22 大概是 40 还是 400?怎么一眼看出来?</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「估一估:我们家到超市要走多少步?先猜,写下来,然后真的去数。差了多少?下次怎么猜得更准?」</div>
+<div class="box hint">💡 <b>家长提示:</b>估算是被家长普遍忽视、却被数学教育研究反复证明与长期数学成就强相关的能力。重点表扬<b>「合理的猜」和「修正的过程」</b>,永远别嘲笑猜得离谱。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>五轮抓块的误差变化</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 11 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 11 周</span><span class="wk-title">规律侦探 — 序列与函数萌芽</span></div>
+<div class="wk-goal">目标:从「发现规律」升级到「自己造规律」+「预测第 N 个」。</div>
+<div class="box watch">📺 <b>看:</b>《Pattern Palace》。</div>
+<div class="box build">🧱 <b>拼:</b>你摆规律他续(红红蓝、红红蓝…);他造规律考你——<b>他出题你来答,答错让他纠正你</b>(故意错一次,看他能不能讲清为什么错)。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>2、5、8、11、__?规则是什么?</li>
+  <li>1、2、4、8、__?和第 2 周的老朋友重逢!</li>
+  <li>1、1、2、3、5、8、__?(每个=前两个之和——斐波那契!)</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题:</b>「摆桌子:1 张方桌坐 4 人,2 张拼起来坐 6 人,3 张拼起来坐 8 人……10 张拼起来坐几人?<b>100 张呢?</b>不许摆 100 张,想办法!」(2n+2)</div>
+<div class="box hint">💡 <b>家长提示:</b>「100 张呢?」是从算术跨向<b>代数思维</b>的那一步——逼他放弃逐个数,去找「每加一张桌子多 2 人,再加两头」的结构。他若能用自己的话说出规则(不用式子),就是 4 岁的代数。</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他描述规则的原话</td><td></td></tr><tr><td>最兴奋的瞬间</td><td></td></tr><tr><td>卡住时的反应</td><td class="c"></td></tr></table>
+</div>
+
+<!-- ================= WEEK 12 ================= -->
+<div class="week">
+<div class="wk-head"><span class="wk-num">第 12 周</span><span class="wk-title">大数与永远 — 收官周</span></div>
+<div class="wk-goal">目标:让他见识数的浩瀚,点燃「数学永远有下一个问题」的感觉。轻松、庆祝、展望。</div>
+<div class="box watch">📺 <b>看:</b>《A Million Big Ones》(一百万登场)。</div>
+<div class="box build">🧱 <b>拼:</b>算给他看:全家的方块全倒出来一共几块?离一百万还差多远?(差得远极了!)那一百万块方块能铺满我们家客厅吗?粗粗地估一估。</div>
+<div class="box snack">🍬 <b>零食题:</b>
+<ol>
+  <li>最大的数是多少?(任何数+1……说不完!)</li>
+  <li>一百万秒是多少天?先猜!(约 11 天半——大人也常猜错)</li>
+  <li>你数到 100 要多久?那数到一百万大概要多久?(几个星期不吃不睡!)</li>
+</ol></div>
+<div class="box big">⭐ <b>周末大题(开放收官):</b>「这 12 周你发现了这么多秘密:倔强数、楼梯魔法、L 形、翻倍爆炸……<b>哪个秘密你最喜欢?把它教给一个还不知道的人</b>(爷爷奶奶/朋友都行),用方块演示。」</div>
+<div class="box hint">💡 <b>家长提示:</b>教别人=最高层次的掌握。他讲的时候录个视频——这是 12 周最好的成果档案,几年后回看会非常动人。然后颁发下一页的证书,认真地颁。🎉</div>
+<table class="obs"><tr><th>观察记录</th><th>写下来</th></tr>
+<tr><td>他选择教的「秘密」</td><td></td></tr><tr><td>他教学的精彩瞬间</td><td></td></tr></table>
+</div>
+
+<!-- ================= CERTIFICATE ================= -->
+<div class="week">
+<div class="cert">
+  <div style="font-size:34px;">🏅</div>
+  <div style="letter-spacing:4px;color:#64748b;font-size:12px;">NUMBERBLOCKS 数学冒险</div>
+  <h1>数字探险家证书</h1>
+  <p style="font-size:14px;">兹证明</p>
+  <p style="font-size:24px;font-weight:bold;color:#b45309;">Leo</p>
+  <p style="max-width:420px;margin:8px auto;">完成了 12 周数学深挖冒险:<br>
+  发现了倔强数 · 破解了楼梯魔法 · 见证了翻倍爆炸<br>
+  证明了奇偶秘密 · 数到了想象不到的大数</p>
+  <p style="font-style:italic;color:#1e3a8a;">「真正的数学家不是算得最快的人,<br>而是最爱问『为什么』的人。」</p>
+  <div style="display:flex;justify-content:center;gap:60px;margin-top:10px;">
+    <div><div class="line"></div><div class="lbl">颁发人签名</div></div>
+    <div><div class="line"></div><div class="lbl">日期</div></div>
+  </div>
+</div>
+
+<h2 style="margin-top:26px;">🧭 12 周之后去哪里?</h2>
+<div class="rules">
+<ul>
+  <li><b>还想要更多这样的玩法:</b>重跑一遍本计划的大题,数字换大;或来找我,出第二季(分数形状、对称、图论小游戏、逻辑谜题)。</li>
+  <li><b>5 岁左右:</b>引入 <b>Beast Academy Level 1</b>(漫画数学,和 Numberblocks 气质无缝衔接)、DragonBox Numbers/Algebra。</li>
+  <li><b>观察到位后:</b>若 6 个月后热情不减、屡屡把大题做穿,可预约教育心理学家做认知评估(为提前入学/加速留依据),并了解学校的 gifted program。</li>
+  <li><b>永远的底线:</b>他喊「再来一题」时结束,别在他皱眉时坚持。兴趣是唯一不可再生的资源。</li>
+</ul>
+</div>
+<div class="footer">Leo 的 12 周 Numberblocks 数学深挖计划 · 为 4–5 岁数学天赋型儿童设计 · 2026-07</div>
+</div>
+
+</body></html>
