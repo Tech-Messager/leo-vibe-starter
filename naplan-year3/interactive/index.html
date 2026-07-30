@@ -1,0 +1,1270 @@
+<title>Chloe 的 NAPLAN Year 3 练习本</title>
+<style>
+  :root {
+    --eucalypt: #2F6B4F;
+    --eucalypt-soft: #E4EFE8;
+    --wattle: #C98A16;
+    --wattle-soft: #FBF0D8;
+    --sky: #356F8F;
+    --sky-soft: #E3EDF3;
+    --coral: #C2453D;
+    --coral-soft: #FBE7E5;
+    --ink: #161C19;
+    --slate: #5C6B64;
+    --hairline: #DDE3DE;
+    --paper: #F6F7F4;
+    --card: #FFFFFF;
+    --card-sunk: #F1F3EF;
+    --on-accent: #FFFFFF;
+
+    --ui: ui-rounded, "SF Pro Rounded", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --read: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --data: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, monospace;
+
+    --r-sm: 8px;
+    --r-md: 14px;
+    --r-lg: 22px;
+    --shadow: 0 1px 2px rgba(22, 28, 25, .05), 0 6px 18px -8px rgba(22, 28, 25, .14);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --eucalypt: #74C39A;
+      --eucalypt-soft: #1E2E26;
+      --wattle: #E8B75A;
+      --wattle-soft: #302719;
+      --sky: #7FB4D2;
+      --sky-soft: #1B282F;
+      --coral: #E8837B;
+      --coral-soft: #33201E;
+      --ink: #E7EDE9;
+      --slate: #9BAAA2;
+      --hairline: #2C3833;
+      --paper: #121614;
+      --card: #1A211E;
+      --card-sunk: #151B18;
+      --on-accent: #10201A;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px -10px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --eucalypt: #74C39A;
+    --eucalypt-soft: #1E2E26;
+    --wattle: #E8B75A;
+    --wattle-soft: #302719;
+    --sky: #7FB4D2;
+    --sky-soft: #1B282F;
+    --coral: #E8837B;
+    --coral-soft: #33201E;
+    --ink: #E7EDE9;
+    --slate: #9BAAA2;
+    --hairline: #2C3833;
+    --paper: #121614;
+    --card: #1A211E;
+    --card-sunk: #151B18;
+    --on-accent: #10201A;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 20px -10px rgba(0, 0, 0, .6);
+  }
+
+  :root[data-theme="light"] {
+    --eucalypt: #2F6B4F;
+    --eucalypt-soft: #E4EFE8;
+    --wattle: #C98A16;
+    --wattle-soft: #FBF0D8;
+    --sky: #356F8F;
+    --sky-soft: #E3EDF3;
+    --coral: #C2453D;
+    --coral-soft: #FBE7E5;
+    --ink: #161C19;
+    --slate: #5C6B64;
+    --hairline: #DDE3DE;
+    --paper: #F6F7F4;
+    --card: #FFFFFF;
+    --card-sunk: #F1F3EF;
+    --on-accent: #FFFFFF;
+    --shadow: 0 1px 2px rgba(22, 28, 25, .05), 0 6px 18px -8px rgba(22, 28, 25, .14);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--ui);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 18px 72px; }
+
+  /* ---------- header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .head-in {
+    max-width: 940px; margin: 0 auto; padding: 14px 18px 0;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  .brand h1 {
+    margin: 0; font-size: 1.28rem; font-weight: 700; letter-spacing: -.01em;
+    text-wrap: balance;
+  }
+  /* 四线格：澳洲小学书写练习纸的虚线格，作为标题下的装饰 */
+  .brand h1::after {
+    content: ""; display: block; height: 9px; margin-top: 5px;
+    background:
+      linear-gradient(to bottom, transparent 0 3px, var(--hairline) 3px 4px, transparent 4px 9px),
+      repeating-linear-gradient(to right, var(--wattle) 0 5px, transparent 5px 10px);
+    background-size: 100% 100%, 100% 1px;
+    background-position: 0 0, 0 6px;
+    background-repeat: no-repeat, repeat-x;
+    opacity: .8;
+  }
+  .brand p { margin: 6px 0 0; font-size: .8rem; color: var(--slate); }
+
+  .head-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; padding-top: 2px; }
+  .ring { display: grid; place-items: center; width: 52px; height: 52px; position: relative; }
+  .ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .ring b { font-family: var(--data); font-size: .78rem; font-variant-numeric: tabular-nums; }
+
+  .icon-btn {
+    border: 1px solid var(--hairline); background: var(--card); color: var(--slate);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    font-size: .95rem; display: grid; place-items: center; padding: 0;
+  }
+  .icon-btn:hover { color: var(--ink); border-color: var(--slate); }
+
+  /* ---------- tabs ---------- */
+  nav {
+    max-width: 940px; margin: 0 auto; padding: 10px 18px 12px;
+    display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0; border: 1px solid var(--hairline); background: var(--card);
+    color: var(--slate); font-family: var(--ui); font-size: .88rem; font-weight: 600;
+    padding: 7px 15px; border-radius: 100px; cursor: pointer; white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab[aria-selected="true"] {
+    background: var(--eucalypt); border-color: var(--eucalypt);
+    color: var(--on-accent);
+  }
+
+  /* ---------- generic ---------- */
+  h2 { font-size: 1.05rem; margin: 30px 0 4px; letter-spacing: -.01em; }
+  h2 .en { font-weight: 500; color: var(--slate); font-size: .82rem; margin-left: 7px; }
+  .lede { margin: 0 0 16px; color: var(--slate); font-size: .88rem; max-width: 62ch; }
+
+  .eyebrow {
+    font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--slate); margin: 26px 0 8px;
+  }
+
+  button, [role="button"] { font-family: var(--ui); }
+  :focus-visible { outline: 2.5px solid var(--wattle); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- knowledge point cards ---------- */
+  .kp-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); }
+  .kp {
+    text-align: left; background: var(--card); border: 1px solid var(--hairline);
+    border-radius: var(--r-md); padding: 13px 15px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 8px;
+    transition: border-color .15s, transform .12s, box-shadow .15s;
+  }
+  .kp:hover { border-color: var(--eucalypt); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .kp-name { font-weight: 650; font-size: .95rem; line-height: 1.35; }
+  .kp-en { font-size: .74rem; color: var(--slate); font-weight: 500; }
+  .kp-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+  .kp-count { font-family: var(--data); font-size: .72rem; color: var(--slate); font-variant-numeric: tabular-nums; }
+
+  .pill {
+    font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 100px;
+    letter-spacing: .01em; white-space: nowrap;
+  }
+  .pill.new  { background: var(--card-sunk); color: var(--slate); }
+  .pill.mid  { background: var(--wattle-soft); color: var(--wattle); }
+  .pill.done { background: var(--eucalypt-soft); color: var(--eucalypt); }
+  .pill.weak { background: var(--coral-soft); color: var(--coral); }
+
+  .bar { height: 5px; border-radius: 99px; background: var(--card-sunk); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--eucalypt); border-radius: 99px; transition: width .35s ease; }
+  .bar i.w { background: var(--coral); }
+  .bar i.m { background: var(--wattle); }
+
+  /* ---------- quiz ---------- */
+  .quiz-head {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    margin: 22px 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline);
+  }
+  .back {
+    border: 1px solid var(--hairline); background: var(--card); color: var(--slate);
+    border-radius: 100px; padding: 6px 14px; font-size: .82rem; font-weight: 600; cursor: pointer;
+  }
+  .back:hover { color: var(--ink); border-color: var(--slate); }
+  .quiz-title { font-weight: 700; font-size: 1rem; }
+  .dots { display: flex; gap: 4px; margin-left: auto; flex-wrap: wrap; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--card-sunk); border: 1px solid var(--hairline); }
+  .dot.ok { background: var(--eucalypt); border-color: var(--eucalypt); }
+  .dot.no { background: var(--coral); border-color: var(--coral); }
+  .dot.now { box-shadow: 0 0 0 3px var(--wattle-soft); border-color: var(--wattle); }
+
+  .passage {
+    background: var(--card); border: 1px solid var(--hairline); border-left: 3px solid var(--sky);
+    border-radius: var(--r-md); padding: 16px 20px; margin-bottom: 18px;
+    max-height: 300px; overflow-y: auto;
+    font-family: var(--read); font-size: .97rem; line-height: 1.68;
+  }
+  .passage h4 {
+    font-family: var(--ui); font-size: .74rem; font-weight: 700; letter-spacing: .09em;
+    text-transform: uppercase; color: var(--sky); margin: 0 0 10px;
+  }
+  .passage p { margin: 0 0 .8em; }
+  .passage p:last-child { margin-bottom: 0; }
+  .passage em { font-style: italic; }
+  .passage .sub { font-style: italic; font-weight: 600; }
+
+  .q-card { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 20px; box-shadow: var(--shadow); }
+  .q-meta { font-family: var(--data); font-size: .7rem; color: var(--slate); margin-bottom: 9px; }
+  .q-text { font-size: 1.06rem; font-weight: 600; line-height: 1.5; margin: 0 0 16px; text-wrap: pretty; }
+  .q-text.serif { font-family: var(--read); font-weight: 500; }
+
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt {
+    display: flex; align-items: flex-start; gap: 11px; width: 100%; text-align: left;
+    background: var(--card); border: 1.5px solid var(--hairline); border-radius: var(--r-md);
+    padding: 12px 14px; cursor: pointer; font-size: .97rem; color: var(--ink);
+    transition: border-color .12s, background .12s;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--eucalypt); background: var(--eucalypt-soft); }
+  .opt:disabled { cursor: default; }
+  .opt .letter {
+    flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--card-sunk); color: var(--slate);
+    display: grid; place-items: center; font-family: var(--data); font-size: .78rem; font-weight: 700;
+  }
+  .opt .body { padding-top: 1px; }
+  .opt.correct { border-color: var(--eucalypt); background: var(--eucalypt-soft); }
+  .opt.correct .letter { background: var(--eucalypt); color: var(--card); }
+  .opt.wrong { border-color: var(--coral); background: var(--coral-soft); }
+  .opt.wrong .letter { background: var(--coral); color: var(--card); }
+  .opt.dim { opacity: .5; }
+
+  .verdict {
+    margin-top: 16px; padding: 14px 16px; border-radius: var(--r-md);
+    background: var(--card-sunk); border-left: 3px solid var(--slate);
+  }
+  .verdict.good { background: var(--eucalypt-soft); border-left-color: var(--eucalypt); }
+  .verdict.bad  { background: var(--coral-soft); border-left-color: var(--coral); }
+  .verdict b { display: block; font-size: .92rem; margin-bottom: 4px; }
+  .verdict p { margin: 0; font-size: .88rem; line-height: 1.6; }
+  .verdict .src { display: block; margin-top: 8px; font-family: var(--data); font-size: .7rem; color: var(--slate); }
+
+  .q-nav { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  .btn {
+    border: none; border-radius: 100px; padding: 11px 22px; font-size: .93rem; font-weight: 700;
+    cursor: pointer; background: var(--eucalypt); color: var(--on-accent);
+  }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .btn.ghost { background: transparent; border: 1px solid var(--hairline); color: var(--slate); font-weight: 600; }
+  .btn.ghost:hover { color: var(--ink); border-color: var(--slate); }
+
+  .score-card {
+    text-align: center; background: var(--card); border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); padding: 32px 24px; box-shadow: var(--shadow);
+  }
+  .score-big { font-family: var(--data); font-size: 2.9rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+  .score-card p { color: var(--slate); font-size: .9rem; margin: 10px 0 20px; }
+  .wrongs { text-align: left; margin: 20px auto 0; max-width: 480px; }
+  .wrongs h5 { font-size: .8rem; margin: 0 0 8px; color: var(--slate); font-weight: 700; }
+  .wrongs li { font-size: .86rem; margin-bottom: 6px; line-height: 1.5; }
+
+  /* ---------- mermaid / diagrams ---------- */
+  .diagram {
+    background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    padding: 16px; margin-bottom: 18px; overflow-x: auto;
+  }
+  pre.mermaid { margin: 0; text-align: center; font-family: var(--data); font-size: .8rem; }
+
+  /* ---------- writing tools ---------- */
+  .panel { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 17px 19px; margin-bottom: 14px; }
+  .panel h3 { margin: 0 0 4px; font-size: .98rem; }
+  .panel .sub { color: var(--slate); font-size: .82rem; margin: 0 0 13px; }
+  .check { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; font-size: .92rem; cursor: pointer; border-bottom: 1px dashed var(--hairline); }
+  .check:last-of-type { border-bottom: none; }
+  .check input { margin: 4px 0 0; accent-color: var(--eucalypt); width: 17px; height: 17px; flex-shrink: 0; }
+  .check span small { display: block; color: var(--slate); font-size: .78rem; margin-top: 2px; }
+
+  .prompt-box {
+    background: var(--card-sunk); border-radius: var(--r-md); padding: 18px 20px; margin-top: 12px;
+    font-family: var(--read); font-size: 1rem; line-height: 1.6; min-height: 72px;
+  }
+  .prompt-box .kind {
+    font-family: var(--ui); font-size: .68rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--wattle); display: block; margin-bottom: 7px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: .87rem; }
+  .scroll-x { overflow-x: auto; }
+  th, td { text-align: left; padding: 8px 11px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--slate); font-weight: 700; }
+  td.num { font-family: var(--data); font-variant-numeric: tabular-nums; }
+
+  /* ---------- progress view ---------- */
+  .stat-row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 22px; }
+  .stat { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 14px 16px; }
+  .stat .k { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--slate); font-weight: 700; }
+  .stat .v { font-family: var(--data); font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  .stat .v small { font-size: .8rem; color: var(--slate); font-weight: 500; }
+
+  .subj-prog { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 15px 17px; margin-bottom: 10px; }
+  .subj-prog .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 9px; gap: 10px; }
+  .subj-prog .top b { font-size: .95rem; }
+  .subj-prog .top span { font-family: var(--data); font-size: .78rem; color: var(--slate); font-variant-numeric: tabular-nums; }
+
+  .empty { color: var(--slate); font-size: .88rem; padding: 20px 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+  @media (max-width: 560px) {
+    .brand h1 { font-size: 1.12rem; }
+    .kp-grid { grid-template-columns: 1fr; }
+    .q-card { padding: 16px; }
+  }
+</style>
+
+<header>
+  <div class="head-in">
+    <div class="brand">
+      <h1>Chloe 的 NAPLAN Year 3 练习本</h1>
+      <p>知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月</p>
+    </div>
+    <div class="head-right">
+      <div class="ring" title="总体掌握度">
+        <svg viewBox="0 0 44 44" width="52" height="52" aria-hidden="true">
+          <circle cx="22" cy="22" r="18" fill="none" stroke="var(--card-sunk)" stroke-width="5"></circle>
+          <circle id="ringArc" cx="22" cy="22" r="18" fill="none" stroke="var(--eucalypt)" stroke-width="5"
+                  stroke-linecap="round" stroke-dasharray="113" stroke-dashoffset="113"></circle>
+        </svg>
+        <b id="ringPct">0%</b>
+      </div>
+      <button class="icon-btn" id="themeBtn" title="切换深色/浅色" aria-label="切换深色或浅色主题">◐</button>
+    </div>
+  </div>
+  <nav id="tabs" role="tablist"></nav>
+</header>
+
+<div class="wrap" id="view" hidden></div>
+
+<!-- 框架图常驻在 DOM 里：mermaid 只在页面首次加载时渲染一次，之后只切换显示 -->
+<div class="wrap" id="mapView">
+  <h2>知识框架<span class="en">Knowledge map</span></h2>
+  <p class="lede">四科的知识点全貌。学完一块，就在纸质资料《知识框架图.md》的打勾表上打一个勾 —— 让 Chloe 自己指着图说「这一块我会了」，比家长反复提问有效得多。</p>
+
+  <p class="eyebrow">四科总览</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    N["NAPLAN Year 3"] --> R["Reading 阅读<br/>45min · 39题"]
+    N --> W["Writing 写作<br/>40min · 1篇 · 纸笔"]
+    N --> C["Conventions 语言规范<br/>45min · 40题"]
+    N --> M["Numeracy 数学<br/>45min · 36题 · 无计算器"]
+    R --> R1["五种文体"]
+    R --> R2["五级阅读能力"]
+    W --> W1["Narrative 记叙"]
+    W --> W2["Persuasive 议论"]
+    W --> W3["10项评分标准"]
+    C --> C1["Grammar 语法"]
+    C --> C2["Punctuation 标点"]
+    C --> C3["Spelling 拼写"]
+    M --> M1["数与代数"]
+    M --> M2["测量与几何"]
+    M --> M3["统计与概率"]
+  </pre></div>
+
+  <p class="eyebrow">阅读：五种文体怎么一眼认出来</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    T["这是什么文章?"] --> a{"有人物和情节?"}
+    a -->|"是"| N1["Narrative 故事<br/>考: 感受 · 顺序 · 主题"]
+    a -->|"否"| b{"有材料清单和编号步骤?"}
+    b -->|"是"| N2["Procedure 步骤文<br/>考: 顺序 · 某步为何重要"]
+    b -->|"否"| c{"分行分节 · 可能押韵?"}
+    c -->|"是"| N3["Poetry 诗歌<br/>考: 押韵 · 比喻 · 画面"]
+    c -->|"否"| d{"作者有明确观点?"}
+    d -->|"是"| N4["Persuasive 议论文<br/>考: 观点 · 理由 · 事实vs观点"]
+    d -->|"否"| N5["Information Report 说明文<br/>考: 找事实 · 小标题 · 图表"]
+  </pre></div>
+
+  <p class="eyebrow">阅读：五级能力由易到难</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart LR
+    A["字面理解<br/>答案在原文"] --> B["词义猜测<br/>代回原句"]
+    B --> C["推断<br/>线索 + 常识"]
+    C --> D["结构与手法<br/>小标题 · 加粗 · 连接词"]
+    D --> E["主旨与作者意图<br/>entertain · inform · persuade"]
+    E --> F["双文本比较<br/>找异同"]
+  </pre></div>
+
+  <p class="eyebrow">写作：两种体裁的结构</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    n1["Narrative 开头<br/>谁 · 在哪 · 何时"] --> n2["Complication<br/>发生了一个问题"]
+    n2 --> n3["Resolution<br/>怎么解决 + 感受"]
+    p1["Persuasive 观点<br/>I strongly believe"] --> p2["Firstly 理由1"]
+    p2 --> p3["Secondly 理由2"]
+    p3 --> p4["反驳对立观点<br/>Some people say... But"]
+    p4 --> p5["重申观点 + 呼吁读者"]
+  </pre></div>
+
+  <p class="eyebrow">语言规范：三大板块</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    C["Conventions"] --> G["Grammar 语法"]
+    C --> P["Punctuation 标点"]
+    C --> S["Spelling 拼写"]
+    G --> G1["词类: 名 · 动 · 形 · 副 · 代"]
+    G --> G2["时态 + 20个不规则过去式"]
+    G --> G3["主谓一致<br/>Each · Nobody 当单数"]
+    G --> G4["连词与句子合并"]
+    G --> G5["完整句 · 四种句型"]
+    P --> P1["大写: 句首 · 人名地名 · 月份 · I"]
+    P --> P2["句号 · 问号 · 感叹号"]
+    P --> P3["逗号: 列举 · 句首状语"]
+    P --> P4["撇号: 缩写 + 所有格<br/>复数不加撇号 · its 不等于 it's"]
+    P --> P5["引号: 问号在引号内"]
+    S --> S1["五规则: 双写 · 去e · y变i · es · f变v"]
+    S --> S2["ough · augh · aigh 家族"]
+    S --> S3["不发音字母: island · answer"]
+    S --> S4["同音词 7 组"]
+    S --> S5["澳洲拼法 -our · -ise"]
+  </pre></div>
+
+  <p class="eyebrow">数学：三大板块</p>
+  <div class="diagram"><pre class="mermaid">
+flowchart TD
+    M["Numeracy"] --> A["数与代数"]
+    M --> B["测量与几何"]
+    M --> D["统计与概率"]
+    A --> A1["位值到四位数 · rounding"]
+    A --> A2["加减法: 进位借位<br/>带0借位最易错"]
+    A --> A3["乘除法 x2 x3 x5 x10"]
+    A --> A4["多步应用题<br/>先说: 第一步算什么"]
+    A --> A5["分数 1/2 1/3 1/4 1/8"]
+    A --> A6["钱币: 凑钱 · 找零"]
+    A --> A7["规律: 加减 · x2 · x2+1"]
+    B --> B1["单位换算<br/>1m=100cm · 1kg=1000g · 1L=1000mL"]
+    B --> B2["时间: 一刻 · 时间段 · 日历"]
+    B --> B3["2D图形 · 对称轴"]
+    B --> B4["3D立体: 面 · 棱 · 顶点"]
+    B --> B5["面积数格子 · 周长"]
+    B --> B6["位置与方向"]
+    D --> D1["象形图: 先看图例!"]
+    D --> D2["条形图 · tally 计数"]
+    D --> D3["how many more = 相减"]
+    D --> D4["可能性五级词汇"]
+  </pre></div>
+
+  <p class="eyebrow">高频失分点 TOP 6</p>
+  <div class="panel scroll-x">
+    <table>
+      <thead><tr><th class="num">#</th><th>失分点</th><th>去哪练</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>象形图不看图例</td><td>数学 → 图表与数据</td></tr>
+        <tr><td class="num">2</td><td>多步应用题只算一步</td><td>数学 → 多步应用题</td></tr>
+        <tr><td class="num">3</td><td>带 0 的借位减法（604−287）</td><td>数学 → 加减法</td></tr>
+        <tr><td class="num">4</td><td>its / it's 混淆、复数误加撇号</td><td>语言规范 → 撇号</td></tr>
+        <tr><td class="num">5</td><td>推断题只找字面意思</td><td>阅读 → 推断</td></tr>
+        <tr><td class="num">6</td><td>单位没统一就计算</td><td>数学 → 长度质量容量</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   题库：每题都带 kp（知识点）与 src（在纸质资料中的出处）
+   ============================================================ */
+
+const READING_TEXTS = {
+  kitten: { type: "Narrative 故事", title: "The Lost Kitten", html: `
+    <p>Ruby was walking home from school when she heard a tiny sound coming from behind the bin. "Meow... meow..."</p>
+    <p>She peeked behind the bin and saw a small grey kitten. It was shivering and its fur was wet from the rain. The kitten looked up at Ruby with big green eyes.</p>
+    <p>"You poor thing," Ruby whispered. She took off her jumper and gently wrapped the kitten inside it.</p>
+    <p>Ruby carried the kitten home. Her mum helped her dry its fur with a warm towel and gave it a saucer of milk. The kitten drank it all and then curled up on Ruby's lap, purring softly.</p>
+    <p>"Can we keep him, Mum? Please?" Ruby asked.</p>
+    <p>Mum smiled. "First we must put up posters to see if he belongs to someone. If nobody comes, then he can stay."</p>
+    <p>Ruby crossed her fingers behind her back. She had already thought of the perfect name: Storm.</p>` },
+
+  newgirl: { type: "Narrative 故事", title: "The New Girl", html: `
+    <p>Amara stood at the classroom door, holding her schoolbag straps so tightly that her knuckles turned white. Twenty-five faces turned to look at her.</p>
+    <p>"Class, this is Amara," said Mrs Chen. "She has just moved here from Perth. Who would like to be her buddy this week?"</p>
+    <p>For a moment, nobody moved. Amara stared at her shoes.</p>
+    <p>Then a hand shot up at the back of the room. "Me! I'll do it!" called a girl with red hair and a gap-toothed grin. "I'm Poppy. I moved here last year, so I know exactly how it feels."</p>
+    <p>At lunchtime, Poppy showed Amara the library, the canteen and the best handball court. "The trick," Poppy explained, "is to bring your own ball. Then everyone wants to play with you."</p>
+    <p>By home time, Amara's schoolbag straps hung loosely from her shoulders, and she was smiling. Perth felt very far away — but for the first time, that didn't seem like such a bad thing.</p>` },
+
+  wombat: { type: "Information Report 说明文", title: "Wombats", html: `
+    <p class="sub">What is a wombat?</p>
+    <p>Wombats are Australian animals with short legs, strong claws and thick brown fur. An adult wombat can weigh up to 35 kilograms — about the same as a ten-year-old child!</p>
+    <p class="sub">Where do wombats live?</p>
+    <p>Wombats live in burrows, which are long tunnels they dig under the ground. A wombat's burrow can be up to 30 metres long. Wombats sleep in their burrows during the day and come out at night to eat. Animals that are active at night are called <strong>nocturnal</strong>.</p>
+    <p class="sub">What do wombats eat?</p>
+    <p>Wombats eat grasses, roots and bark. Their front teeth never stop growing, so all that chewing keeps them the right length.</p>
+    <p class="sub">An amazing fact</p>
+    <p>Wombats are the only animals in the world that do cube-shaped poo! Scientists believe the cube shape stops it from rolling away, which helps wombats mark their territory.</p>` },
+
+  phone: { type: "Procedure 步骤文", title: "How to Make a Paper Cup Telephone", html: `
+    <p class="sub">You will need:</p>
+    <p>2 paper cups &middot; a long piece of string (about 5 metres) &middot; a sharp pencil &middot; a friend</p>
+    <p class="sub">Steps:</p>
+    <p>1. Use the pencil to poke a small hole in the bottom of each cup.<br>
+       2. Push one end of the string through the hole in the first cup. Tie a big knot inside the cup so the string cannot slip out.<br>
+       3. Do the same with the other end of the string and the second cup.<br>
+       4. Give one cup to your friend and walk apart until the string is pulled tight.<br>
+       5. Speak into your cup while your friend holds their cup to their ear.</p>
+    <p class="sub">Handy hint:</p>
+    <p>The telephone will not work if the string is loose. Make sure it stays tight and does not touch anything.</p>` },
+
+  umbrella: { type: "Poetry 诗歌", title: "My Umbrella", html: `
+    <p>My umbrella is a mushroom<br>that blooms when clouds turn grey,<br>a little roof that follows me<br>and keeps the rain away.</p>
+    <p>The raindrops play their drum song —<br><em>tap-tap</em>, <em>tappity-tap</em> —<br>while I stay dry as toast beneath<br>my mushroom's friendly cap.</p>
+    <p>But when the sun peeks out again<br>and paints the puddles gold,<br>I shake my sleeping mushroom dry<br>and fold away its fold.</p>` },
+
+  playtime: { type: "Persuasive 议论文", title: "Kids Need More Playtime!", html: `
+    <p>Do you think lunchtime at school is long enough? I don't! I believe children should have more playtime at school, and here is why.</p>
+    <p>Firstly, playing keeps us healthy. Doctors say children should exercise for at least one hour every day. Running, climbing and skipping at playtime are all great exercise.</p>
+    <p>Secondly, playtime helps our brains. After sitting still and thinking hard in class, our brains get tired. A break outside helps us concentrate better when we return to the classroom. In fact, some schools that added extra playtime found that students' work improved!</p>
+    <p>Some people say more playtime means less learning. But that's not true — a rested brain learns faster than a tired one.</p>
+    <p>So come on, principals of Australia — give kids the playtime we need! You will have healthier, happier and smarter students.</p>` }
+};
+
+/* --- q(kp, text, options, answerIndex, explanation, source, textKey?) --- */
+const BANK = {
+  reading: {
+    label: "阅读", en: "Reading", accent: "sky",
+    groups: [
+      { kp: "字面理解", en: "Literal comprehension", tip: "答案就写在原文里 —— 回去找那一句。", qs: [
+        { t: "kitten", q: "Where did Ruby find the kitten?", o: ["In her garden", "Behind a bin", "At school", "On her lap"], a: 1, e: "原文：\"behind the bin\"。字面题必须回原文核对，不凭印象。", s: "阅读第1辑 Q1" },
+        { t: "kitten", q: "What must happen before Ruby can keep the kitten?", o: ["The kitten must learn its name.", "Ruby must buy it a bed.", "The family must put up posters first.", "The kitten must stop purring."], a: 2, e: "妈妈说：先贴寻猫启事（posters）看有没有人认领。", s: "阅读第1辑 Q5" },
+        { t: "wombat", q: "How long can a wombat's burrow be?", o: ["3 metres", "10 metres", "30 metres", "35 metres"], a: 2, e: "洞穴 30 米，体重 35 公斤 —— 两个数字互为干扰项，看清问的是哪个。", s: "阅读第1辑 Q9" },
+        { t: "wombat", q: "Why do scientists think wombat poo is cube-shaped?", o: ["so the wombat can eat it later", "so it doesn't roll away when marking territory", "because wombats live underground", "because wombats only eat square food"], a: 1, e: "原文：cube shape stops it from rolling away。", s: "阅读第1辑 Q12" },
+        { t: "phone", q: "The telephone will NOT work if —", o: ["the string is tight", "the cups are made of paper", "the string is loose", "your friend listens with their ear"], a: 2, e: "Handy hint 里明确说 loose 就不工作。注意题目里的 NOT。", s: "阅读第1辑 Q15" },
+        { t: "playtime", q: "According to the text, how long should children exercise each day?", o: ["at least one hour", "at least two hours", "thirty minutes", "all day"], a: 0, e: "原文：at least one hour every day。", s: "阅读第1辑 Q18" }
+      ]},
+      { kp: "推断", en: "Inference", tip: "文中的线索 ＋ 我知道的常识 ＝ 推断。文章不会直说答案。", qs: [
+        { t: "kitten", q: "How did Ruby most likely feel when she found the kitten?", o: ["angry", "bored", "worried", "scared"], a: 2, e: "\"You poor thing\" ＋ 脱下毛衣包住它 → 担心、心疼。文中从没写 worried 这个词。", s: "阅读第1辑 Q3" },
+        { t: "kitten", q: "Why did Ruby wrap the kitten in her jumper?", o: ["to hide it from her mum", "to keep it warm and dry", "because her jumper was old", "because the kitten asked her to"], a: 1, e: "小猫又湿又发抖 → 包起来是为了保暖。", s: "阅读第1辑 Q4" },
+        { t: "kitten", q: "Why did Ruby cross her fingers behind her back?", o: ["She was hoping nobody would claim the kitten.", "Her fingers were cold.", "She was telling a lie.", "She was playing a game."], a: 0, e: "cross fingers 是「祈求好运」的动作 —— 她希望没人来认领。这题考文化常识＋推断，是本篇最难的一题。", s: "阅读第1辑 Q6" },
+        { t: "newgirl", q: "How did Amara feel at the beginning of the story?", o: ["excited", "nervous", "angry", "sleepy"], a: 1, e: "攥紧背带到指节发白 ＋ 盯着自己的鞋 → 紧张。", s: "阅读第2辑 Q1" },
+        { t: "newgirl", q: "Which words from the story BEST show how Amara felt at the door?", o: ["\"Twenty-five faces turned\"", "\"holding her schoolbag straps so tightly that her knuckles turned white\"", "\"She has just moved here from Perth\"", "\"a girl with red hair\""], a: 1, e: "「找证据题」：哪句话最能证明她的感受 —— 指节发白是紧张的身体信号。", s: "阅读第2辑 Q2" },
+        { t: "newgirl", q: "At the end, Amara's bag straps \"hung loosely from her shoulders\". This shows Amara —", o: ["had lost her bag", "was no longer tense", "needed a new bag", "was carrying more books"], a: 1, e: "开头「攥紧」vs 结尾「松弛」——用同一个细节的变化暗示心情变化，高阶考法。", s: "阅读第2辑 Q5" }
+      ]},
+      { kp: "主旨与作者意图", en: "Main idea & purpose", tip: "三选一：entertain 讲故事 / inform 给知识 / persuade 说服你。", qs: [
+        { t: "wombat", q: "This text was written mainly to —", o: ["tell a funny story about a wombat", "give the reader information about wombats", "persuade people to keep wombats as pets", "explain how to dig a burrow"], a: 1, e: "全篇都是事实陈述，没有观点，没有情节 → to inform。", s: "阅读第1辑 Q7" },
+        { t: "playtime", q: "The writer wrote this text to —", o: ["entertain", "inform", "persuade", "give instructions"], a: 2, e: "有明确观点 ＋ 理由 ＋ 呼吁 → to persuade。", s: "阅读第1辑 Q24" },
+        { t: "playtime", q: "What is the writer's opinion?", o: ["Lunchtime at school is too long.", "Children should have more playtime at school.", "Children should exercise less.", "Schools should have more classes."], a: 1, e: "第一段末句：\"I believe children should have more playtime\"。找观点先看第一段和最后一段。", s: "阅读第1辑 Q17" },
+        { t: "newgirl", q: "What is the main message of this story?", o: ["Handball is the best game.", "Moving to Perth is fun.", "A small act of kindness can change someone's day.", "Libraries are important in schools."], a: 2, e: "主旨要覆盖「整篇」。A、D 只是提到过的细节，不是主题。", s: "阅读第2辑 Q6" }
+      ]},
+      { kp: "词义与比喻", en: "Vocabulary & figurative language", tip: "把选项代回原句读一遍，看哪个通顺。", qs: [
+        { t: "kitten", q: "The word <strong>shivering</strong> in this story means —", o: ["sleeping quietly", "shaking from cold", "jumping up and down", "making a loud noise"], a: 1, e: "下雨天＋毛是湿的 → shivering ＝ 冷得发抖。用前后文线索猜词义。", s: "阅读第1辑 Q2" },
+        { t: "wombat", q: "According to the text, a <strong>nocturnal</strong> animal is one that —", o: ["digs long tunnels", "eats grass and bark", "is active at night", "weighs 35 kilograms"], a: 2, e: "文中直接给了定义：animals that are active at night are called nocturnal。", s: "阅读第1辑 Q8" },
+        { t: "umbrella", q: "In this poem, the umbrella is compared to —", o: ["a cloud", "a mushroom", "a drum", "a puddle"], a: 1, e: "比喻（metaphor）：My umbrella is a mushroom。", s: "阅读第2辑 Q7" },
+        { t: "umbrella", q: "\"The raindrops play their drum song\" means —", o: ["the rain makes a tapping sound on the umbrella", "it has stopped raining", "someone is playing a real drum", "the umbrella is broken"], a: 0, e: "雨点敲在伞面上像打鼓 —— 不是真的有鼓。", s: "阅读第2辑 Q9" },
+        { t: "umbrella", q: "\"I stay dry as toast\" shows that she is —", o: ["eating breakfast", "completely dry", "warm", "hungry"], a: 1, e: "习语 dry as toast ＝ 非常干。遇到没见过的习语，从整句意思推。", s: "阅读第2辑 Q10" },
+        { t: "umbrella", q: "Which word rhymes with <strong>grey</strong> in the first stanza?", o: ["me", "roof", "away", "rain"], a: 2, e: "押韵：grey / away。诗歌题常考押韵词和分节。", s: "阅读第2辑 Q8" }
+      ]},
+      { kp: "结构与写作手法", en: "Text structure & language features", tip: "小标题、加粗、图注、连接词都是「有用途的」，不是装饰。", qs: [
+        { t: "wombat", q: "The headings in this text (such as <em>Where do wombats live?</em>) help the reader to —", o: ["know what each part of the text is about", "learn how to spell difficult words", "see how heavy a wombat is", "find the author's name"], a: 0, e: "小标题的作用＝提示本段讲什么，帮读者快速定位。", s: "阅读第1辑 Q11" },
+        { t: "phone", q: "The words <em>poke, push, tie</em> and <em>speak</em> are used at the start of the steps because the text is —", o: ["telling a story", "asking questions", "giving instructions", "describing feelings"], a: 2, e: "动词开头的祈使句（imperative）是步骤文的语言标志。", s: "阅读第1辑 Q16" },
+        { t: "phone", q: "What should you do straight after poking holes in the cups?", o: ["Walk apart from your friend.", "Push the string through the hole and tie a knot.", "Speak into your cup.", "Cut the string in half."], a: 1, e: "顺序题：Step 1 之后是 Step 2。步骤文必考排序。", s: "阅读第1辑 Q13" },
+        { t: "playtime", q: "The writer begins with a question (<em>Do you think lunchtime is long enough?</em>) to —", o: ["test the reader's memory", "get the reader interested and thinking", "show the answer is unknown", "make the text longer"], a: 1, e: "开头提问是「钩子」（hook），议论文常用的吸引读者手法。", s: "阅读第1辑 Q20" },
+        { t: "playtime", q: "\"Some people say more playtime means less learning. But that's not true...\" — the writer includes this to —", o: ["agree with other people", "answer an argument against her idea", "change her own opinion", "describe a game"], a: 1, e: "这叫「反驳」（rebuttal）：先说反方观点再驳倒它，能让论证更有力。写作时也要学会用。", s: "阅读第1辑 Q22" },
+        { t: "playtime", q: "Which of these is an OPINION, not a fact?", o: ["Doctors say children should exercise for one hour a day.", "Some schools added extra playtime.", "I believe children should have more playtime.", "Skipping is a kind of exercise."], a: 2, e: "\"I believe...\" 是观点；其余三个都可以查证 → 是事实。带 believe / think / best / should 的多是观点。", s: "阅读第1辑 Q21" }
+      ]}
+    ]
+  },
+
+  conventions: {
+    label: "语言规范", en: "Conventions", accent: "eucalypt",
+    groups: [
+      { kp: "词类", en: "Parts of speech", tip: "动词＝动作词，形容词描写名词，副词描写动词（多以 -ly 结尾）。", qs: [
+        { q: "Which word is a <strong>verb</strong>? <em>The little girl jumped over the muddy puddle.</em>", o: ["little", "girl", "jumped", "muddy"], a: 2, e: "jumped 是动作（doing word）。", s: "语言第1辑 Q1" },
+        { q: "Which word is an <strong>adjective</strong>? <em>The hungry possum ate the apple quickly.</em>", o: ["hungry", "possum", "ate", "quickly"], a: 0, e: "hungry 描写 possum（名词）→ 形容词。quickly 描写 ate → 副词，注意区分。", s: "语言第1辑 Q2" },
+        { q: "Which word is an <strong>adverb</strong>? <em>The turtle moved slowly across the sand.</em>", o: ["turtle", "moved", "slowly", "sand"], a: 2, e: "slowly 描写「怎样移动」→ 副词。", s: "语言第1辑 Q12" },
+        { q: "Which word is a <strong>pronoun</strong>? <em>Sophie packed her bag and then she ran to the bus stop.</em>", o: ["Sophie", "bag", "she", "ran"], a: 2, e: "she 代替 Sophie → 代词。", s: "语言第2辑 Q1" },
+        { q: "Which word is a <strong>conjunction</strong>? <em>We stayed inside because the wind was too strong.</em>", o: ["stayed", "inside", "because", "strong"], a: 2, e: "because 连接两个分句 → 连词。", s: "语言第3辑 Q1" },
+        { q: "Which word is a <strong>noun</strong>? <em>The eager students raced quickly outside.</em>", o: ["eager", "students", "raced", "quickly"], a: 1, e: "students 是人（naming word）→ 名词。", s: "模拟卷3 语言 Q1" }
+      ]},
+      { kp: "动词时态", en: "Verb tense", tip: "Yesterday → 过去式；every day → 现在式；Tomorrow → will。不规则过去式必须背。", qs: [
+        { q: "<em>Yesterday we ___ to the museum.</em>", o: ["go", "goes", "went", "going"], a: 2, e: "Yesterday → 过去式；go 的不规则过去式是 went。", s: "语言第1辑 Q3" },
+        { q: "<em>Last week our class ___ a picture of the beach.</em>", o: ["draw", "drawed", "drew", "drawn"], a: 2, e: "draw → drew。drawed 是最典型的错误答案。", s: "语言第1辑 Q11" },
+        { q: "<em>Last week the birds ___ south for the winter.</em>", o: ["fly", "flys", "flied", "flew"], a: 3, e: "fly → flew（不是 flied）。", s: "语言第2辑 Q6" },
+        { q: "<em>Tomorrow we ___ our grandparents.</em>", o: ["visit", "visited", "will visit", "was visiting"], a: 2, e: "Tomorrow → 将来时 will visit。", s: "语言第2辑 Q4" },
+        { q: "<em>Grandma ___ us a cake yesterday.</em>", o: ["make", "maked", "made", "makes"], a: 2, e: "make → made。", s: "语言第2辑 Q9" },
+        { q: "Which sentence uses the correct tense throughout?", o: ["Yesterday we walked to the shop and buy some bread.", "Yesterday we walk to the shop and bought some bread.", "Yesterday we walked to the shop and bought some bread.", "Yesterday we will walk to the shop and bought some bread."], a: 2, e: "「时态一致」：一句话里 Yesterday 管到底，两个动词都要用过去式。", s: "语言第3辑 Q5" },
+        { q: "<em>If it rains tomorrow, we ___ the picnic.</em>", o: ["cancelled", "will cancel", "cancels", "cancelling"], a: 1, e: "条件句：If ＋ 现在时，主句用 will。", s: "语言第3辑 Q15" }
+      ]},
+      { kp: "主谓一致", en: "Subject–verb agreement", tip: "单数主语＋动词加 s；复数主语＋动词原形。Each / Nobody / Everybody 都当单数！", qs: [
+        { q: "<em>Sam ___ his lunch every day at noon.</em>", o: ["eat", "eats", "eating", "ate"], a: 1, e: "单数主语 Sam ＋ every day → eats。", s: "语言第1辑 Q4" },
+        { q: "<em>The children ___ playing in the garden.</em>", o: ["was", "is", "were", "be"], a: 2, e: "children 是复数 → were。", s: "语言第1辑 Q5" },
+        { q: "<em>There ___ four cupcakes left on the plate.</em>", o: ["is", "are", "was", "be"], a: 1, e: "four cupcakes 复数 → There are。", s: "语言第1辑 Q13" },
+        { q: "<em>The ___ are reading in the library.</em>", o: ["child", "childs", "children", "childrens"], a: 2, e: "child 的复数是不规则的 children（没有 childs / childrens）。", s: "语言第2辑 Q3" },
+        { q: "<em>Neither of my shoes ___ dry.</em>", o: ["is", "are", "be", "were"], a: 0, e: "Neither 当单数 → is。这是高阶考点。", s: "语言第2辑 Q7" },
+        { q: "<em>Each of the students ___ a library card.</em>", o: ["have", "has", "having", "haves"], a: 1, e: "Each of ＋ 复数 → 动词仍用单数 has。看到 Each 就想「一个一个地」。", s: "语言第3辑 Q3" },
+        { q: "<em>Nobody ___ where the keys are.</em>", o: ["know", "knows", "knowing", "known"], a: 1, e: "Nobody / Somebody / Everybody 全部当单数 → knows。", s: "语言第3辑 Q8" },
+        { q: "<em>The geese ___ across the lake every morning.</em>", o: ["swim", "swims", "swimming", "is swimming"], a: 0, e: "geese 是 goose 的复数 → swim。", s: "模拟卷3 语言 Q5" }
+      ]},
+      { kp: "连词与句子", en: "Conjunctions & sentences", tip: "完整句必须有主语＋动词。两句合并要选对连词，不能只用逗号。", qs: [
+        { q: "<em>I took my umbrella ___ it was raining.</em>", o: ["but", "or", "because", "if"], a: 2, e: "因果关系 → because。", s: "语言第1辑 Q6" },
+        { q: "<em>I wanted to go to the party, ___ I was too sick.</em>", o: ["but", "so", "because", "and"], a: 0, e: "前后转折 → but。", s: "语言第1辑 Q7" },
+        { q: "<em>Wear a hat ___ you will get sunburnt.</em>", o: ["and", "or", "because", "but"], a: 1, e: "「戴帽子，否则会晒伤」→ or。", s: "语言第2辑 Q8" },
+        { q: "Best word to join: <em>The cake looked delicious. It tasted awful.</em>", o: ["so", "but", "because", "and"], a: 1, e: "看起来好吃但很难吃 → 转折 but。", s: "语言第3辑 Q2" },
+        { q: "Which correctly combines these? <em>I wanted to ride my bike. It was raining heavily.</em>", o: ["I wanted to ride my bike, it was raining heavily.", "I wanted to ride my bike, but it was raining heavily.", "I wanted to ride my bike because it was raining heavily.", "I wanted to ride my bike so it was raining heavily."], a: 1, e: "A 是「逗号粘连句」（comma splice），语法错误 —— 两个完整句不能只用逗号连。", s: "语言第3辑 Q9" },
+        { q: "Which is a complete sentence?", o: ["Running to the shops.", "The big brown dog.", "My sister sings in the choir.", "After the rain stopped."], a: 2, e: "只有 C 同时有主语（My sister）和动词（sings）。", s: "语言第1辑 Q8" },
+        { q: "Which sentence is a <strong>command</strong>?", o: ["Do you like carrots?", "Carrots grow underground.", "Please wash the carrots.", "What crunchy carrots these are!"], a: 2, e: "祈使句（command）＝动词开头、让人做事。", s: "语言第2辑 Q12" }
+      ]},
+      { kp: "代词与比较级", en: "Pronouns & comparatives", tip: "做主语用 I，介词后用 me。两者比较用 -er，三者以上用 -est。", qs: [
+        { q: "<em>Emma lost ___ library book.</em>", o: ["she", "hers", "her", "him"], a: 2, e: "名词前用形容词性物主代词 her。", s: "语言第1辑 Q9" },
+        { q: "Which sentence is correct?", o: ["Me and Jack played soccer.", "Jack and me played soccer.", "Jack and I played soccer.", "I and Jack played soccer."], a: 2, e: "做主语用 I，且习惯把自己放后面 → Jack and I。", s: "语言第1辑 Q14" },
+        { q: "<em>Dad cooked dinner for my brother and ___.</em>", o: ["I", "me", "she", "they"], a: 1, e: "介词 for 后用宾格 me。检验法：去掉「my brother and」读一遍 —— for me ✓。", s: "语言第2辑 Q14" },
+        { q: "<em>This puzzle is ___ than that one.</em>", o: ["hard", "harder", "hardest", "more harder"], a: 1, e: "两者比较 → harder。more harder 是双重比较，错。", s: "语言第2辑 Q10" },
+        { q: "<em>Mia is the ___ runner in the whole school.</em>", o: ["fast", "faster", "fastest", "most fast"], a: 2, e: "全校范围（三者以上）→ 最高级 fastest。", s: "语言第2辑 Q11" },
+        { q: "<em>The girl ___ won the race is my sister.</em>", o: ["who", "what", "which", "she"], a: 0, e: "指人用关系代词 who（不用 what / which）。", s: "语言第3辑 Q14" },
+        { q: "<em>We waited ___ hour for the bus.</em>", o: ["a", "an", "two", "many"], a: 1, e: "hour 的 h 不发音，以元音音开头 → an hour。看「读音」不看字母。", s: "模拟卷2 语言 Q12" }
+      ]},
+      { kp: "大写字母", en: "Capital letters", tip: "句首、人名地名、月份星期、单独的 I、书名主要单词。", qs: [
+        { q: "Which sentence is written correctly?", o: ["my dog is called max.", "My dog is called max.", "My Dog is called Max.", "My dog is called Max."], a: 3, e: "句首大写 ＋ 狗的名字 Max 是专有名词要大写；dog 是普通名词不大写。", s: "语言第1辑 Q16" },
+        { q: "Which sentence is written correctly?", o: ["We visited melbourne in january.", "We visited Melbourne in january.", "We visited Melbourne in January.", "We visited melbourne in January."], a: 2, e: "城市名和月份都要大写。", s: "语言第1辑 Q23" },
+        { q: "Which sentence is written correctly?", o: ["chloe and i live in melbourne.", "Chloe and I live in Melbourne.", "Chloe and i live in Melbourne.", "chloe and I live in melbourne."], a: 1, e: "人名、单独的 I、城市名 —— 三处都要大写。", s: "语言第2辑 Q16" },
+        { q: "Which title is written correctly?", o: ["the very hungry caterpillar", "The Very Hungry Caterpillar", "THE very HUNGRY caterpillar", "the Very hungry Caterpillar"], a: 1, e: "书名的主要单词首字母大写。", s: "语言第2辑 Q24" }
+      ]},
+      { kp: "撇号", en: "Apostrophes", tip: "两个用途：缩写（don't）和所有格（girl's）。复数不加撇号！its＝它的，it's＝it is。", qs: [
+        { q: "Which is the short way of writing <strong>do not</strong>?", o: ["dont", "do'nt", "don't", "don t"], a: 2, e: "撇号放在省略字母 o 的位置 → don't。", s: "语言第1辑 Q19" },
+        { q: "<em>___ raining outside, so take your coat.</em>", o: ["Its", "It's", "Its'", "Is"], a: 1, e: "It's ＝ It is。Its（无撇号）＝「它的」。这组是 NAPLAN 最爱的陷阱。", s: "语言第1辑 Q20" },
+        { q: "Which uses the apostrophe correctly? （只有一个男孩）", o: ["The boys' hat blew away.", "The boy's hat blew away.", "The boys hat blew away.", "The boy hat's blew away."], a: 1, e: "一个男孩 → boy's（撇号在 s 前）。", s: "语言第1辑 Q21" },
+        { q: "Which sentence is correct?", o: ["The two cat's slept on the mat.", "The two cats slept on the mat.", "The two cats' slept on the mat.", "The two cats slept on the mat's."], a: 1, e: "复数直接加 s，不加撇号！这题错的人最多。", s: "语言第1辑 Q24" },
+        { q: "Which is the short way of writing <strong>could not</strong>?", o: ["could'nt", "couldnt'", "couldn't", "cou'ldnt"], a: 2, e: "撇号替代省略的 o → couldn't。", s: "语言第2辑 Q18" },
+        { q: "Which uses the apostrophe correctly?", o: ["The childrens' playground is new.", "The children's playground is new.", "The childrens playground is new.", "The children playground's is new."], a: 1, e: "children 本身已是复数，所有格直接加 's → children's。", s: "语言第2辑 Q19" },
+        { q: "Which uses the apostrophe correctly? （三个女孩）", o: ["The three girls' bags were left on the bus.", "The three girl's bags were left on the bus.", "The three girls bag's were left on the bus.", "The three girls bags' were left on the bus."], a: 0, e: "复数所有格：girls ＋ 撇号在 s 后 → girls'。对比单数 girl's。", s: "语言第3辑 Q18" },
+        { q: "Which is the correct way to write <strong>will not</strong>?", o: ["willn't", "will'nt", "won't", "wont"], a: 2, e: "will not 的缩写是不规则的 won't —— 只能记住。", s: "语言第3辑 Q20" },
+        { q: "<em>___ jumper is that? I think ___ Sam's.</em>", o: ["Whose / its", "Who's / it's", "Whose / it's", "Who's / its"], a: 2, e: "Whose＝谁的；it's＝it is。两个陷阱同时出现，做对说明撇号已完全掌握。", s: "语言第3辑 Q21" },
+        { q: "Which sentence is correct? （指多位男士）", o: ["The mens' shed is behind the oval.", "The men's shed is behind the oval.", "The mens shed is behind the oval.", "The man's shed are behind the oval."], a: 1, e: "men 本身是复数 → 所有格加 's → men's。和 children's 同理。", s: "语言第3辑 Q25" }
+      ]},
+      { kp: "标点与引号", en: "Punctuation & speech marks", tip: "问号在引号内；说的话和 said 之间用逗号；列举用逗号（and 前不加）。", qs: [
+        { q: "Which sentence needs a <strong>question mark</strong>?", o: ["What time does the movie start", "The movie starts at two o'clock", "I love going to the movies", "Buy your ticket at the door"], a: 0, e: "只有 A 是疑问句。", s: "语言第1辑 Q17" },
+        { q: "Which sentence is punctuated correctly?", o: ["I bought apples bananas and grapes.", "I bought apples, bananas and grapes.", "I bought, apples bananas, and grapes.", "I bought apples bananas, and, grapes."], a: 1, e: "列举用逗号分隔，澳洲惯例 and 前不加逗号。", s: "语言第1辑 Q18" },
+        { q: "Which sentence is written correctly?", o: ["\"Come inside now, said Mum.\"", "\"Come inside now,\" said Mum.", "Come inside now, \"said Mum\".", "\"Come inside now said\" Mum."], a: 1, e: "引号只包住说的话，逗号在引号内，said Mum 在引号外。", s: "语言第1辑 Q22" },
+        { q: "Which sentence should end with an <strong>exclamation mark</strong>?", o: ["The library opens at nine o'clock", "Watch out for that car", "Do you like strawberries", "Please pass the salt"], a: 1, e: "警告、惊呼、强烈情感 → 感叹号。", s: "语言第1辑 Q25" },
+        { q: "Which sentence is written correctly?", o: ["\"Have you fed the chickens yet?\" asked Grandma.", "\"Have you fed the chickens yet.\" asked Grandma?", "\"Have you fed the chickens yet?\" Asked Grandma.", "\"Have you fed the chickens yet\" asked Grandma?"], a: 0, e: "问号在引号内；asked 不是新句开头，所以小写。", s: "语言第3辑 Q17" },
+        { q: "Which sentence is punctuated correctly?", o: ["After the storm we cleaned up the branches leaves and rubbish.", "After the storm, we cleaned up the branches, leaves and rubbish.", "After the storm we cleaned up, the branches leaves, and rubbish.", "After, the storm we cleaned up the branches leaves and rubbish."], a: 1, e: "句首状语后加逗号 ＋ 列举用逗号。", s: "语言第3辑 Q19" }
+      ]},
+      { kp: "拼写规则", en: "Spelling rules", tip: "双写（stopped）、去 e 加 ing（making）、y 变 i（babies/cried）、es 复数（boxes）、f 变 v（leaves）。", qs: [
+        { q: "Which spelling is correct?", o: ["chaced", "chased", "chaised", "chassed"], a: 1, e: "chase 去 e 加 ed → chased。", s: "语言第1辑 Q26" },
+        { q: "Which spelling is correct?", o: ["babys", "babies", "babyes", "babis"], a: 1, e: "辅音＋y 结尾 → 变 i 加 es → babies。", s: "语言第1辑 Q27" },
+        { q: "Which spelling is correct?", o: ["stoped", "stopped", "stopt", "stopedd"], a: 1, e: "短元音＋单辅音 → 双写 p → stopped。", s: "语言第1辑 Q28" },
+        { q: "Which spelling is correct?", o: ["carryed", "carried", "carrid", "carryd"], a: 1, e: "辅音＋y → 变 i 加 ed → carried。", s: "语言第1辑 Q32" },
+        { q: "Which spelling is correct?", o: ["foxs", "foxes", "foxies", "foxess"], a: 1, e: "x 结尾加 es → foxes。（s / x / ch / sh 结尾都加 es）", s: "语言第1辑 Q33" },
+        { q: "Which spelling is correct?", o: ["wolfs", "wolves", "wolfes", "wolvs"], a: 1, e: "f 变 v 加 es → wolves。同类：leaves, knives, shelves。", s: "语言第2辑 Q27" },
+        { q: "Which spelling is correct?", o: ["writting", "writing", "writeing", "wrighting"], a: 1, e: "write 去 e 加 ing → writing（只有一个 t！）。", s: "语言第2辑 Q28" },
+        { q: "Which spelling is correct?", o: ["hotest", "hottest", "hottst", "hotist"], a: 1, e: "短元音＋单辅音 → 双写 t → hottest。", s: "语言第2辑 Q29" },
+        { q: "Which spelling is correct?", o: ["swiming", "swimming", "swimmming", "swimeing"], a: 1, e: "双写 m → swimming。", s: "模拟卷2 语言 Q24" }
+      ]},
+      { kp: "高频易错词", en: "High-frequency words", tip: "ough / augh 家族要单独练；澳洲拼法用 -our（favourite）和 -ise（surprise）。", qs: [
+        { q: "Which spelling is correct?", o: ["freind", "friend", "frend", "friende"], a: 1, e: "friend —— 口诀：fri-END，朋友到最后（end）。", s: "语言第1辑 Q29" },
+        { q: "Which spelling is correct?", o: ["becos", "because", "becuase", "becouse"], a: 1, e: "口诀：<b>B</b>ig <b>E</b>lephants <b>C</b>an <b>A</b>lways <b>U</b>nderstand <b>S</b>mall <b>E</b>lephants。", s: "语言第1辑 Q31" },
+        { q: "Which spelling is correct?", o: ["thort", "thought", "thaught", "thouht"], a: 1, e: "ought 家族：thought / brought / bought。", s: "语言第1辑 Q34" },
+        { q: "Which spelling is correct?", o: ["skool", "school", "shool", "scool"], a: 1, e: "school 里 ch 发 /k/ 音。同类：Christmas, echo。", s: "语言第1辑 Q35" },
+        { q: "Which spelling is correct?（澳洲拼法）", o: ["favorite", "favourite", "favorit", "favourit"], a: 1, e: "澳洲／英式拼法带 u → favourite。同理 colour, neighbour。", s: "语言第2辑 Q30" },
+        { q: "Which spelling is correct?", o: ["Wensday", "Wednesday", "Wendsday", "Wednsday"], a: 1, e: "拆成三段记：Wed-nes-day。星期还要大写。", s: "语言第2辑 Q31" },
+        { q: "Which spelling is correct?", o: ["enuff", "enough", "enugh", "enouph"], a: 1, e: "ough 家族：enough / tough / rough（发 /uf/）。", s: "语言第3辑 Q26" },
+        { q: "Which spelling is correct?", o: ["strait", "straight", "straght", "strainght"], a: 1, e: "aigh 组合 → straight。（strait 是「海峡」，另一个词）", s: "语言第3辑 Q27" },
+        { q: "Which spelling is correct?", o: ["laffed", "laughed", "larfed", "laughted"], a: 1, e: "augh 家族：laughed / caught / taught。", s: "语言第3辑 Q28" },
+        { q: "Which spelling is correct?", o: ["throo", "through", "thruogh", "throuh"], a: 1, e: "ough 家族：through（发 /oo/）。和 though / thought 一起对比记。", s: "语言第3辑 Q29" },
+        { q: "Which spelling is correct?", o: ["iland", "island", "islande", "ilsand"], a: 1, e: "island 的 s 不发音 —— 口诀：岛上有陆地（is-LAND）。", s: "语言第3辑 Q33" },
+        { q: "Which spelling is correct?", o: ["intresting", "interesting", "interresting", "intersting"], a: 1, e: "四段记：in-ter-est-ing。中间的 er 最常被漏掉。", s: "语言第3辑 Q35" },
+        { q: "Which spelling is correct?", o: ["beautifull", "beautiful", "beutiful", "beautifel"], a: 1, e: "-ful 结尾只有一个 l：beautiful, wonderful, careful。", s: "模拟卷3 语言 Q33" },
+        { q: "Which spelling is correct?（澳洲拼法）", o: ["naybour", "neighbour", "neighbor", "nieghbour"], a: 1, e: "neighbour：eigh 组合 ＋ 澳洲拼法带 u。", s: "模拟卷3 语言 Q32" }
+      ]},
+      { kp: "同音词", en: "Homophones", tip: "there那里／their他们的／they're＝they are；to到／too太／two二；hear里面有 ear。", qs: [
+        { q: "<em>We put the toys over ___.</em>", o: ["there", "their", "they're"], a: 0, e: "表地点 → there（里面有 here）。", s: "语言第1辑 Q36" },
+        { q: "<em>___ going to the beach tomorrow.</em>", o: ["There", "Their", "They're"], a: 2, e: "They're ＝ They are。", s: "语言第1辑 Q37" },
+        { q: "<em>The children took off ___ shoes.</em>", o: ["there", "their", "they're"], a: 1, e: "「他们的」→ their。", s: "模拟卷2 语言 Q32" },
+        { q: "<em>I ate ___ much cake at the party.</em>", o: ["to", "too", "two"], a: 1, e: "「太多」→ too（多一个 o ＝ 太多了）。", s: "语言第1辑 Q38" },
+        { q: "<em>Did you ___ that strange noise?</em>", o: ["hear", "here"], a: 0, e: "用耳朵听 → hear（里面有 ear！）。", s: "语言第1辑 Q39" },
+        { q: "<em>I don't ___ the answer.</em>", o: ["know", "no"], a: 0, e: "「知道」→ know（k 不发音）。", s: "语言第1辑 Q40" },
+        { q: "<em>The dog buried ___ bone in the garden.</em>", o: ["its", "it's"], a: 0, e: "「它的」→ its，没有撇号。", s: "语言第2辑 Q38" },
+        { q: "<em>I ___ a prize at the school fair!</em>", o: ["one", "won"], a: 1, e: "win 的过去式 → won。one 是数字「一」。", s: "语言第2辑 Q39" },
+        { q: "<em>The wind ___ my hat away.</em>", o: ["blew", "blue"], a: 0, e: "blow 的过去式 → blew。blue 是颜色。", s: "语言第2辑 Q36" },
+        { q: "<em>___ turn is it to feed the fish?</em>", o: ["Whose", "Who's"], a: 0, e: "问「谁的轮次」→ Whose。Who's ＝ Who is。", s: "语言第3辑 Q37" },
+        { q: "<em>She wanted to ___ her new dress to the party.</em>", o: ["where", "wear"], a: 1, e: "「穿」→ wear。where 问地点。", s: "语言第3辑 Q40" },
+        { q: "<em>Please ___ down your name and address.</em>", o: ["right", "write"], a: 1, e: "「写」→ write（w 不发音）。right ＝ 对的／右边。", s: "模拟卷3 语言 Q39" }
+      ]}
+    ]
+  },
+
+  numeracy: {
+    label: "数学", en: "Numeracy", accent: "wattle",
+    groups: [
+      { kp: "位值与比大小", en: "Place value", tip: "看数字站在哪一位：2651 里的 6 在百位 → 值是 600，不是 6。", qs: [
+        { q: "What is the value of the <strong>6</strong> in 2 651?", o: ["6", "60", "600", "6 000"], a: 2, e: "6 站在百位 → 600。", s: "数学第1辑 Q1" },
+        { q: "Which number has <strong>8 hundreds, 0 tens and 6 ones</strong>?", o: ["8 006", "806", "860", "8 060"], a: 1, e: "8百＋0十＋6个 → 806。注意 0 要占住十位。", s: "数学第3辑 Q1" },
+        { q: "What number is 10 more than 3 495?", o: ["3 505", "3 405", "3 595", "4 495"], a: 0, e: "3495＋10：十位 9 满十进位 → 3505。", s: "数学第2辑 Q2" },
+        { q: "Which number is the <strong>largest</strong>?", o: ["989", "1 020", "998", "1 002"], a: 1, e: "先看位数：四位数 > 三位数；再比 1020 与 1002 的十位 → 1020。", s: "数学第1辑 Q2" },
+        { q: "Using the digits 4, 7, 1 and 9 once each, what is the LARGEST four-digit number?", o: ["1 479", "9 471", "9 741", "7 941"], a: 2, e: "把数字从大到小排：9741。", s: "数学第3辑 Q3" },
+        { q: "Round 687 to the nearest hundred.", o: ["600", "680", "690", "700"], a: 3, e: "十位是 8（≥5）→ 进到 700。", s: "数学第2辑 Q3" },
+        { q: "Round 1 462 to the nearest ten.", o: ["1 400", "1 460", "1 470", "1 500"], a: 1, e: "到十位看个位：2 < 5 → 舍去 → 1460。", s: "数学第3辑 Q4" }
+      ]},
+      { kp: "加减法", en: "Addition & subtraction", tip: "心算三招：凑十、拆分、补差。带 0 的借位最容易错，要放慢。", qs: [
+        { q: "38 + 25 = ?", o: ["53", "63", "613", "65"], a: 1, e: "凑十法：38＋2＝40，40＋23＝63。", s: "数学第1辑 Q4" },
+        { q: "245 + 138 = ?", o: ["373", "383", "483", "313"], a: 1, e: "个位 5＋8＝13 进位 → 383。", s: "数学第1辑 Q5" },
+        { q: "70 − 42 = ?", o: ["38", "32", "28", "112"], a: 2, e: "70−40＝30，30−2＝28。", s: "数学第1辑 Q6" },
+        { q: "500 − 263 = ?", o: ["237", "247", "337", "763"], a: 0, e: "连续借位：500−263＝237。", s: "数学第2辑 Q5" },
+        { q: "604 − 287 = ?", o: ["317", "327", "417", "423"], a: 0, e: "带 0 的连续借位 —— 全套题里最易错的一类。604−287＝317。", s: "数学第3辑 Q6" },
+        { q: "703 − 246 = ?", o: ["457", "467", "543", "447"], a: 0, e: "同样是带 0 借位：703−246＝457。慢一点，检查一遍。", s: "模拟卷3 数学 Q7" },
+        { q: "Mia had 52 stickers. She gave 17 to her friend. How many does she have <strong>left</strong>?", o: ["45", "35", "69", "34"], a: 1, e: "「left」是减法信号词：52−17＝35。", s: "数学第1辑 Q7" },
+        { q: "□ + 27 = 63. What number goes in the box?", o: ["90", "46", "36", "44"], a: 2, e: "逆运算：63−27＝36。加减互为逆运算。", s: "数学第1辑 Q8" },
+        { q: "□ − 38 = 45. What number goes in the box?", o: ["7", "73", "83", "93"], a: 2, e: "逆运算：45＋38＝83。", s: "模拟卷3 数学 Q8" }
+      ]},
+      { kp: "乘除法", en: "Multiplication & division", tip: "each / rows of / groups of → 乘法；shared equally → 除法。口诀 ×2 ×3 ×5 ×10 必须脱口而出。", qs: [
+        { q: "5 × 4 = ?", o: ["9", "20", "25", "54"], a: 1, e: "5×4＝20。", s: "数学第1辑 Q9" },
+        { q: "Which has the same answer as 3 × 6?", o: ["6 + 6 + 6", "3 + 6", "6 + 3 + 6", "3 + 3"], a: 0, e: "3×6 ＝ 3 组 6 ＝ 6＋6＋6。理解乘法的意义比背答案重要。", s: "数学第1辑 Q10" },
+        { q: "There are 4 rows of chairs. <strong>Each</strong> row has 5 chairs. How many chairs altogether?", o: ["9", "45", "20", "25"], a: 2, e: "看到 each → 乘法：4×5＝20。", s: "数学第1辑 Q11" },
+        { q: "7 × 4 = ?", o: ["24", "28", "32", "11"], a: 1, e: "7×4＝28。", s: "数学第3辑 Q9" },
+        { q: "Which number sentence has the SAME answer as 4 × 6?", o: ["6 × 4", "4 + 6", "24 ÷ 6", "6 − 4"], a: 0, e: "乘法交换律：4×6 ＝ 6×4。", s: "数学第3辑 Q10" },
+        { q: "15 lollies are <strong>shared equally</strong> between 3 children. How many does each child get?", o: ["3", "5", "12", "45"], a: 1, e: "shared equally → 除法：15÷3＝5。", s: "数学第1辑 Q12" },
+        { q: "45 ÷ 5 = ?", o: ["8", "9", "10", "40"], a: 1, e: "想「5 乘几等于 45」→ 9。乘除互逆。", s: "数学第3辑 Q11" },
+        { q: "Eggs come in cartons of 6. Mrs Patel needs 30 eggs. How many cartons must she buy?", o: ["4", "5", "6", "24"], a: 1, e: "30÷6＝5 盒。", s: "数学第3辑 Q12" },
+        { q: "Pencils are sold in packs of 10. Mr Nguyen needs 45 pencils. How many packs must he buy <strong>to have enough</strong>?", o: ["4", "4.5", "5", "45"], a: 2, e: "45÷10＝4.5 → 要够用必须往上取整 → 5 包。「够用」类题必须多买一个。", s: "模拟卷3 数学 Q14" }
+      ]},
+      { kp: "多步应用题", en: "Multi-step word problems", tip: "动笔前先说出口：「第一步算什么，第二步算什么」。这是最大的失分区。", qs: [
+        { q: "A baker made 60 pies. He sold 27 in the morning and 18 in the afternoon. How many pies were left?", o: ["15", "33", "45", "105"], a: 0, e: "两步：27＋18＝45（共卖出）；60−45＝15（剩下）。只算一步会选 B 或 C。", s: "数学第2辑 Q7" },
+        { q: "Mrs Lee buys 3 packets of 10 pencils. She gives 6 pencils away. How many are left?", o: ["30", "24", "36", "21"], a: 1, e: "两步：3×10＝30；30−6＝24。", s: "数学第2辑 Q12" },
+        { q: "A school has 3 classes of Year 3. Each class has 22 students. 5 students are absent today. How many are at school?", o: ["66", "61", "71", "17"], a: 1, e: "两步：3×22＝66；66−5＝61。", s: "数学第3辑 Q8" },
+        { q: "There are 4 boxes with 6 books in each. 3 books are damaged and thrown away. How many good books are left?", o: ["24", "21", "27", "18"], a: 1, e: "两步：4×6＝24；24−3＝21。", s: "模拟卷3 数学 Q10" },
+        { q: "Mia has $20. She buys a book for $8.50 and a pen for $2.75. How much does she have left?", o: ["$8.75", "$11.25", "$9.25", "$8.25"], a: 0, e: "两步：$8.50＋$2.75＝$11.25；$20−$11.25＝$8.75。B 是「只算了第一步」的陷阱。", s: "模拟卷3 数学 Q19" },
+        { q: "A ribbon 20 cm long is cut in half, and then one half is cut in half again. How long is the smallest piece?", o: ["10 cm", "5 cm", "4 cm", "2 cm"], a: 1, e: "20 → 10 → 5。分两步对折。", s: "数学第3辑 Q14" }
+      ]},
+      { kp: "分数", en: "Fractions", tip: "每一份必须一样大才叫 ¼。分母越大，每一份越小（⅛ < ¼ < ⅓ < ½）。", qs: [
+        { q: "A pizza is cut into 4 <strong>equal</strong> pieces. Tom eats 1 piece. What fraction did Tom eat?", o: ["½", "⅓", "¼", "¾"], a: 2, e: "4 等份中的 1 份 → ¼。「equal」这个词是关键。", s: "数学第1辑 Q14" },
+        { q: "What is ¼ of 12?", o: ["3", "4", "6", "8"], a: 0, e: "12÷4＝3。求「几分之一」就是除以分母。", s: "数学第1辑 Q15" },
+        { q: "What is ½ of 30?", o: ["10", "15", "20", "60"], a: 1, e: "30÷2＝15。", s: "数学第2辑 Q14" },
+        { q: "Which is the SMALLEST fraction?", o: ["½", "⅓", "¼", "⅛"], a: 3, e: "分母越大每份越小 → ⅛ 最小。这是分数最重要的概念。", s: "数学第3辑 Q15" },
+        { q: "Which fraction is the SAME as one half?", o: ["2/4", "1/4", "1/3", "3/4"], a: 0, e: "等值分数：2/4 ＝ ½。", s: "模拟卷2 数学 Q14" },
+        { q: "A cake is cut into 8 equal slices. Three slices are eaten. What fraction of the cake is <strong>LEFT</strong>?", o: ["⅜", "⅛", "½", "⅝"], a: 3, e: "吃了 3 份，剩 5 份 → ⅝。注意问的是「剩下」不是「吃掉」。", s: "模拟卷3 数学 Q17" }
+      ]},
+      { kp: "钱币", en: "Money", tip: "找零用「往上数」：$3.20→$4 是 80c，$4→$5 是 $1，合计 $1.80。", qs: [
+        { q: "Chloe buys a drink for $3.20. She pays with a $5 note. How much change?", o: ["$2.80", "$1.80", "$2.20", "$1.20"], a: 1, e: "往上数：$3.20→$4.00 是 80c，$4.00→$5.00 是 $1 → $1.80。", s: "数学第1辑 Q16" },
+        { q: "Which group of coins makes exactly $1.50?", o: ["$1 + 20c + 20c", "50c + 50c + 50c", "$2 + 50c", "50c + 20c + 10c"], a: 1, e: "50＋50＋50＝150c＝$1.50。A＝$1.40，C＝$2.50，D＝80c。", s: "数学第1辑 Q17" },
+        { q: "Sam buys a pencil for 85c and a ruler for $1.10. How much altogether?", o: ["$1.85", "$1.95", "$2.05", "$9.60"], a: 1, e: "85c＋$1.10＝$1.95。", s: "数学第2辑 Q17" },
+        { q: "Which coins would you get as change from $5 if you spend $4.20?", o: ["50c + 20c + 10c", "50c + 20c + 20c", "50c + 20c", "$1 + 20c"], a: 0, e: "$5−$4.20＝80c；50＋20＋10＝80c ✓。", s: "数学第3辑 Q17" },
+        { q: "Which coins make exactly $3.70?", o: ["$2 + $1 + 50c + 20c", "$2 + $1 + 50c + 10c", "$2 + $1 + 20c + 20c", "$2 + 50c + 20c"], a: 0, e: "2＋1＋0.50＋0.20＝$3.70。", s: "模拟卷3 数学 Q20" }
+      ]},
+      { kp: "规律", en: "Patterns", tip: "先找「每次变化多少」，再用第二步验证一遍。规律不一定是加减，也可能是 ×2。", qs: [
+        { q: "What is the next number? 4, 8, 12, 16, __", o: ["18", "20", "22", "24"], a: 1, e: "每次 ＋4 → 20。", s: "数学第1辑 Q18" },
+        { q: "What is the rule for this pattern? 3, 6, 12, 24, 48", o: ["add 3 each time", "add 6 each time", "double each time", "halve each time"], a: 2, e: "每次 ×2（doubling）。", s: "数学第2辑 Q18" },
+        { q: "What is the next number? 2, 5, 11, 23, __", o: ["26", "47", "46", "35"], a: 1, e: "规律是「×2 再 ＋1」：2→5→11→23→47。复杂规律要试两种运算。", s: "数学第3辑 Q18" },
+        { q: "What is the missing number? 15, 20, __, 30, 35", o: ["22", "24", "25", "26"], a: 2, e: "每次 ＋5 → 25。", s: "模拟卷2 数学 Q18" }
+      ]},
+      { kp: "长度质量容量", en: "Length, mass & capacity", tip: "1 m＝100 cm，1 kg＝1000 g，1 L＝1000 mL。计算前先统一单位！", qs: [
+        { q: "Which unit is best for measuring the length of a classroom?", o: ["centimetres", "metres", "kilograms", "litres"], a: 1, e: "教室长度用米。先排除 kg 和 L —— 它们根本不是长度单位。", s: "数学第1辑 Q19" },
+        { q: "1 metre = ___ centimetres", o: ["10", "100", "1 000", "60"], a: 1, e: "1 m ＝ 100 cm。", s: "数学第1辑 Q20" },
+        { q: "A pencil is measured on a ruler. One end is at the 3 cm mark, the other at 12 cm. How long is it?", o: ["12 cm", "15 cm", "9 cm", "3 cm"], a: 2, e: "不从 0 开始量 → 用「结束刻度 − 开始刻度」：12−3＝9 cm。经典陷阱。", s: "数学第1辑 Q21" },
+        { q: "A ribbon is 1 metre long. Grace cuts off 35 cm. How long is the ribbon now?", o: ["65 cm", "75 cm", "35 cm", "135 cm"], a: 0, e: "先换单位：1 m＝100 cm；100−35＝65 cm。", s: "数学第2辑 Q20" },
+        { q: "Which of these would weigh about <strong>1 kilogram</strong>?", o: ["a feather", "a bag of sugar", "a car", "a paperclip"], a: 1, e: "一袋糖 ≈ 1 kg。这类题考生活「量感」，多在超市观察包装。", s: "数学第1辑 Q22" },
+        { q: "A bag of flour weighs 2 kg. How many grams is that?", o: ["20 g", "200 g", "2 000 g", "20 000 g"], a: 2, e: "1 kg＝1000 g → 2 kg＝2000 g。", s: "数学第2辑 Q22" },
+        { q: "A jug holds 2 litres. Ella pours out 750 mL. How much is left?", o: ["1 250 mL", "1 350 mL", "750 mL", "250 mL"], a: 0, e: "先换单位：2 L＝2000 mL；2000−750＝1250 mL。", s: "数学第3辑 Q21" },
+        { q: "Which of these is the HEAVIEST?", o: ["900 g", "1 kg", "1 500 g", "950 g"], a: 2, e: "换成同一单位再比：900 / 1000 / 1500 / 950 g → 1500 g 最重。", s: "数学第3辑 Q22" }
+      ]},
+      { kp: "时间", en: "Time", tip: "分针指 3＝15分，指 6＝30分，指 9＝45分（quarter to 下一个钟点）。", qs: [
+        { q: "The hour hand points just past the 7 and the minute hand points at the 6. What time is it?", o: ["6:07", "7:06", "half past 7 (7:30)", "quarter past 7 (7:15)"], a: 2, e: "分针指 6 ＝ 30 分 → half past 7。", s: "数学第1辑 Q23" },
+        { q: "\"Quarter to nine\" is the same as —", o: ["9:15", "8:45", "9:45", "8:15"], a: 1, e: "quarter to nine ＝ 差一刻到九点 ＝ 8:45。to 是「还差」。", s: "数学第1辑 Q24" },
+        { q: "Which time is the same as <strong>quarter to seven</strong>?", o: ["7:15", "7:45", "6:15", "6:45"], a: 3, e: "差一刻到七点 → 6:45。", s: "模拟卷3 数学 Q28" },
+        { q: "A movie starts at 2:30 and goes for 1 hour and a half. What time does it finish?", o: ["3:30", "4:00", "4:30", "3:00"], a: 1, e: "2:30＋1小时＝3:30，再＋30分＝4:00。", s: "数学第1辑 Q25" },
+        { q: "Football training starts at 4:15 and finishes at 5:00. How long is training?", o: ["30 minutes", "45 minutes", "60 minutes", "85 minutes"], a: 1, e: "4:15→5:00 是 45 分钟。", s: "数学第2辑 Q23" },
+        { q: "A film starts at 6:40 pm and finishes at 8:15 pm. How long is the film?", o: ["1 hour 35 minutes", "1 hour 25 minutes", "2 hours 35 minutes", "1 hour 75 minutes"], a: 0, e: "跨小时先算到整点：6:40→7:40 是 1 小时；7:40→8:15 是 35 分 → 1 小时 35 分。", s: "数学第3辑 Q23" },
+        { q: "A lesson starts at 11:35 am and finishes at 12:20 pm. How long is the lesson?", o: ["35 minutes", "55 minutes", "45 minutes", "1 hour 45 minutes"], a: 2, e: "11:35→12:00 是 25 分；12:00→12:20 是 20 分 → 45 分钟。", s: "模拟卷3 数学 Q27" },
+        { q: "Netball training is every Tuesday. If training was on Tuesday 3 February, what is the date of the <strong>FOURTH</strong> session?", o: ["17 February", "24 February", "10 February", "3 March"], a: 1, e: "第1次 3日，第2次 10日，第3次 17日，第4次 24日。每次＋7。", s: "数学第3辑 Q24" },
+        { q: "How many minutes are in 2 hours?", o: ["60", "100", "120", "200"], a: 2, e: "1 小时＝60 分 → 2 小时＝120 分。", s: "模拟卷3 数学 Q30" }
+      ]},
+      { kp: "2D 与 3D 图形", en: "Shapes & objects", tip: "正方体：面 6、棱 12、顶点 8。四棱锥：面 5、棱 8、顶点 5。", qs: [
+        { q: "How many sides does a <strong>hexagon</strong> have?", o: ["5", "6", "7", "8"], a: 1, e: "hex ＝ 6。pentagon 5，hexagon 6，octagon 8。", s: "数学第1辑 Q26" },
+        { q: "Which 2D shape has 4 equal sides and 4 right angles?", o: ["rectangle", "triangle", "square", "circle"], a: 2, e: "正方形。长方形只有对边相等，不是四边都相等。", s: "数学第1辑 Q27" },
+        { q: "How many <strong>faces</strong> does a cube have?", o: ["4", "6", "8", "12"], a: 1, e: "正方体 6 个面（想想骰子）。棱 12、顶点 8。", s: "数学第1辑 Q28" },
+        { q: "How many <strong>edges</strong> does a cube have?", o: ["6", "8", "12", "4"], a: 2, e: "12 条棱。面 6 / 棱 12 / 顶点 8 要背成一句话。", s: "数学第2辑 Q26" },
+        { q: "A tin of soup is the same shape as which 3D object?", o: ["sphere", "cube", "cone", "cylinder"], a: 3, e: "罐头 ＝ 圆柱（cylinder）。", s: "数学第1辑 Q29" },
+        { q: "A 3D object has 2 flat circular faces and 1 curved surface. It is a —", o: ["cone", "sphere", "cylinder", "cube"], a: 2, e: "两个圆面＋一个曲面 ＝ 圆柱。", s: "数学第3辑 Q26" },
+        { q: "How many faces, edges and vertices does a <strong>square pyramid</strong> have?", o: ["5 faces, 8 edges, 5 vertices", "4 faces, 6 edges, 4 vertices", "6 faces, 12 edges, 8 vertices", "5 faces, 6 edges, 4 vertices"], a: 0, e: "四棱锥：1 个底面＋4 个侧面＝5 面；8 棱；5 顶点。", s: "数学第3辑 Q27" },
+        { q: "Which letter has TWO lines of symmetry?", o: ["A", "H", "F", "P"], a: 1, e: "H 有横、竖两条对称轴。A 只有 1 条；F、P 没有。", s: "数学第3辑 Q28" }
+      ]},
+      { kp: "面积与周长", en: "Area & perimeter", tip: "面积＝数格子；周长＝绕一圈的长度。逆向题（已知周长求边）要会。", qs: [
+        { q: "A shape is made of 8 small squares in 2 rows of 4. What is its area?", o: ["6 squares", "8 squares", "12 squares", "4 squares"], a: 1, e: "2×4＝8 个方格。", s: "数学第1辑 Q30" },
+        { q: "Each side of a square is 4 cm. What is the <strong>perimeter</strong>?", o: ["8 cm", "12 cm", "16 cm", "4 cm"], a: 2, e: "四条边都是 4：4×4＝16 cm。", s: "数学第2辑 Q30" },
+        { q: "A rectangle is 5 cm long and 3 cm wide. What is its perimeter?", o: ["8 cm", "15 cm", "16 cm", "20 cm"], a: 2, e: "(5＋3)×2＝16 cm。15 是面积，是干扰项。", s: "模拟卷2 数学 Q27" },
+        { q: "A rectangle has a perimeter of 14 cm. Two of its sides are 4 cm each. How long are the other two sides?", o: ["3 cm each", "6 cm each", "5 cm each", "7 cm each"], a: 0, e: "逆向思维：两边共 8；14−8＝6；6÷2＝3 cm。这是 Exceeding 级的分水岭题。", s: "数学第3辑 Q29" },
+        { q: "A shape covers 12 squares on grid paper and is 3 squares wide. How many squares long is it?", o: ["3", "4", "6", "9"], a: 1, e: "12÷3＝4。面积题的逆运算。", s: "数学第3辑 Q30" }
+      ]},
+      { kp: "图表与数据", en: "Data & graphs", tip: "象形图第一件事：看图例！一个符号可能代表 2 个或 5 个。", qs: [
+        { q: "In a picture graph, each ⭐ stands for <strong>2 books</strong>. Jack's row shows 4 stars. How many books did Jack read?", o: ["4", "6", "8", "2"], a: 2, e: "4×2＝8。不看图例就会选 A —— 这是象形图最大的坑。", s: "数学第1辑 Q34" },
+        { q: "A picture graph uses 🙂 = <strong>2 students</strong>. The \"Car\" row has 6 faces. How many students come by car?", o: ["6", "12", "3", "10"], a: 1, e: "6×2＝12。", s: "数学第2辑 Q31" },
+        { q: "Same graph (🙂 = 2 students): \"Walk\" has 4 faces, \"Bike\" has 2 faces. How many MORE students walk than ride a bike?", o: ["2", "4", "6", "8"], a: 1, e: "Walk＝8，Bike＝4；8−4＝4。要先换算再相减，两步。", s: "数学第2辑 Q32" },
+        { q: "Fruit survey — Apple 8, Banana 5, Grapes 7, Orange 3. How many <strong>MORE</strong> children chose apples than oranges?", o: ["3", "5", "8", "11"], a: 1, e: "「how many more」＝相减：8−3＝5。不是只读一个数字。", s: "数学第1辑 Q32" },
+        { q: "Same survey — how many children were surveyed <strong>altogether</strong>?", o: ["20", "23", "25", "22"], a: 1, e: "8＋5＋7＋3＝23。altogether ＝ 全部加起来。", s: "数学第1辑 Q33" },
+        { q: "Books borrowed: Mon 6, Tue 3, Wed 8, Thu 5, Fri 8. On which day(s) were the MOST books borrowed?", o: ["Monday only", "Wednesday only", "Wednesday and Friday", "Thursday"], a: 2, e: "8 出现两次 → 并列最多。注意答案可以是两天。", s: "模拟卷2 数学 Q29" }
+      ]},
+      { kp: "可能性", en: "Chance", tip: "五级词汇：impossible → unlikely → even chance → likely → certain。", qs: [
+        { q: "A bag has 7 red marbles and 1 blue marble. Which colour are you <strong>more likely</strong> to pick?", o: ["blue", "red", "both the same", "neither"], a: 1, e: "7:1，红色多得多 → more likely red。", s: "数学第1辑 Q35" },
+        { q: "Which of these events is <strong>certain</strong>?", o: ["It will rain tomorrow.", "You will see a dinosaur on the way home.", "The sun will rise tomorrow morning.", "You will win a prize this year."], a: 2, e: "太阳升起 ＝ certain（一定）。下雨只是 possible。", s: "数学第1辑 Q36" },
+        { q: "A class rolls a normal dice (numbered 1 to 6). Which result is <strong>impossible</strong>?", o: ["rolling a 1", "rolling a 6", "rolling a 7", "rolling a 3"], a: 2, e: "骰子只有 1–6，掷出 7 是不可能的。", s: "数学第2辑 Q34" },
+        { q: "A spinner has 4 equal parts: red, blue, green, yellow. What is the chance of landing on blue?", o: ["certain", "impossible", "1 out of 4", "3 out of 4"], a: 2, e: "4 等份中 1 份是蓝 → 1 out of 4。", s: "数学第2辑 Q35" },
+        { q: "A bag contains 3 red, 2 blue and 5 green counters. Which colour are you <strong>LEAST likely</strong> to pick?", o: ["red", "blue", "green", "all the same"], a: 1, e: "蓝色只有 2 个，最少 → least likely。注意问的是「最不可能」。", s: "数学第3辑 Q34" },
+        { q: "A weather report says rain tomorrow is \"very unlikely\". Which best matches that?", o: ["It will definitely rain.", "There is a small chance of rain.", "It is impossible for rain to fall.", "There is an even chance of rain."], a: 1, e: "very unlikely ＝ 机会很小，但不是「不可能」。C 是最常见的误选。", s: "数学第3辑 Q36" }
+      ]}
+    ]
+  }
+};
+
+const WRITING_PROMPTS = [
+  { k: "Narrative 记叙文", t: "<strong>The Box</strong><br>One day you find a box. It looks interesting. You wonder what could be inside. Write a narrative about the box.", s: "写作第1辑 N1" },
+  { k: "Narrative 记叙文", t: "<strong>The Day the Power Went Out</strong><br>Imagine a day when all the electricity stopped working — no lights, no TV, no computers! Write a narrative about what happens.", s: "写作第1辑 N2" },
+  { k: "Narrative 记叙文", t: "<strong>An Animal That Can Talk</strong><br>One morning, an animal speaks to you! Write a story about what happens.", s: "写作第1辑 N3" },
+  { k: "Narrative 记叙文", t: "<strong>Found in the Sand</strong><br>While digging at the beach, you find something buried in the sand. Write a narrative about what you find and what happens next.", s: "写作第2辑 N4" },
+  { k: "Narrative 记叙文", t: "<strong>The Wrong Bus</strong><br>You get on the school bus as usual — but today the bus doesn't go to school... Write a story about where it goes.", s: "写作第2辑 N5" },
+  { k: "Narrative 记叙文", t: "<strong>Shrunk!</strong><br>When you wake up one morning, you are only 5 centimetres tall! Write a story about your day.", s: "写作第2辑 N6" },
+  { k: "Narrative 记叙文", t: "<strong>The Magic Door</strong><br>One day you notice a door you have never seen before. What happens when you open it?", s: "模拟卷1" },
+  { k: "Narrative 记叙文", t: "<strong>The Last One Left</strong><br>Everyone else has gone. You are the last one left. Where are you? Why is everyone gone? What happens next?", s: "模拟卷3" },
+  { k: "Persuasive 议论文", t: "<strong>What is the best pet?</strong><br>Write to persuade a reader that one kind of pet is the best.", s: "写作第1辑 P1" },
+  { k: "Persuasive 议论文", t: "<strong>School Uniforms</strong><br>Should students wear school uniforms, or choose their own clothes? Write to persuade a reader of your opinion.", s: "写作第1辑 P2" },
+  { k: "Persuasive 议论文", t: "<strong>Too Much Screen Time?</strong><br>Some parents think children spend too much time on screens. Do you agree? Write to persuade a reader.", s: "写作第1辑 P3" },
+  { k: "Persuasive 议论文", t: "<strong>Class Pet</strong><br>Write to persuade your teacher that your class should (or should not) get a class pet.", s: "写作第2辑 P4" },
+  { k: "Persuasive 议论文", t: "<strong>The Best Season</strong><br>Summer, autumn, winter or spring — which is best? Write to persuade a reader.", s: "写作第2辑 P5" },
+  { k: "Persuasive 议论文", t: "<strong>Books or Movies?</strong><br>Which is better — reading books or watching movies? Write to persuade a reader of your opinion.", s: "写作第2辑 P6" },
+  { k: "Persuasive 议论文", t: "<strong>Should Every Child Play a Sport?</strong><br>Some people think every child should play a sport. Others do not agree. What do you think?", s: "模拟卷2" }
+];
+
+/* ============================================================
+   进度存储
+   ============================================================ */
+const STORE = "chloe-naplan-v1";
+let progress = load();
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE)) || { kp: {}, checks: {} }; }
+  catch (e) { return { kp: {}, checks: {} }; }
+}
+function save() {
+  try { localStorage.setItem(STORE, JSON.stringify(progress)); } catch (e) {}
+}
+function kpKey(subj, kp) { return subj + "::" + kp; }
+function kpStat(subj, kp) {
+  return progress.kp[kpKey(subj, kp)] || { done: 0, right: 0, total: 0 };
+}
+function recordRun(subj, kp, right, total) {
+  progress.kp[kpKey(subj, kp)] = { done: 1, right, total, at: Date.now() };
+  save();
+}
+
+/* ============================================================
+   视图
+   ============================================================ */
+const TABS = [
+  { id: "reading",     label: "阅读" },
+  { id: "writing",     label: "写作" },
+  { id: "conventions", label: "语言规范" },
+  { id: "numeracy",    label: "数学" },
+  { id: "map",         label: "知识框架" },
+  { id: "progress",    label: "我的进度" }
+];
+let current = "map";
+const view = document.getElementById("view");
+const mapView = document.getElementById("mapView");
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderTabs() {
+  document.getElementById("tabs").innerHTML = TABS.map(t =>
+    `<button class="tab" role="tab" aria-selected="${t.id === current}" data-tab="${t.id}">${t.label}</button>`
+  ).join("");
+}
+
+function masteryOf(st) {
+  if (!st.total) return { cls: "new", txt: "未开始", pct: 0 };
+  const pct = Math.round(st.right / st.total * 100);
+  if (pct >= 85) return { cls: "done", txt: "已掌握 " + pct + "%", pct };
+  if (pct >= 60) return { cls: "mid",  txt: "再练练 " + pct + "%", pct };
+  return { cls: "weak", txt: "要加强 " + pct + "%", pct };
+}
+
+function renderSubject(id) {
+  const s = BANK[id];
+  const cards = s.groups.map(g => {
+    const st = kpStat(id, g.kp), m = masteryOf(st);
+    return `<button class="kp" data-quiz="${id}" data-kp="${esc(g.kp)}">
+      <div>
+        <div class="kp-name">${esc(g.kp)}</div>
+        <div class="kp-en">${esc(g.en)}</div>
+      </div>
+      <div class="bar"><i class="${m.cls === "weak" ? "w" : m.cls === "mid" ? "m" : ""}" style="width:${m.pct}%"></i></div>
+      <div class="kp-foot">
+        <span class="kp-count">${g.qs.length} 题</span>
+        <span class="pill ${m.cls}">${m.txt}</span>
+      </div>
+    </button>`;
+  }).join("");
+
+  view.innerHTML = `
+    <h2>${s.label}<span class="en">${s.en}</span></h2>
+    <p class="lede">点一个知识点开始练习 —— 每题答完立刻给出批改和讲解，并告诉你这题出自纸质资料的哪一页。</p>
+    <div class="kp-grid">${cards}</div>
+    <p class="eyebrow">这一科怎么考</p>
+    <div class="panel"><p class="sub" style="margin:0">${
+      id === "reading" ? "45 分钟约 39 题，在线自适应。读若干篇短文，每篇 5–8 题。前面的题答对越多，后面越难 —— 所以开头要格外认真。" :
+      id === "conventions" ? "45 分钟约 40 题，分语法标点和拼写两部分。拼写题是听音频输入单词，或找出错词改正。" :
+      "45 分钟约 36 题，<strong>不允许使用计算器</strong>。三大板块：数与代数（占比最大）、测量与几何、统计与概率。"
+    }</p></div>`;
+}
+
+/* ---------- quiz ---------- */
+let quiz = null;
+
+function startQuiz(subj, kpName) {
+  const g = BANK[subj].groups.find(x => x.kp === kpName);
+  quiz = { subj, kp: kpName, group: g, i: 0, results: [], answered: false };
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const { group, i, results } = quiz;
+  const q = group.qs[i];
+  const isReading = quiz.subj === "reading";
+  const txt = isReading && q.t ? READING_TEXTS[q.t] : null;
+
+  const dots = group.qs.map((_, n) => {
+    const r = results[n];
+    return `<span class="dot ${r === undefined ? "" : r ? "ok" : "no"} ${n === i ? "now" : ""}"></span>`;
+  }).join("");
+
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-back="${quiz.subj}">← ${BANK[quiz.subj].label}</button>
+      <span class="quiz-title">${esc(quiz.kp)}</span>
+      <span class="dots">${dots}</span>
+    </div>
+    <div class="panel" style="border-left:3px solid var(--wattle)">
+      <p class="sub" style="margin:0"><strong>提示 ·</strong> ${esc(group.tip)}</p>
+    </div>
+    ${txt ? `<div class="passage"><h4>${esc(txt.type)} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    <div class="q-card">
+      <div class="q-meta">第 ${i + 1} / ${group.qs.length} 题 · 考点：${esc(quiz.kp)}</div>
+      <p class="q-text ${isReading ? "serif" : ""}">${q.q}</p>
+      <div class="opts" id="opts">
+        ${q.o.map((o, n) => `<button class="opt" data-pick="${n}">
+          <span class="letter">${"ABCD"[n]}</span><span class="body">${o}</span>
+        </button>`).join("")}
+      </div>
+      <div id="verdict"></div>
+      <div class="q-nav" id="qnav"></div>
+    </div>`;
+}
+
+function pick(n) {
+  if (quiz.answered) return;
+  quiz.answered = true;
+  const q = quiz.group.qs[quiz.i];
+  const ok = n === q.a;
+  quiz.results[quiz.i] = ok;
+
+  document.querySelectorAll("#opts .opt").forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === q.a) b.classList.add("correct");
+    else if (idx === n) b.classList.add("wrong");
+    else b.classList.add("dim");
+  });
+
+  document.getElementById("verdict").innerHTML = `
+    <div class="verdict ${ok ? "good" : "bad"}">
+      <b>${ok ? "✓ 答对了" : "✗ 正确答案是 " + "ABCD"[q.a]}</b>
+      <p>${q.e}</p>
+      <span class="src">出处：${esc(q.s)}</span>
+    </div>`;
+
+  const last = quiz.i === quiz.group.qs.length - 1;
+  document.getElementById("qnav").innerHTML =
+    `<button class="btn" data-next="1">${last ? "看成绩" : "下一题 →"}</button>`;
+
+  document.querySelectorAll(".dot")[quiz.i].className = "dot " + (ok ? "ok" : "no") + " now";
+}
+
+function next() {
+  if (quiz.i === quiz.group.qs.length - 1) return finish();
+  quiz.i++;
+  quiz.answered = false;
+  renderQuiz();
+}
+
+function finish() {
+  const total = quiz.group.qs.length;
+  const right = quiz.results.filter(Boolean).length;
+  recordRun(quiz.subj, quiz.kp, right, total);
+  const pct = Math.round(right / total * 100);
+  const wrongIdx = quiz.results.map((r, n) => r ? -1 : n).filter(n => n >= 0);
+
+  const msg = pct === 100 ? "全对！这个知识点可以打勾了 🎉"
+    : pct >= 85 ? "很好，基本掌握了。错的那题看一遍讲解就行。"
+    : pct >= 60 ? "有进步空间 —— 把错题的讲解读一遍，明天再做一次这一组。"
+    : "这个知识点先回《知识点.md》重新学一遍，两天后再来做。不着急。";
+
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-back="${quiz.subj}">← ${BANK[quiz.subj].label}</button>
+      <span class="quiz-title">${esc(quiz.kp)} · 成绩</span>
+    </div>
+    <div class="score-card">
+      <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)">/${total}</span></div>
+      <p>${msg}</p>
+      <div class="q-nav" style="justify-content:center">
+        <button class="btn" data-retry="1">再做一次</button>
+        <button class="btn ghost" data-back="${quiz.subj}">回到 ${BANK[quiz.subj].label}</button>
+      </div>
+      ${wrongIdx.length ? `<div class="wrongs">
+        <h5>要复习的题（${wrongIdx.length} 题）</h5>
+        <ul>${wrongIdx.map(n => `<li>${quiz.group.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${esc(quiz.group.qs[n].s)}</span></li>`).join("")}</ul>
+      </div>` : ""}
+    </div>`;
+}
+
+/* ---------- writing ---------- */
+const NARR_CHECK = [
+  ["开头抓人（sizzling start）", "用声音、对话或动作开头 —— 不要写 One day I went to..."],
+  ["交代了谁 / 在哪 / 什么时候", "Orientation：读者要马上知道故事发生在哪"],
+  ["有一个明确的问题（complication）", "这是故事的心脏。只写场景不写事件是最大的失分点"],
+  ["问题解决了（resolution）", "并写出人物的感受或学到了什么"],
+  ["用身体写情绪，不直接说", "不写 I was scared，写 My hands were shaking"],
+  ["至少 3 个升级词", "enormous / whispered / terrified / dashed / delighted"],
+  ["用了时间连接词", "First, After that, Suddenly, Later, Finally"],
+  ["分了段", "开头、中间、结尾至少三段"],
+  ["结尾不是「然后我醒了」", "阅卷老师最不喜欢这个结尾"],
+  ["留了 5 分钟检查", "专查：大写、句号、漏字、拼写"]
+];
+const PERS_CHECK = [
+  ["第一段亮明观点", "I strongly believe that..."],
+  ["开头有钩子", "修辞提问 / 大胆断言 / 想象场景"],
+  ["理由 1 有解释或例子", "Firstly, ... 光有观点没有支撑拿不到分"],
+  ["理由 2 有解释或例子", "Secondly, ..."],
+  ["理由 3（有时间就写）", "Finally, and most importantly..."],
+  ["用了强观点词", "must / should / definitely / never / absolutely"],
+  ["用了三词排比", "Dogs are loyal, loving and fun."],
+  ["写了反驳段", "Some people say... But that's not true because..."],
+  ["结尾重申观点 + 呼吁", "That is why... / So come on, ..."],
+  ["立场从头到尾没变", "Year 3 最常见的失分：写着写着改立场"]
+];
+
+function renderWriting() {
+  const box = (id, title, sub, items) => `
+    <div class="panel">
+      <h3>${title}</h3>
+      <p class="sub">${sub}</p>
+      ${items.map((it, n) => {
+        const key = id + n, on = progress.checks[key];
+        return `<label class="check">
+          <input type="checkbox" data-check="${key}" ${on ? "checked" : ""}>
+          <span>${esc(it[0])}<small>${esc(it[1])}</small></span>
+        </label>`;
+      }).join("")}
+    </div>`;
+
+  view.innerHTML = `
+    <h2>写作<span class="en">Writing · 40 分钟 · 纸笔作答</span></h2>
+    <p class="lede">写作是四科里唯一的纸笔考试，所以练习一定要在真的作文纸上手写、并严格计时：<strong>5 分钟构思 → 30 分钟写 → 5 分钟检查</strong>。考试当天才知道考记叙文还是议论文，两种都要会。</p>
+
+    <p class="eyebrow">抽一个题目（模拟「当天才知道体裁」）</p>
+    <div class="panel">
+      <div class="q-nav" style="margin-top:0">
+        <button class="btn" data-prompt="any">随机抽题</button>
+        <button class="btn ghost" data-prompt="Narrative 记叙文">只抽记叙文</button>
+        <button class="btn ghost" data-prompt="Persuasive 议论文">只抽议论文</button>
+      </div>
+      <div class="prompt-box" id="promptBox"><span class="kind">点上面的按钮抽题</span>抽到题后，先花 5 分钟写提纲，再开始写。</div>
+    </div>
+
+    <p class="eyebrow">写完后自查（打勾会自动保存）</p>
+    ${box("n", "Narrative 记叙文自查表", "结构：开头（谁·哪·何时）→ 问题 → 解决 + 感受", NARR_CHECK)}
+    ${box("p", "Persuasive 议论文自查表", "结构：观点 → Firstly → Secondly → Finally → 重申观点", PERS_CHECK)}
+
+    <p class="eyebrow">好词升级表</p>
+    <div class="panel scroll-x">
+      <table>
+        <thead><tr><th>普通词</th><th>升级成</th></tr></thead>
+        <tbody>
+          <tr><td>said</td><td>whispered, shouted, cried, mumbled, squeaked</td></tr>
+          <tr><td>big</td><td>enormous, gigantic, huge, massive</td></tr>
+          <tr><td>small</td><td>tiny, miniature</td></tr>
+          <tr><td>walked</td><td>crept, dashed, wandered, stomped, raced</td></tr>
+          <tr><td>happy</td><td>delighted, thrilled, overjoyed</td></tr>
+          <tr><td>scared</td><td>terrified, frightened, petrified</td></tr>
+          <tr><td>nice</td><td>wonderful, amazing, delightful</td></tr>
+          <tr><td>ran</td><td>sprinted, bolted, charged</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="eyebrow">10 项评分标准（家长批改用）</p>
+    <div class="panel scroll-x">
+      <table>
+        <thead><tr><th>标准</th><th>问自己</th><th class="num">满分</th></tr></thead>
+        <tbody>
+          <tr><td>Audience 读者意识</td><td>读起来吸引人吗？</td><td class="num">6</td></tr>
+          <tr><td>Text structure 结构</td><td>开头／中间／结尾齐全吗？</td><td class="num">4</td></tr>
+          <tr><td>Ideas 内容</td><td>想法有意思、展开了吗？</td><td class="num">5</td></tr>
+          <tr><td>Character &amp; setting / Devices</td><td>人物场景生动 / 用了说服技巧吗？</td><td class="num">4</td></tr>
+          <tr><td>Vocabulary 词汇</td><td>有升级词吗？</td><td class="num">5</td></tr>
+          <tr><td>Cohesion 连贯</td><td>连接词、代词清楚吗？</td><td class="num">4</td></tr>
+          <tr><td>Paragraphing 分段</td><td>一段一个意思吗？</td><td class="num">2</td></tr>
+          <tr><td>Sentence structure 句式</td><td>句子完整、长短有变化吗？</td><td class="num">6</td></tr>
+          <tr><td>Punctuation 标点</td><td>大写和句号对吗？</td><td class="num">5</td></tr>
+          <tr><td>Spelling 拼写</td><td>常见词全对、敢用难词吗？</td><td class="num">6</td></tr>
+        </tbody>
+      </table>
+      <p class="sub" style="margin:13px 0 0">批改顺序很重要：<strong>先找出写得最好的两句话念给她听</strong>，再一起数升级词和连接词，最后只挑 1 个改进点。一次改太多会打击信心。</p>
+    </div>`;
+}
+
+function showPrompt(kind) {
+  const pool = kind === "any" ? WRITING_PROMPTS : WRITING_PROMPTS.filter(p => p.k === kind);
+  const p = pool[Math.floor(Math.random() * pool.length)];
+  document.getElementById("promptBox").innerHTML =
+    `<span class="kind">${esc(p.k)}</span>${p.t}
+     <span style="display:block;margin-top:10px;font-family:var(--data);font-size:.7rem;color:var(--slate)">出处：${esc(p.s)} · 现在开始计时 40 分钟</span>`;
+}
+
+/* ---------- progress ---------- */
+function renderProgress() {
+  const subjects = ["reading", "conventions", "numeracy"];
+  let allR = 0, allT = 0, doneKp = 0, totalKp = 0;
+  const weak = [];
+
+  const rows = subjects.map(id => {
+    const s = BANK[id];
+    let r = 0, t = 0, dk = 0;
+    s.groups.forEach(g => {
+      totalKp++;
+      const st = kpStat(id, g.kp);
+      if (st.total) {
+        r += st.right; t += st.total;
+        const pct = st.right / st.total;
+        if (pct >= .85) { dk++; doneKp++; }
+        if (pct < .6) weak.push({ subj: s.label, kp: g.kp, pct: Math.round(pct * 100), id });
+      }
+    });
+    allR += r; allT += t;
+    const pct = t ? Math.round(r / t * 100) : 0;
+    return `<div class="subj-prog">
+      <div class="top"><b>${s.label}</b><span>${dk}/${s.groups.length} 个知识点已掌握 · 正确率 ${t ? pct + "%" : "—"}</span></div>
+      <div class="bar"><i class="${pct >= 85 ? "" : pct >= 60 ? "m" : "w"}" style="width:${pct}%"></i></div>
+    </div>`;
+  }).join("");
+
+  const overall = allT ? Math.round(allR / allT * 100) : 0;
+
+  view.innerHTML = `
+    <h2>我的进度<span class="en">Progress</span></h2>
+    <p class="lede">进度只存在这台设备的浏览器里，不会上传到任何地方。目标不是刷满 100%，而是把「要加强」的知识点清空。</p>
+
+    <div class="stat-row">
+      <div class="stat"><div class="k">总正确率</div><div class="v">${allT ? overall + "%" : "—"}</div></div>
+      <div class="stat"><div class="k">已掌握知识点</div><div class="v">${doneKp}<small> / ${totalKp}</small></div></div>
+      <div class="stat"><div class="k">累计做题</div><div class="v">${allT}<small> 题</small></div></div>
+    </div>
+
+    <p class="eyebrow">分科进度</p>
+    ${rows}
+
+    <p class="eyebrow">需要加强的知识点</p>
+    ${weak.length ? `<div class="kp-grid">${weak.sort((a, b) => a.pct - b.pct).map(w =>
+      `<button class="kp" data-quiz="${w.id}" data-kp="${esc(w.kp)}">
+        <div><div class="kp-name">${esc(w.kp)}</div><div class="kp-en">${esc(w.subj)}</div></div>
+        <div class="kp-foot"><span class="kp-count">正确率 ${w.pct}%</span><span class="pill weak">再练一次</span></div>
+      </button>`).join("")}</div>`
+      : `<p class="empty">${allT ? "目前没有低于 60% 的知识点 —— 很好。" : "还没有练习记录。去任意一科点一个知识点开始吧。"}</p>`}
+
+    <p class="eyebrow">备考节奏提醒</p>
+    <div class="panel">
+      <p class="sub" style="margin:0">现在（Year 2）到 2026 年底是<strong>慢速学知识点</strong>阶段，每周 2–3 次、每次 20–30 分钟就够。真正有用的两件事是：<strong>每天 10 分钟英文朗读</strong>和<strong>乘法口诀 ×2 ×3 ×5 ×10 滚瓜烂熟</strong>。整套模拟卷留到 2027 年 1 月再开始做。</p>
+    </div>
+
+    <div class="q-nav">
+      <button class="btn ghost" id="resetBtn">清空所有进度记录</button>
+    </div>`;
+}
+
+/* ---------- mermaid ---------- */
+/* ---------- router ---------- */
+function render() {
+  renderTabs();
+  updateRing();
+  const onMap = current === "map";
+  mapView.hidden = !onMap;
+  view.hidden = onMap;
+  if (!onMap) {
+    if (current === "writing") renderWriting();
+    else if (current === "progress") renderProgress();
+    else renderSubject(current);
+  }
+  window.scrollTo({ top: 0 });
+}
+
+function updateRing() {
+  let r = 0, t = 0;
+  Object.values(progress.kp).forEach(s => { r += s.right || 0; t += s.total || 0; });
+  const pct = t ? Math.round(r / t * 100) : 0;
+  const arc = document.getElementById("ringArc");
+  arc.setAttribute("stroke-dashoffset", String(113 - 113 * pct / 100));
+  document.getElementById("ringPct").textContent = pct + "%";
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-tab],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],#resetBtn,#themeBtn");
+  if (!t) return;
+
+  if (t.id === "themeBtn") {
+    const root = document.documentElement;
+    const isDark = root.getAttribute("data-theme") === "dark" ||
+      (!root.hasAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    root.setAttribute("data-theme", isDark ? "light" : "dark");
+    return;
+  }
+  if (t.dataset.tab) { current = t.dataset.tab; render(); return; }
+  if (t.dataset.quiz) {
+    current = t.dataset.quiz;
+    renderTabs();
+    mapView.hidden = true; view.hidden = false;
+    startQuiz(t.dataset.quiz, t.dataset.kp);
+    window.scrollTo({ top: 0 });
+    return;
+  }
+  if (t.dataset.back) { current = t.dataset.back; render(); return; }
+  if (t.dataset.pick !== undefined) { pick(+t.dataset.pick); return; }
+  if (t.dataset.next) { next(); return; }
+  if (t.dataset.retry) { startQuiz(quiz.subj, quiz.kp); return; }
+  if (t.dataset.prompt) { showPrompt(t.dataset.prompt); return; }
+  if (t.id === "resetBtn") {
+    progress = { kp: {}, checks: {} };
+    save(); render();
+    return;
+  }
+});
+
+document.addEventListener("change", e => {
+  const cb = e.target.closest("[data-check]");
+  if (!cb) return;
+  progress.checks[cb.dataset.check] = cb.checked;
+  save();
+});
+
+render();
+</script>
