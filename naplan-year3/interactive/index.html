@@ -659,8 +659,8 @@
 <header>
   <div class="head-in">
     <div class="brand">
-      <h1>Chloe 的 NAPLAN Year 3 练习本</h1>
-      <p>知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月</p>
+      <h1 id="brandTitle">Chloe 的 NAPLAN Year 3 练习本</h1>
+      <p id="brandSub">知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月</p>
     </div>
     <div class="head-right">
       <div class="ring" title="总体掌握度">
@@ -690,7 +690,7 @@
    ============================================================ */
 
 const READING_TEXTS = {
-  kitten: { type: "Narrative 故事", title: "The Lost Kitten", html: `
+  kitten: { type: "Narrative", typeZh: "故事", title: "The Lost Kitten", html: `
     <p>Ruby was walking home from school when she heard a tiny sound coming from behind the bin. "Meow... meow..."</p>
     <p>She peeked behind the bin and saw a small grey kitten. It was shivering and its fur was wet from the rain. The kitten looked up at Ruby with big green eyes.</p>
     <p>"You poor thing," Ruby whispered. She took off her jumper and gently wrapped the kitten inside it.</p>
@@ -699,7 +699,7 @@ const READING_TEXTS = {
     <p>Mum smiled. "First we must put up posters to see if he belongs to someone. If nobody comes, then he can stay."</p>
     <p>Ruby crossed her fingers behind her back. She had already thought of the perfect name: Storm.</p>` },
 
-  newgirl: { type: "Narrative 故事", title: "The New Girl", html: `
+  newgirl: { type: "Narrative", typeZh: "故事", title: "The New Girl", html: `
     <p>Amara stood at the classroom door, holding her schoolbag straps so tightly that her knuckles turned white. Twenty-five faces turned to look at her.</p>
     <p>"Class, this is Amara," said Mrs Chen. "She has just moved here from Perth. Who would like to be her buddy this week?"</p>
     <p>For a moment, nobody moved. Amara stared at her shoes.</p>
@@ -707,7 +707,7 @@ const READING_TEXTS = {
     <p>At lunchtime, Poppy showed Amara the library, the canteen and the best handball court. "The trick," Poppy explained, "is to bring your own ball. Then everyone wants to play with you."</p>
     <p>By home time, Amara's schoolbag straps hung loosely from her shoulders, and she was smiling. Perth felt very far away — but for the first time, that didn't seem like such a bad thing.</p>` },
 
-  wombat: { type: "Information Report 说明文", title: "Wombats", html: `
+  wombat: { type: "Information Report", typeZh: "说明文", title: "Wombats", html: `
     <p class="sub">What is a wombat?</p>
     <p>Wombats are Australian animals with short legs, strong claws and thick brown fur. An adult wombat can weigh up to 35 kilograms — about the same as a ten-year-old child!</p>
     <p class="sub">Where do wombats live?</p>
@@ -717,7 +717,7 @@ const READING_TEXTS = {
     <p class="sub">An amazing fact</p>
     <p>Wombats are the only animals in the world that do cube-shaped poo! Scientists believe the cube shape stops it from rolling away, which helps wombats mark their territory.</p>` },
 
-  phone: { type: "Procedure 步骤文", title: "How to Make a Paper Cup Telephone", html: `
+  phone: { type: "Procedure", typeZh: "步骤文", title: "How to Make a Paper Cup Telephone", html: `
     <p class="sub">You will need:</p>
     <p>2 paper cups &middot; a long piece of string (about 5 metres) &middot; a sharp pencil &middot; a friend</p>
     <p class="sub">Steps:</p>
@@ -729,12 +729,12 @@ const READING_TEXTS = {
     <p class="sub">Handy hint:</p>
     <p>The telephone will not work if the string is loose. Make sure it stays tight and does not touch anything.</p>` },
 
-  umbrella: { type: "Poetry 诗歌", title: "My Umbrella", html: `
+  umbrella: { type: "Poetry", typeZh: "诗歌", title: "My Umbrella", html: `
     <p>My umbrella is a mushroom<br>that blooms when clouds turn grey,<br>a little roof that follows me<br>and keeps the rain away.</p>
     <p>The raindrops play their drum song —<br><em>tap-tap</em>, <em>tappity-tap</em> —<br>while I stay dry as toast beneath<br>my mushroom's friendly cap.</p>
     <p>But when the sun peeks out again<br>and paints the puddles gold,<br>I shake my sleeping mushroom dry<br>and fold away its fold.</p>` },
 
-  playtime: { type: "Persuasive 议论文", title: "Kids Need More Playtime!", html: `
+  playtime: { type: "Persuasive", typeZh: "议论文", title: "Kids Need More Playtime!", html: `
     <p>Do you think lunchtime at school is long enough? I don't! I believe children should have more playtime at school, and here is why.</p>
     <p>Firstly, playing keeps us healthy. Doctors say children should exercise for at least one hour every day. Running, climbing and skipping at playtime are all great exercise.</p>
     <p>Secondly, playtime helps our brains. After sitting still and thinking hard in class, our brains get tired. A break outside helps us concentrate better when we return to the classroom. In fact, some schools that added extra playtime found that students' work improved!</p>
@@ -1097,7 +1097,7 @@ function recordRun(subj, kp, right, total) {
    听写词库（对照《高频拼写词表.md》四个等级）
    ============================================================ */
 const SPELL = [
-  { lv: "Level 1 · 基础必对", note: "这一级必须全对 —— 都是每天都会用到的词。", w: [
+  { lv: "Level 1 · 基础必对", lvEn: "Level 1 · Must-know", note: "这一级必须全对 —— 都是每天都会用到的词。", noteEn: "Every one of these must be right — they are words used every single day.", w: [
     ["said", "\"Hello,\" said the teacher."],
     ["they", "They walked to the park together."],
     ["were", "We were late for the bus."],
@@ -1124,7 +1124,7 @@ const SPELL = [
     ["before", "Wash your hands before dinner."],
     ["after", "We played outside after lunch."]
   ]},
-  { lv: "Level 2 · 常用进阶", note: "ough / augh 家族和澳洲拼法在这一级出现。", w: [
+  { lv: "Level 2 · 常用进阶", lvEn: "Level 2 · Stepping up", note: "ough / augh 家族和澳洲拼法在这一级出现。", noteEn: "The ough / augh families and Australian spellings start here.", w: [
     ["night", "The owl hunts at night."],
     ["right", "Turn right at the corner."],
     ["caught", "I caught the ball with one hand."],
@@ -1151,7 +1151,7 @@ const SPELL = [
     ["world", "The blue whale is the largest animal in the world."],
     ["watch", "Let's watch the parade."]
   ]},
-  { lv: "Level 3 · 规则应用", note: "考的是拼写规则：双写、去 e、y 变 i、es 复数、f 变 v。", w: [
+  { lv: "Level 3 · 规则应用", lvEn: "Level 3 · Spelling rules", note: "考的是拼写规则：双写、去 e、y 变 i、es 复数、f 变 v。", noteEn: "These test the rules: doubling, dropping e, y to i, adding es, f to v.", w: [
     ["running", "The boy is running fast."],
     ["stopped", "We stopped at the shop for milk."],
     ["dropped", "I dropped my ice cream on the path."],
@@ -1178,7 +1178,7 @@ const SPELL = [
     ["shelves", "The shelves are full of books."],
     ["halves", "Cut the orange into two halves."]
   ]},
-  { lv: "Level 4 · 挑战级", note: "不发音字母和最难的常用词 —— 拿 Exceeding 靠这一级。", w: [
+  { lv: "Level 4 · 挑战级", lvEn: "Level 4 · Challenge", note: "不发音字母和最难的常用词 —— 拿 Exceeding 靠这一级。", noteEn: "Silent letters and the hardest common words — this level is what Exceeding is built on.", w: [
     ["straight", "We walked straight down the road."],
     ["enough", "I have enough money to buy the book."],
     ["through", "She climbed through the window."],
@@ -1524,8 +1524,8 @@ const METHODS = {
         ["Author and Me 作者＋我", "文中只给线索，要加上自己的常识 → 这就是推断题"],
         ["On My Own 全靠自己", "问你的看法／感受 → 文中没有标准答案"]
       ],
-      use: "做每道阅读题前，先让她说一句：「这题是哪一类？」光是这一步，推断题正确率就会明显提高。" },
-    { n: "五指复述法", en: "Five Finger Retell", from: "澳洲小学低年级阅读课的口头复述工具",
+      use: "做每道阅读题前，先让她说一句：「这题是哪一类？」光是这一步，推断题正确率就会明显提高。", enWhy: "Why it helps: when a child cannot answer an inference question, it is usually not that they did not understand the text \u2014 they do not know WHERE the answer lives. QAR teaches them to name the question type first, then decide where to look.", enSteps: [["Right There", "The answer sits word for word in one line — go back and find it."], ["Think and Search", "The answer is spread over a few lines — put two or three together."], ["Author and Me", "The text gives clues only; add what you already know. This is an inference question."], ["On My Own", "It asks for your own view — there is no answer in the text."]], enUse: "Before every reading question, have her say one sentence: \"Which type is this?\" That single step lifts inference accuracy noticeably." },
+    { n: "五指复述法", en: "Five Finger Retell", from: "澳洲小学低年级阅读课的口头复述工具", enWhy: "Why it helps: if you can retell it, you have understood it. Five fingers give a five-part outline so nothing gets missed.", enSteps: [["Thumb · Who", "Who are the main characters?"], ["Index · Where", "Where does it happen?"], ["Middle · When", "Day or night? What season?"], ["Ring · What happened", "What problem came up?"], ["Little · How it ended", "How was it solved? What happened in the end?"]], enUse: "Spend one minute after daily reading: she counts on her fingers and retells. This feeds straight into main-idea and sequencing questions.",
       why: "读完能复述，才算真读懂。用一只手的五根手指当提纲，孩子不容易漏。",
       steps: [
         ["拇指 · 谁", "主要人物是谁"],
@@ -1546,8 +1546,8 @@ const METHODS = {
         ["Dying Moment 高潮定格", "最关键那一刻要放慢、写细"],
         ["Ending with Impact 有力收尾", "留一句让人回味的话，绝不写「然后我醒了」"]
       ],
-      use: "不必每次写整篇。这周只练 Sizzling Start，下周只练 Dying Moment —— 一次练一步，进步最快。" },
-    { n: "VCOP 四件套", en: "Vocabulary · Connectives · Openers · Punctuation", from: "Big Write 写作框架的核心，英澳小学课堂常见",
+      use: "不必每次写整篇。这周只练 Sizzling Start，下周只练 Dying Moment —— 一次练一步，进步最快。", enWhy: "Why it helps: if you can retell it, you have understood it. Five fingers give a five-part outline so nothing is missed.", enSteps: [["Thumb · Who", "Who are the main characters?"], ["Index · Where", "Where does it happen?"], ["Middle · When", "Day or night? What season?"], ["Ring · What happened", "What problem came up?"], ["Little · How it ended", "How was it solved? What happened in the end?"]], enUse: "Spend one minute after daily reading: she counts on her fingers and retells. This feeds straight into main-idea and sequencing questions.", enWhy: "Why it helps: the biggest problem in Year 3 narratives is the running diary \u2014 waking up, breakfast, lunch, bed. Seven Steps teaches you to spend your words where the story actually is.", enSteps: [["Sizzling Start", "Open at the most exciting moment, not with \"One morning I woke up\"."], ["Backfill", "Once you have the reader, fill in who and where."], ["Tightening Tension", "Grow the problem bit by bit — don't solve it in one line."], ["Dying Moment", "Slow right down at the key moment and write it in detail."], ["Ending with Impact", "Leave one line worth remembering. Never \"and then I woke up\"."]], enUse: "You do not need a whole piece every time. Practise only Sizzling Starts this week, only Dying Moments next week \u2014 one step at a time is fastest." },
+    { n: "VCOP 四件套", en: "Vocabulary · Connectives · Openers · Punctuation", from: "Big Write 写作框架的核心，英澳小学课堂常见", enWhy: "Why it helps: these four line up with the four fastest-scoring items in the 10 NAPLAN writing criteria. Mark for these four alone and a parent can mark reliably.", enSteps: [["V — Vocabulary", "Any upgraded words? Count them; aim for 3 or more."], ["C — Connectives", "How many of First / Suddenly / However / Finally?"], ["O — Openers", "Does every paragraph start with I or The? Vary them."], ["P — Punctuation", "Capitals and full stops right? Brave enough to use ! and speech marks?"]], enUse: "Give her four coloured pencils and let her circle her own V, C, O and P. Whichever colour is rarest is next week's target.",
       why: "这四项正好对应 NAPLAN 写作 10 项评分标准里最容易快速提分的四项。批改时只看这四样，家长也能改。",
       steps: [
         ["V 词汇", "有没有升级词？数一数，目标每篇 ≥3 个"],
@@ -1567,8 +1567,8 @@ const METHODS = {
         ["Write 写", "凭记忆写出来，不许偷看"],
         ["Check 对", "自己对照，错了就从第一步重来"]
       ],
-      use: "每个词做一轮只要 20 秒。每周 10 个词，周一学、周三复习、周五测 —— 比一次抄 50 遍有效得多。" },
-    { n: "拼错时的三级求助", en: "Sound it out → Chunk it → Rule it", from: "小学拼写教学的通用解题顺序",
+      use: "每个词做一轮只要 20 秒。每周 10 个词，周一学、周三复习、周五测 —— 比一次抄 50 遍有效得多。", enWhy: "Why it helps: these four line up with the four fastest-scoring items in the 10 NAPLAN writing criteria. Mark for these four alone and a parent can mark reliably.", enSteps: [["V — Vocabulary", "Any upgraded words? Count them; aim for 3 or more per piece."], ["C — Connectives", "How many of First / Suddenly / However / Finally?"], ["O — Openers", "Does every paragraph start with I or The? Vary them."], ["P — Punctuation", "Capitals and full stops right? Brave enough to use ! and \"\"?"]], enUse: "Give her four coloured pencils and let her circle her own V, C, O and P. Whichever colour is rarest is next week's target.", enWhy: "Why it helps: copying a word ten times barely works, because the hand moves and the brain does not. These five steps force her to remember before writing \u2014 which is what a spelling test actually asks.", enSteps: [["Look", "Look hard at the word; notice the tricky letters."], ["Say", "Say it out loud, split into syllables: in-ter-est-ing."], ["Cover", "Cover it and picture it in your head."], ["Write", "Write it from memory — no peeking."], ["Check", "Check it yourself. If it is wrong, start again from Look."]], enUse: "One word takes about 20 seconds. Ten words a week: learn Monday, revise Wednesday, test Friday \u2014 far better than fifty copies at once." },
+    { n: "拼错时的三级求助", en: "Sound it out → Chunk it → Rule it", from: "小学拼写教学的通用解题顺序", enWhy: "Why it helps: in a test she needs a fixed rescue routine for a word she cannot spell, instead of leaving a blank or guessing wildly.", enSteps: [["1. Sound it out", "Break it into sounds: re-mem-ber."], ["2. Chunk it", "Any familiar chunk? light has igh, thought has ough."], ["3. Rule it", "Add ed? Double the letter? y to i? Add es for the plural?"]], enUse: "When she is stuck at home, don't give the answer. Ask: can you sound it out? Is there a bit you already know?",
       why: "考试时遇到不会的词，要有一套固定的自救顺序，而不是空着或乱猜。",
       steps: [
         ["① 拼读音", "把词按音拆开：re-mem-ber"],
@@ -1588,8 +1588,8 @@ const METHODS = {
         ["A Answer 作答", "答的是题目问的那个东西吗？带单位了吗？"],
         ["C Check 检查", "答案合理吗？一支铅笔不会是 200 米长"]
       ],
-      use: "多步应用题是全套资料里最大的失分区。让她养成第 3 步「说出口」的习惯，两步题的错误会大幅下降。" },
-    { n: "CPA 三阶段", en: "Concrete → Pictorial → Abstract", from: "新加坡数学教学法核心，澳洲小学广泛借鉴",
+      use: "多步应用题是全套资料里最大的失分区。让她养成第 3 步「说出口」的习惯，两步题的错误会大幅下降。", enWhy: "Why it helps: in a test she needs a fixed rescue routine for an unknown word, instead of leaving a blank or guessing wildly.", enSteps: [["1. Sound it out", "Break it into sounds: re-mem-ber."], ["2. Chunk it", "Any familiar chunk? light has igh, thought has ough."], ["3. Rule it", "Add ed? Double the letter? y to i? Add es for the plural?"]], enUse: "When she is stuck at home, don't give the answer. Ask: \"Can you sound it out? Is there a bit you already know?\"", enWhy: "Why it helps: most lost marks in word problems are not calculation errors \u2014 the question was misread, or only the first step was done. RUCSAC turns reading the question into a step you cannot skip.", enSteps: [["R — Read", "Read the whole thing, skipping nothing."], ["U — Underline", "Circle the numbers and the signal words: altogether / each / left / more than."], ["C — Choose", "Choose the operation and say it out loud: \"First I work out ___, then ___.\""], ["S — Solve", "Write the number sentence — don't do it all in your head."], ["A — Answer", "Is that what the question asked for? Did you write the unit?"], ["C — Check", "Is the answer sensible? A pencil is not 200 metres long."]], enUse: "Multi-step problems are the biggest lost-mark area in the whole pack. Build the habit of saying step 3 out loud and two-step errors drop sharply." },
+    { n: "CPA 三阶段", en: "Concrete → Pictorial → Abstract", from: "新加坡数学教学法核心，澳洲小学广泛借鉴", enWhy: "Why it helps: when fractions or division will not stick, it is usually because the first two stages were skipped and she went straight to memorising number sentences.", enSteps: [["C — Concrete", "Use real things: share biscuits between 3 people, lay out Lego in 4 rows of 5."], ["P — Pictorial", "Draw it: grids, or a bar model to stand for the amounts."], ["A — Abstract", "Only now write 15 ÷ 3 = 5."]], enUse: "When she is stuck, don't rush to the number sentence \u2014 go back and lay it out with real objects. The kitchen and the supermarket are the best maths classrooms.",
       why: "孩子算不对分数或乘除，多半是跳过了前两个阶段直接背算式。补上实物和画图这两步，概念才真正立住。",
       steps: [
         ["C 实物", "用真东西：饼干分给 3 个人、乐高摆成 4 行 5 列"],
@@ -1598,6 +1598,21 @@ const METHODS = {
       ],
       use: "遇到她卡住的题，别急着讲算式 —— 退回去拿实物摆一遍。厨房和超市是最好的数学教室。" }
   ]
+};
+
+/* 具体知识点的教学要点（英文） */
+const EN_COACH = {
+  "reading::推断": 'Say the whole formula out loud: "The text says ___, I know ___, so ___." Once she can finish all three parts, the answer appears by itself.',
+  "reading::主旨与作者意图": "Every wrong choice is a detail that really was mentioned. Ask one question: does this choice cover the WHOLE text? If it only covers one paragraph, it is not the main idea.",
+  "reading::结构与写作手法": "Headings, bold words, captions and connectives are the writer's signposts. Scan the signposts first, then read — it is faster and you understand more.",
+  "conventions::撇号": "An apostrophe has only two jobs: replacing missing letters (don't) and showing belonging (girl's). Plurals never take one — that single rule wins most of these questions.",
+  "conventions::主谓一致": "Each / Nobody / Everybody / Neither look like lots of people but count as one. Swap the subject for he in your head and the verb comes out right.",
+  "conventions::拼写规则": "Look at the ending first: short vowel + one consonant doubles; e endings drop the e; consonant + y turns into i; s/x/ch/sh add es. Judging the ending beats memorising whole words.",
+  "numeracy::多步应用题": 'You must say this before you write: "First I work out ___, then I work out ___." If you cannot say it, you have not understood the question yet — don\'t start calculating.',
+  "numeracy::加减法": "Borrowing across a zero (604 − 287) is the most-missed type in the whole pack. Think of 604 as 60 tens and 4 ones and the borrowing works out.",
+  "numeracy::图表与数据": 'With a picture graph the first move is always: find the key, and ask "how many does one symbol stand for?" That one move saves several marks.',
+  "numeracy::分数": "The one sentence that matters: the bigger the bottom number, the smaller each piece. Compare a pizza cut into 4 with one cut into 8 and she will see it instantly.",
+  "numeracy::时间": "Clock rhyme: minute hand on 3 is 15 past, on 6 is half past, on 9 is quarter to. Ask her once a day off the kitchen clock and it sticks in a fortnight."
 };
 
 /* 具体知识点的教学要点 */
@@ -1620,7 +1635,7 @@ const COACH = {
    徽章与打卡（寓教于乐）
    ============================================================ */
 const BADGES = [
-  { id: "first",    icon: "🌱", n: "第一步",     en: "First step",     d: "完成第一组练习",            de: "Finish your first set" },
+  { id: "first",    icon: "🌱", n: "第一步",     en: "First step",     d: "完成第一组练习",            de: "Finish your first set", enWhy: "Why it helps: when fractions or division will not stick, it is usually because the first two stages were skipped and she went straight to memorising number sentences.", enSteps: [["C — Concrete", "Use real things: share biscuits between 3 people, lay out Lego in 4 rows of 5."], ["P — Pictorial", "Draw it: grids, or a bar model to stand for the amounts."], ["A — Abstract", "Only now write 15 ÷ 3 = 5."]], enUse: "When she is stuck, don't rush to the number sentence \u2014 go back and lay it out with real objects. The kitchen and the supermarket are the best maths classrooms." },
   { id: "perfect",  icon: "⭐", n: "满分",       en: "Full marks",     d: "一组练习全对",              de: "Get a whole set right" },
   { id: "perfect5", icon: "🌟", n: "五个满分",   en: "Five in a row",  d: "累计 5 组练习全对",         de: "5 perfect sets altogether" },
   { id: "fixer",    icon: "🔧", n: "错题清道夫", en: "Mistake fixer",  d: "从错题本清掉 5 道题",       de: "Clear 5 questions from your mistakes" },
@@ -1707,6 +1722,15 @@ const TABS = [
 let current = "graph";
 const view = document.getElementById("view");
 
+/* 题目出处：数学第2辑 Q7 → Maths Set 2 Q7 */
+function srcEn(x) {
+  return String(x)
+    .replace("阅读", "Reading ").replace("语言", "Language ").replace("数学", "Maths ")
+    .replace(/第(\d)辑/, "Set $1").replace(/模拟卷(\d)/, "Mock Paper $1")
+    .replace(/\s+/g, " ").trim();
+}
+function SRC(x) { return lang === "zh" ? esc(x) : esc(srcEn(x)); }
+
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 
 /* ---------- 语言：en 只英文 / both 英文为主中文为辅 / zh 只中文 ---------- */
@@ -1730,11 +1754,20 @@ function TB(zh, en) {
 /* 属性（placeholder / title / aria-label）用纯文本，不能带标签 */
 function Tp(zh, en) { if (!en) return zh; return lang === "zh" ? zh : en; }
 
+/* 查表式双语：优先 EN_TREE，其次原样 */
+function TX(zh) { const en = (typeof EN_TREE !== "undefined" && EN_TREE[zh]) || ""; return T(esc(zh), en ? esc(en) : ""); }
+function TXB(zh) { const en = (typeof EN_TREE !== "undefined" && EN_TREE[zh]) || ""; return TB(esc(zh), en ? esc(en) : ""); }
+
 /* 只在非英文模式显示的中文（纯家长向内容） */
 function ZH(zh) { return lang === "en" ? "" : zh; }
 
 function renderTabs() {
   const nw = wrongList().length;
+  const bt = document.getElementById("brandTitle"), bs = document.getElementById("brandSub");
+  if (bt) bt.innerHTML = lang === "zh" ? "Chloe 的 NAPLAN Year 3 练习本" : "Chloe's NAPLAN Year 3 Practice Book";
+  if (bs) bs.innerHTML = lang === "zh"
+    ? "知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月"
+    : "Knowledge map · practice by topic · instant marking &nbsp;|&nbsp; Test: March 2027";
   document.querySelectorAll("#langSw button").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
   document.getElementById("tabs").innerHTML = TABS.map(t =>
@@ -1745,11 +1778,11 @@ function renderTabs() {
 }
 
 function masteryOf(st) {
-  if (!st.total) return { cls: "new", txt: "未开始", pct: 0 };
+  if (!st.total) return { cls: "new", txt: Tp("未开始", "Not started"), pct: 0 };
   const pct = Math.round(st.right / st.total * 100);
-  if (pct >= 85) return { cls: "done", txt: "已掌握 " + pct + "%", pct };
-  if (pct >= 60) return { cls: "mid",  txt: "再练练 " + pct + "%", pct };
-  return { cls: "weak", txt: "要加强 " + pct + "%", pct };
+  if (pct >= 85) return { cls: "done", txt: Tp("已掌握 " + pct + "%", "Mastered " + pct + "%"), pct };
+  if (pct >= 60) return { cls: "mid",  txt: Tp("再练练 " + pct + "%", "Almost " + pct + "%"), pct };
+  return { cls: "weak", txt: Tp("要加强 " + pct + "%", "Needs work " + pct + "%"), pct };
 }
 
 function renderSubject(id) {
@@ -1763,21 +1796,24 @@ function renderSubject(id) {
       </div>
       <div class="bar"><i class="${m.cls === "weak" ? "w" : m.cls === "mid" ? "m" : ""}" style="width:${m.pct}%"></i></div>
       <div class="kp-foot">
-        <span class="kp-count">${g.qs.length} 题</span>
+        <span class="kp-count">${g.qs.length} ${Tp("题","Q")}</span>
         <span class="pill ${m.cls}">${m.txt}</span>
       </div>
     </button>`;
   }).join("");
 
   view.innerHTML = `
-    <h2>${lang==="zh"?s.label:s.en}<span class="en">${lang==="zh"?s.en:s.label}</span></h2>
-    <p class="lede">点一个知识点开始练习 —— 每题答完立刻给出批改和讲解，并告诉你这题出自纸质资料的哪一页。</p>
+    <h2>${lang==="zh"?s.label:s.en}<span class="en">${lang==="zh"?s.en:ZH(s.label)}</span></h2>
+    <p class="lede">${TB("点一个知识点开始练习 —— 每题答完立刻给出批改和讲解，并告诉你这题出自纸质资料的哪一页。","Tap a topic to start. Every question is marked the moment you answer it, with an explanation and a note of where it comes from in the paper workbook.")}</p>
     <div class="kp-grid">${cards}</div>
-    <p class="eyebrow">这一科怎么考</p>
+    <p class="eyebrow">${T("这一科怎么考","How this paper works")}</p>
     <div class="panel"><p class="sub" style="margin:0">${
-      id === "reading" ? "45 分钟约 39 题，在线自适应。读若干篇短文，每篇 5–8 题。前面的题答对越多，后面越难 —— 所以开头要格外认真。" :
-      id === "conventions" ? "45 分钟约 40 题，分语法标点和拼写两部分。拼写题是听音频输入单词，或找出错词改正。" :
-      "45 分钟约 36 题，<strong>不允许使用计算器</strong>。三大板块：数与代数（占比最大）、测量与几何、统计与概率。"
+      id === "reading" ? TB("45 分钟约 39 题，在线自适应。读若干篇短文，每篇 5–8 题。前面的题答对越多，后面越难 —— 所以开头要格外认真。",
+        "45 minutes, about 39 questions, online and adaptive. You read several short texts with 5–8 questions each. The more you get right early on, the harder it gets — so take extra care at the start.") :
+      id === "conventions" ? TB("45 分钟约 40 题，分语法标点和拼写两部分。拼写题是听音频输入单词，或找出错词改正。",
+        "45 minutes, about 40 questions, in two parts: grammar and punctuation, then spelling. Spelling questions play a word aloud for you to type, or ask you to find and fix a misspelt word.") :
+      TB("45 分钟约 36 题，<strong>不允许使用计算器</strong>。三大板块：数与代数（占比最大）、测量与几何、统计与概率。",
+        "45 minutes, about 36 questions, and <strong>no calculator</strong>. Three strands: Number & Algebra (the biggest), Measurement & Geometry, and Statistics & Probability.")
     }</p></div>`;
 }
 
@@ -1809,10 +1845,11 @@ function renderQuiz() {
     </div>
     <div class="panel" style="border-left:3px solid var(--wattle)">
       <p class="sub" style="margin:0"><strong>${T("提示", "Tip")} ·</strong> ${TB(esc(group.tip), EN_TIP[quiz.kp])}</p>
-      ${COACH[quiz.subj + "::" + quiz.kp] && lang !== "en"
-        ? `<p class="sub coach-line"><strong>老师说 ·</strong> ${esc(COACH[quiz.subj + "::" + quiz.kp])}</p>` : ""}
+      ${COACH[quiz.subj + "::" + quiz.kp]
+        ? `<p class="sub coach-line"><strong>${T("老师说", "Teacher says")} ·</strong> ${
+            TB(esc(COACH[quiz.subj + "::" + quiz.kp]), esc(EN_COACH[quiz.subj + "::" + quiz.kp] || ""))}</p>` : ""}
     </div>
-    ${txt ? `<div class="passage"><h4>${esc(txt.type)} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${group.qs.length} 题`, `Question ${i + 1} of ${group.qs.length}`)} · ${
         lang === "zh" ? esc(quiz.kp) : esc(BANK[quiz.subj].groups.find(g => g.kp === quiz.kp).en)}</div>
@@ -1846,7 +1883,7 @@ function pick(n) {
     <div class="verdict ${ok ? "good" : "bad"}">
       <b>${ok ? "✓ " + cheer() : Tp("✗ 正确答案是 " + "ABCD"[q.a], "✗ The answer is " + "ABCD"[q.a])}</b>
       <p>${TB(q.e, EN_EXP[q.s])}</p>
-      <span class="src">${esc(q.s)}</span>
+      <span class="src">${SRC(q.s)}</span>
     </div>`;
 
   const last = quiz.i === quiz.group.qs.length - 1;
@@ -1874,10 +1911,10 @@ function finish() {
   const pct = Math.round(right / total * 100);
   const wrongIdx = quiz.results.map((r, n) => r ? -1 : n).filter(n => n >= 0);
 
-  const msg = pct === 100 ? "全对！这个知识点可以打勾了 🎉"
-    : pct >= 85 ? "很好，基本掌握了。错的那题看一遍讲解就行。"
-    : pct >= 60 ? "有进步空间 —— 把错题的讲解读一遍，明天再做一次这一组。"
-    : "这个知识点先回《知识点.md》重新学一遍，两天后再来做。不着急。";
+  const msg = pct === 100 ? Tp("全对！这个知识点可以打勾了 🎉", "All correct! You can tick this topic off 🎉")
+    : pct >= 85 ? Tp("很好，基本掌握了。错的那题看一遍讲解就行。", "Great — you have this. Just read the explanation for the one you missed.")
+    : pct >= 60 ? Tp("有进步空间 —— 把错题的讲解读一遍，明天再做一次这一组。", "Getting there — read the explanations, then do this set again tomorrow.")
+    : Tp("这个知识点先回《知识点.md》重新学一遍，两天后再来做。不着急。", "Learn this topic again first, then come back in a couple of days. No rush.");
 
   view.innerHTML = `
     <div class="quiz-head">
@@ -1893,35 +1930,35 @@ function finish() {
       </div>
       ${wrongIdx.length ? `<div class="wrongs">
         <h5>${T("要复习的题（" + wrongIdx.length + " 题）", "Questions to review (" + wrongIdx.length + ")")}</h5>
-        <ul>${wrongIdx.map(n => `<li>${quiz.group.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${esc(quiz.group.qs[n].s)}</span></li>`).join("")}</ul>
+        <ul>${wrongIdx.map(n => `<li>${quiz.group.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${SRC(quiz.group.qs[n].s)}</span></li>`).join("")}</ul>
       </div>` : ""}
     </div>`;
 }
 
 /* ---------- writing ---------- */
 const NARR_CHECK = [
-  ["开头抓人（sizzling start）", "用声音、对话或动作开头 —— 不要写 One day I went to..."],
-  ["交代了谁 / 在哪 / 什么时候", "Orientation：读者要马上知道故事发生在哪"],
-  ["有一个明确的问题（complication）", "这是故事的心脏。只写场景不写事件是最大的失分点"],
-  ["问题解决了（resolution）", "并写出人物的感受或学到了什么"],
-  ["用身体写情绪，不直接说", "不写 I was scared，写 My hands were shaking"],
-  ["至少 3 个升级词", "enormous / whispered / terrified / dashed / delighted"],
-  ["用了时间连接词", "First, After that, Suddenly, Later, Finally"],
-  ["分了段", "开头、中间、结尾至少三段"],
-  ["结尾不是「然后我醒了」", "阅卷老师最不喜欢这个结尾"],
-  ["留了 5 分钟检查", "专查：大写、句号、漏字、拼写"]
+  ["开头抓人（sizzling start）", "用声音、对话或动作开头 —— 不要写 One day I went to...", "A sizzling start", "Open with a sound, some speech or an action — not One day I went to..."],
+  ["交代了谁 / 在哪 / 什么时候", "Orientation：读者要马上知道故事发生在哪", "Said who, where and when", "Orientation: the reader must know straight away where they are"],
+  ["有一个明确的问题（complication）", "这是故事的心脏。只写场景不写事件是最大的失分点", "There is a clear problem", "This is the heart of the story. Describing a scene with no event is the biggest loss of marks"],
+  ["问题解决了（resolution）", "并写出人物的感受或学到了什么", "The problem gets solved", "And say how the character feels, or what they learnt"],
+  ["用身体写情绪，不直接说", "不写 I was scared，写 My hands were shaking", "Showed feelings with the body", "Not I was scared, but My hands were shaking"],
+  ["至少 3 个升级词", "enormous / whispered / terrified / dashed / delighted", "At least 3 upgraded words", "enormous / whispered / terrified / dashed / delighted"],
+  ["用了时间连接词", "First, After that, Suddenly, Later, Finally", "Used time connectives", "First, After that, Suddenly, Later, Finally"],
+  ["分了段", "开头、中间、结尾至少三段", "Used paragraphs", "At least three: beginning, middle and end"],
+  ["结尾不是「然后我醒了」", "阅卷老师最不喜欢这个结尾", "Did NOT end with a dream", "Markers like that ending least of all"],
+  ["留了 5 分钟检查", "专查：大写、句号、漏字、拼写", "Left 5 minutes to check", "Check for: capitals, full stops, missing words, spelling"]
 ];
 const PERS_CHECK = [
-  ["第一段亮明观点", "I strongly believe that..."],
-  ["开头有钩子", "修辞提问 / 大胆断言 / 想象场景"],
-  ["理由 1 有解释或例子", "Firstly, ... 光有观点没有支撑拿不到分"],
-  ["理由 2 有解释或例子", "Secondly, ..."],
-  ["理由 3（有时间就写）", "Finally, and most importantly..."],
-  ["用了强观点词", "must / should / definitely / never / absolutely"],
-  ["用了三词排比", "Dogs are loyal, loving and fun."],
-  ["写了反驳段", "Some people say... But that's not true because..."],
-  ["结尾重申观点 + 呼吁", "That is why... / So come on, ..."],
-  ["立场从头到尾没变", "Year 3 最常见的失分：写着写着改立场"]
+  ["第一段亮明观点", "I strongly believe that...", "Opinion clear in paragraph 1", "I strongly believe that..."],
+  ["开头有钩子", "修辞提问 / 大胆断言 / 想象场景", "There is a hook", "A rhetorical question / a bold claim / picture this..."],
+  ["理由 1 有解释或例子", "Firstly, ... 光有观点没有支撑拿不到分", "Reason 1 is explained", "Firstly, ... an opinion with no support earns nothing"],
+  ["理由 2 有解释或例子", "Secondly, ...", "Reason 2 is explained", "Secondly, ..."],
+  ["理由 3（有时间就写）", "Finally, and most importantly...", "Reason 3 (if there is time)", "Finally, and most importantly..."],
+  ["用了强观点词", "must / should / definitely / never / absolutely", "Used strong words", "must / should / definitely / never / absolutely"],
+  ["用了三词排比", "Dogs are loyal, loving and fun.", "Used the rule of three", "Dogs are loyal, loving and fun."],
+  ["写了反驳段", "Some people say... But that's not true because...", "Answered the other side", "Some people say... But that's not true because..."],
+  ["结尾重申观点 + 呼吁", "That is why... / So come on, ...", "Restated and called to action", "That is why... / So come on, ..."],
+  ["立场从头到尾没变", "Year 3 最常见的失分：写着写着改立场", "Kept the same side throughout", "The most common Year 3 slip: swapping sides halfway"]
 ];
 
 function renderWriting() {
@@ -1933,14 +1970,14 @@ function renderWriting() {
         const key = id + n, on = progress.checks[key];
         return `<label class="check">
           <input type="checkbox" data-check="${key}" ${on ? "checked" : ""}>
-          <span>${esc(it[0])}<small>${esc(it[1])}</small></span>
+          <span>${T(esc(it[0]), esc(it[2]))}<small>${TB(esc(it[1]), esc(it[3]))}</small></span>
         </label>`;
       }).join("")}
     </div>`;
 
   view.innerHTML = `
-    <h2>${T("写作","Writing")}<span class="en">40 minutes · 1 piece · pen and paper</span></h2>
-    <p class="lede">写作是四科里唯一的纸笔考试，所以练习一定要在真的作文纸上手写、并严格计时：<strong>5 分钟构思 → 30 分钟写 → 5 分钟检查</strong>。考试当天才知道考记叙文还是议论文，两种都要会。</p>
+    <h2>${T("写作","Writing")}<span class="en">${Tp("40 分钟 · 1 篇 · 纸笔","40 min · 1 piece · pen and paper")}</span></h2>
+    <p class="lede">${TB("写作是四科里唯一的纸笔考试，所以练习一定要在真的作文纸上手写、并严格计时：<strong>5 分钟构思 → 30 分钟写 → 5 分钟检查</strong>。考试当天才知道考记叙文还是议论文，两种都要会。","Writing is the only paper done with pen and paper, so practise on real lined paper and keep to the clock: <strong>5 minutes planning → 30 minutes writing → 5 minutes checking</strong>. You only find out on the day whether it is a narrative or a persuasive piece, so you need both.")}</p>
 
     <p class="eyebrow">${T("抽一个题目（模拟「当天才知道体裁」）","Draw a prompt (you only find out the type on the day)")}</p>
     <div class="panel">
@@ -1953,8 +1990,8 @@ function renderWriting() {
     </div>
 
     <p class="eyebrow">${T("写完后自查（打勾会自动保存）","Check your own writing (ticks are saved)")}</p>
-    ${box("n", "Narrative 记叙文自查表", "结构：开头（谁·哪·何时）→ 问题 → 解决 + 感受", NARR_CHECK)}
-    ${box("p", "Persuasive 议论文自查表", "结构：观点 → Firstly → Secondly → Finally → 重申观点", PERS_CHECK)}
+    ${box("n", T("Narrative 记叙文自查表", "Narrative checklist"), TB("结构：开头（谁·哪·何时）→ 问题 → 解决 + 感受", "Structure: orientation (who, where, when) → problem → solution + feelings"), NARR_CHECK)}
+    ${box("p", T("Persuasive 议论文自查表", "Persuasive checklist"), TB("结构：观点 → Firstly → Secondly → Finally → 重申观点", "Structure: opinion → Firstly → Secondly → Finally → restate"), PERS_CHECK)}
 
     <p class="eyebrow">${T("好词升级表","Word upgrades")}</p>
     <div class="panel scroll-x">
@@ -1976,21 +2013,22 @@ function renderWriting() {
     <p class="eyebrow">${T("10 项评分标准（家长批改用）","The 10 marking criteria")}</p>
     <div class="panel scroll-x">
       <table>
-        <thead><tr><th>标准</th><th>问自己</th><th class="num">满分</th></tr></thead>
+        <thead><tr><th>${T("标准","Criterion")}</th><th>${T("问自己","Ask yourself")}</th><th class="num">${T("满分","Marks")}</th></tr></thead>
         <tbody>
-          <tr><td>Audience 读者意识</td><td>读起来吸引人吗？</td><td class="num">6</td></tr>
-          <tr><td>Text structure 结构</td><td>开头／中间／结尾齐全吗？</td><td class="num">4</td></tr>
-          <tr><td>Ideas 内容</td><td>想法有意思、展开了吗？</td><td class="num">5</td></tr>
-          <tr><td>Character &amp; setting / Devices</td><td>人物场景生动 / 用了说服技巧吗？</td><td class="num">4</td></tr>
-          <tr><td>Vocabulary 词汇</td><td>有升级词吗？</td><td class="num">5</td></tr>
-          <tr><td>Cohesion 连贯</td><td>连接词、代词清楚吗？</td><td class="num">4</td></tr>
-          <tr><td>Paragraphing 分段</td><td>一段一个意思吗？</td><td class="num">2</td></tr>
-          <tr><td>Sentence structure 句式</td><td>句子完整、长短有变化吗？</td><td class="num">6</td></tr>
-          <tr><td>Punctuation 标点</td><td>大写和句号对吗？</td><td class="num">5</td></tr>
-          <tr><td>Spelling 拼写</td><td>常见词全对、敢用难词吗？</td><td class="num">6</td></tr>
+          ${[["Audience","读者意识","读起来吸引人吗？","Is it engaging to read?",6],
+             ["Text structure","结构","开头／中间／结尾齐全吗？","Beginning, middle and end all there?",4],
+             ["Ideas","内容","想法有意思、展开了吗？","Are the ideas interesting and developed?",5],
+             ["Character &amp; setting / Devices","人物·场景／说服技巧","人物场景生动 / 用了说服技巧吗？","Vivid characters and setting, or persuasive devices used?",4],
+             ["Vocabulary","词汇","有升级词吗？","Any upgraded words?",5],
+             ["Cohesion","连贯","连接词、代词清楚吗？","Are connectives and pronouns clear?",4],
+             ["Paragraphing","分段","一段一个意思吗？","One idea per paragraph?",2],
+             ["Sentence structure","句式","句子完整、长短有变化吗？","Complete sentences, varied in length?",6],
+             ["Punctuation","标点","大写和句号对吗？","Capitals and full stops correct?",5],
+             ["Spelling","拼写","常见词全对、敢用难词吗？","Common words right, and brave with harder ones?",6]]
+            .map(r => `<tr><td>${r[0]}${ZH(" " + r[1])}</td><td>${T(r[2], r[3])}</td><td class="num">${r[4]}</td></tr>`).join("")}
         </tbody>
       </table>
-      <p class="sub" style="margin:13px 0 0">批改顺序很重要：<strong>先找出写得最好的两句话念给她听</strong>，再一起数升级词和连接词，最后只挑 1 个改进点。一次改太多会打击信心。</p>
+      <p class="sub" style="margin:13px 0 0">${TB("批改顺序很重要：<strong>先找出写得最好的两句话念给她听</strong>，再一起数升级词和连接词，最后只挑 1 个改进点。一次改太多会打击信心。","The order of marking matters: <strong>first find the two best sentences and read them back to her</strong>, then count the upgraded words and connectives together, and only then pick ONE thing to improve. Fixing too much at once knocks confidence.")}</p>
     </div>`;
 }
 
@@ -1999,7 +2037,7 @@ function showPrompt(kind) {
   const p = pool[Math.floor(Math.random() * pool.length)];
   document.getElementById("promptBox").innerHTML =
     `<span class="kind">${esc(p.k)}</span>${p.t}
-     <span style="display:block;margin-top:10px;font-family:var(--data);font-size:.7rem;color:var(--slate)">出处：${esc(p.s)} · ${T("现在开始计时 40 分钟","start your 40-minute timer now")}</span>`;
+     <span style="display:block;margin-top:10px;font-family:var(--data);font-size:.7rem;color:var(--slate)">${Tp("出处","from")}: ${SRC(p.s)} · ${T("现在开始计时 40 分钟","start your 40-minute timer now")}</span>`;
 }
 
 /* ---------- progress ---------- */
@@ -2018,13 +2056,13 @@ function renderProgress() {
         r += st.right; t += st.total;
         const pct = st.right / st.total;
         if (pct >= .85) { dk++; doneKp++; }
-        if (pct < .6) weak.push({ subj: s.label, kp: g.kp, pct: Math.round(pct * 100), id });
+        if (pct < .6) weak.push({ subj: lang === "zh" ? s.label : s.en, kp: lang === "zh" ? g.kp : g.en, kpRaw: g.kp, pct: Math.round(pct * 100), id });
       }
     });
     allR += r; allT += t;
     const pct = t ? Math.round(r / t * 100) : 0;
     return `<div class="subj-prog">
-      <div class="top"><b>${s.label}</b><span>${dk}/${s.groups.length} 个知识点已掌握 · 正确率 ${t ? pct + "%" : "—"}</span></div>
+      <div class="top"><b>${lang === "zh" ? s.label : s.en}</b><span>${Tp(dk + "/" + s.groups.length + " 个知识点已掌握", dk + "/" + s.groups.length + " topics mastered")} · ${t ? pct + "%" : "—"}</span></div>
       <div class="bar"><i class="${pct >= 85 ? "" : pct >= 60 ? "m" : "w"}" style="width:${pct}%"></i></div>
     </div>`;
   }).join("");
@@ -2035,17 +2073,17 @@ function renderProgress() {
   const streakDays = (progress.streak || {}).days || 0;
 
   view.innerHTML = `
-    <h2>${T("我的进度","My Progress")}<span class="en">${lang==="zh"?"Progress":"我的进度"}</span></h2>
-    <p class="lede">进度只存在这台设备的浏览器里，不会上传到任何地方。目标不是刷满 100%，而是把「要加强」的知识点清空。</p>
+    <h2>${T("我的进度","My Progress")}<span class="en">${ZH("我的进度") || "Progress"}</span></h2>
+    <p class="lede">${TB("进度只存在这台设备的浏览器里，不会上传到任何地方。目标不是刷满 100%，而是把「要加强」的知识点清空。","Your progress is stored in this browser only and never uploaded. The goal is not 100% everywhere — it is to empty the \"needs work\" list.")}</p>
 
     <div class="stat-row">
       <div class="stat"><div class="k">${T("总正确率","Correct overall")}</div><div class="v">${allT ? overall + "%" : "—"}</div></div>
       <div class="stat"><div class="k">${T("已掌握知识点","Topics mastered")}</div><div class="v">${doneKp}<small> / ${totalKp}</small></div></div>
-      <div class="stat"><div class="k">${T("累计做题","Questions done")}</div><div class="v">${allT}<small> 题</small></div></div>
+      <div class="stat"><div class="k">${T("累计做题","Questions done")}</div><div class="v">${allT}<small> ${Tp("题","Q")}</small></div></div>
       <div class="stat"><div class="k">${T("口诀最好成绩","Tables best")}</div><div class="v">${progress.drill.best || 0}<small> ${T("题/3分钟","in 3 min")}</small></div></div>
     </div>
 
-    <p class="eyebrow">徽章墙 ${got ? `· 已获得 ${got} / ${BADGES.length}` : ""}</p>
+    <p class="eyebrow">${T("徽章墙","Badges")} ${got ? `· ${got} / ${BADGES.length}` : ""}</p>
     ${streakDays ? `<p style="margin:0 0 12px"><span class="streak">🔥 ${T("连续练习 <b>"+streakDays+"</b> 天","<b>"+streakDays+"</b>-day streak")}</span></p>` : ""}
     <div class="badge-grid">
       ${BADGES.map(b => {
@@ -2063,15 +2101,16 @@ function renderProgress() {
 
     <p class="eyebrow">${T("需要加强的知识点","Topics to work on")}</p>
     ${weak.length ? `<div class="kp-grid">${weak.sort((a, b) => a.pct - b.pct).map(w =>
-      `<button class="kp" data-quiz="${w.id}" data-kp="${esc(w.kp)}">
+      `<button class="kp" data-quiz="${w.id}" data-kp="${esc(w.kpRaw)}">
         <div><div class="kp-name">${esc(w.kp)}</div><div class="kp-en">${esc(w.subj)}</div></div>
         <div class="kp-foot"><span class="kp-count">${w.pct}%</span><span class="pill weak">${T("再练一次","Practise again")}</span></div>
       </button>`).join("")}</div>`
-      : `<p class="empty">${allT ? "目前没有低于 60% 的知识点 —— 很好。" : "还没有练习记录。去任意一科点一个知识点开始吧。"}</p>`}
+      : `<p class="empty">${allT ? Tp("目前没有低于 60% 的知识点 —— 很好。","Nothing under 60% right now — nice work.") : Tp("还没有练习记录。去任意一科点一个知识点开始吧。","No practice yet. Pick any subject and tap a topic to start.")}</p>`}
 
-    <p class="eyebrow">备考节奏提醒</p>
+    <p class="eyebrow">${T("备考节奏提醒","Pacing reminder")}</p>
     <div class="panel">
-      <p class="sub" style="margin:0">现在（Year 2）到 2026 年底是<strong>慢速学知识点</strong>阶段，每周 2–3 次、每次 20–30 分钟就够。真正有用的两件事是：<strong>每天 10 分钟英文朗读</strong>和<strong>乘法口诀 ×2 ×3 ×5 ×10 滚瓜烂熟</strong>。整套模拟卷留到 2027 年 1 月再开始做。</p>
+      <p class="sub" style="margin:0">${TB("现在（Year 2）到 2026 年底是<strong>慢速学知识点</strong>阶段，每周 2–3 次、每次 20–30 分钟就够。真正有用的两件事是：<strong>每天 10 分钟英文朗读</strong>和<strong>乘法口诀 ×2 ×3 ×5 ×10 滚瓜烂熟</strong>。整套模拟卷留到 2027 年 1 月再开始做。",
+        "From now (Year 2) to the end of 2026 is the <strong>slow learning</strong> phase — 2 to 3 sessions a week, 20–30 minutes each, is plenty. The two things that really matter: <strong>10 minutes of reading aloud every day</strong> and <strong>knowing the ×2, ×3, ×5 and ×10 tables cold</strong>. Save the full practice papers for January 2027.")}</p>
     </div>
 
     <div class="q-nav">
@@ -2126,7 +2165,7 @@ function renderDict() {
   view.innerHTML = `
     <div class="quiz-head">
       <button class="back" data-tab2="train">← ${T("专项训练","Drills")}</button>
-      <span class="quiz-title">${T("听写","Dictation")} · ${esc(dict.set.lv)}</span>
+      <span class="quiz-title">${Tp("听写","Dictation")} · ${esc(lang === "zh" ? dict.set.lv : dict.set.lvEn)}</span>
       <span class="dots">${dots}</span>
     </div>
     <div class="panel" style="border-left:3px solid var(--wattle)">
@@ -2212,9 +2251,9 @@ function finishDict() {
     </div>
     <div class="score-card">
       <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)">/${total}</span></div>
-      <p>${right === total ? "全对！这一级可以往下走了 🐝"
-        : right >= total - 2 ? "很不错，把错的两个词用五步法再练一遍。"
-        : "错得有点多 —— 今天先别加新词，把这 10 个用 Look-Say-Cover-Write-Check 过一遍。"}</p>
+      <p>${right === total ? Tp("全对！这一级可以往下走了 🐝", "All correct! Time to move up a level 🐝")
+        : right >= total - 2 ? Tp("很不错，把错的两个词用五步法再练一遍。", "Nearly there — practise the ones you missed with Look-Say-Cover-Write-Check.")
+        : Tp("错得有点多 —— 今天先别加新词，把这 10 个用 Look-Say-Cover-Write-Check 过一遍。", "A few too many — no new words today. Work through these 10 with Look-Say-Cover-Write-Check.")}</p>
       <div class="q-nav" style="justify-content:center">
         <button class="btn" data-dict="${dict.lv}">${Tp("再来一轮","Another round")}</button>
         <button class="btn ghost" data-tab2="train">${Tp("回到专项训练","Back to Drills")}</button>
@@ -2329,11 +2368,13 @@ function finishDrill() {
     </div>
     <div class="score-card">
       <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)"> 题</span></div>
-      <p>${isBest ? "🎉 新纪录！之前最好成绩是 " + (progress.drill.runs.length > 1 ? Math.max(...progress.drill.runs.slice(0, -1).map(r => r.right)) : 0) + " 题"
-        : "个人最好成绩：" + best + " 题"}<br>
-        ${right >= 25 ? "口诀已经很熟了 ⚡ 保持每天 3 分钟就行。"
-        : right >= 15 ? "不错。哪一组慢就单独练那一组。"
-        : "先只练 ×2 和 ×10，熟了再加 ×5 和 ×3。"}</p>
+      <p>${isBest
+        ? Tp("🎉 新纪录！之前最好成绩是 " + (progress.drill.runs.length > 1 ? Math.max(...progress.drill.runs.slice(0, -1).map(r => r.right)) : 0) + " 题",
+             "🎉 New record! Your best before was " + (progress.drill.runs.length > 1 ? Math.max(...progress.drill.runs.slice(0, -1).map(r => r.right)) : 0))
+        : Tp("个人最好成绩：" + best + " 题", "Personal best: " + best)}<br>
+        ${right >= 25 ? Tp("口诀已经很熟了 ⚡ 保持每天 3 分钟就行。", "Your tables are quick ⚡ Just keep up 3 minutes a day.")
+        : right >= 15 ? Tp("不错。哪一组慢就单独练那一组。", "Good going. Whichever table felt slow, practise that one on its own.")
+        : Tp("先只练 ×2 和 ×10，熟了再加 ×5 和 ×3。", "Start with just ×2 and ×10, then add ×5 and ×3 once those are quick.")}</p>
       <div class="q-nav" style="justify-content:center">
         <button class="btn" data-drill="${drill.tables.join(",")}">${Tp("再来一次","Go again")}</button>
         <button class="btn ghost" data-tab2="train">回到专项训练</button>
@@ -2376,7 +2417,7 @@ function renderExam() {
       <span class="quiz-title">${T("限时测验","Timed test")} · ${lang==="zh"?BANK[exam.subj].label:BANK[exam.subj].en}</span>
       <span class="clock" id="examClock">${fmtTime(exam.left)}</span>
     </div>
-    ${txt ? `<div class="passage"><h4>${esc(txt.type)} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${qs.length} 题`, `Question ${i + 1} of ${qs.length}`)} · ${T("中途不显示对错，交卷后一次看","no answers shown until you finish")}</div>
       <p class="q-text ${isReading ? "serif" : ""}">${q.q}</p>
@@ -2429,7 +2470,9 @@ function finishExam() {
     <div class="score-card">
       <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)">/${total}</span></div>
       <p>正确率 ${pct}% ${timedOut ? "· ⏰ 时间到" : "· 用时 " + fmtTime(used)}<br>
-      ${pct >= 85 ? "这一科状态很好。" : pct >= 70 ? "接近 Strong 水平，把下面正确率低的知识点补一补。" : "别急 —— 按下面的表，从最低的那一行开始补。"}</p>
+      ${pct >= 85 ? Tp("这一科状态很好。", "This subject is in good shape.")
+        : pct >= 70 ? Tp("接近 Strong 水平，把下面正确率低的知识点补一补。", "Close to Strong — top up the weaker topics listed below.")
+        : Tp("别急 —— 按下面的表，从最低的那一行开始补。", "No rush — start with the bottom row of the table below and work up.")}</p>
       <div class="q-nav" style="justify-content:center">
         <button class="btn" data-tab2="wrong">${Tp("去错题本","See my mistakes")}</button>
         <button class="btn ghost" data-tab2="train">${Tp("再测一次","Test again")}</button>
@@ -2473,7 +2516,7 @@ function renderReview() {
     <div class="panel" style="border-left:3px solid var(--coral)">
       <p class="sub" style="margin:0"><strong>规则 ·</strong> 一道题<strong>连续答对两次</strong>才会从错题本消失。这道题你之前错过 ${item.meta.times} 次${item.meta.streak ? `，已连对 ${item.meta.streak} 次` : ""}。</p>
     </div>
-    ${txt ? `<div class="passage"><h4>${esc(txt.type)} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${list.length} 题`, `Question ${i + 1} of ${list.length}`)} · ${
         esc(lang === "zh" ? BANK[item.subj].label + " → " + item.kp
@@ -2517,7 +2560,7 @@ function reviewPick(n) {
       <span class="src">${cleared
         ? T("🎉 连对两次，这道题从错题本移除了", "🎉 Right twice in a row — removed from your mistakes")
         : ok ? T("再答对一次就能移出错题本", "Get it right once more to clear it")
-             : T("别急，讲解再读一遍，下次一定行", "Read the explanation again — you'll get it next time")} · ${esc(q.s)}</span>
+             : T("别急，讲解再读一遍，下次一定行", "Read the explanation again — you'll get it next time")} · ${SRC(q.s)}</span>
     </div>`;
   const last = review.i === review.list.length - 1;
   document.getElementById("qnav").innerHTML =
@@ -2542,14 +2585,14 @@ function renderWrong() {
   const spellWrong = Object.entries(progress.spell || {}).sort((a, b) => b[1] - a[1]);
 
   view.innerHTML = `
-    <h2>${T("错题本","My Mistakes")}<span class="en">${lang==="zh"?"Wrong-answer notebook":"错题本"}</span></h2>
+    <h2>${T("错题本","My Mistakes")}<span class="en">${ZH("错题本") || "Wrong-answer notebook"}</span></h2>
     <p class="lede">${TB("做错的题会自动收进这里。规则：<strong>连续答对两次</strong>才移出去 —— 一次可能是蒙对的。考前最后一周，只做这里的题就够了。",
       "Every question you get wrong lands here. The rule: you must get it right <strong>twice in a row</strong> before it leaves — once could be a lucky guess. In the last week before the test, this page is all you need.")}</p>
 
     ${list.length ? `
       <div class="stat-row">
-        <div class="stat"><div class="k">${T("待攻克","To fix")}</div><div class="v">${list.length}<small> 题</small></div></div>
-        <div class="stat"><div class="k">${T("已清除","Cleared")}</div><div class="v">${progress.cleared || 0}<small> 题</small></div></div>
+        <div class="stat"><div class="k">${T("待攻克","To fix")}</div><div class="v">${list.length}<small> ${Tp("题","Q")}</small></div></div>
+        <div class="stat"><div class="k">${T("已清除","Cleared")}</div><div class="v">${progress.cleared || 0}<small> ${Tp("题","Q")}</small></div></div>
         <div class="stat"><div class="k">${T("错词","Tricky words")}</div><div class="v">${spellWrong.length}<small> 个</small></div></div>
       </div>
       <div class="q-nav" style="margin:0 0 22px">
@@ -2561,7 +2604,7 @@ function renderWrong() {
           ${ws.map(w => `<div class="wrong-row">
             <div>
               <div class="wr-q">${w.q.q.replace(/<[^>]+>/g, "")}</div>
-              <div class="wr-meta">${esc(w.kp)} · ${esc(w.q.s)}</div>
+              <div class="wr-meta">${esc(lang === "zh" ? w.kp : (BANK[w.subj].groups.find(g => g.kp === w.kp) || {}).en || w.kp)} · ${SRC(w.q.s)}</div>
             </div>
             <span class="pill ${w.meta.streak ? "mid" : "weak"}">${w.meta.streak ? T("已连对 " + w.meta.streak + " 次", w.meta.streak + " right in a row") : T("错 " + w.meta.times + " 次", "wrong " + w.meta.times + "×")}</span>
           </div>`).join("")}
@@ -2573,7 +2616,7 @@ function renderWrong() {
       <div class="panel">
         <div class="chips">${spellWrong.map(([w, n]) =>
           `<span class="chip">${esc(w)}<b>${n}</b></span>`).join("")}</div>
-        <p class="sub" style="margin:12px 0 0">用五步法练：看 → 读 → 盖住 → 写 → 对答案。每个词 20 秒。</p>
+        <p class="sub" style="margin:12px 0 0">${TB("用五步法练：看 → 读 → 盖住 → 写 → 对答案。每个词 20 秒。","Use the five steps: Look → Say → Cover → Write → Check. About 20 seconds per word.")}</p>
       </div>` : ""}`;
 }
 
@@ -2584,15 +2627,15 @@ function renderTrain() {
   const best = progress.drill.best || 0;
   const lastTest = (progress.tests || []).slice(-1)[0];
   view.innerHTML = `
-    <h2>${T("专项训练","Drills")}<span class="en">${lang==="zh"?"Drills":"专项训练"}</span></h2>
-    <p class="lede">三个每天／每周固定做的小练习。听写和口诀各只要几分钟，是最容易坚持、见效也最快的两件事。</p>
+    <h2>${T("专项训练","Drills")}<span class="en">${ZH("专项训练") || "Drills"}</span></h2>
+    <p class="lede">${TB("三个每天／每周固定做的小练习。听写和口诀各只要几分钟，是最容易坚持、见效也最快的两件事。","Three short routines. Dictation and the tables sprint take only a few minutes each — they are the easiest to keep up and the quickest to pay off.")}</p>
 
     <p class="eyebrow">${T("拼写听写 · 每周一次，10 个词","Spelling dictation · once a week, 10 words")}</p>
     <div class="panel">
-      <p class="sub">真实考试是听音频输入拼写。这里用语音朗读「单词 → 例句 → 单词」，和考场一模一样。设备没声音时可切「家长看词」由家长报词。</p>
+      <p class="sub">${TB("真实考试是听音频输入拼写。这里用语音朗读「单词 → 例句 → 单词」，和考场一模一样。设备没声音时可切「家长看词」由家长报词。","In the real test you hear a word and type it. This reads the word, then the example sentence, then the word again — exactly like the test. If the device has no sound, use Show word (parent) and read it aloud instead.")}</p>
       <div class="kp-grid">
         ${SPELL.map((s, n) => `<button class="kp" data-dict="${n}">
-          <div><div class="kp-name">${esc(s.lv)}</div><div class="kp-en">${esc(s.note)}</div></div>
+          <div><div class="kp-name">${T(esc(s.lv), esc(s.lvEn))}</div><div class="kp-en">${TB(esc(s.note), esc(s.noteEn))}</div></div>
           <div class="kp-foot"><span class="kp-count">${s.w.length} ${T("词 · 每轮抽 10","words · 10 per round")}</span><span class="pill new">${T("开始","Start")}</span></div>
         </button>`).join("")}
       </div>
@@ -2600,7 +2643,7 @@ function renderTrain() {
 
     <p class="eyebrow">${T("乘法口诀抢答 · 每天 3 分钟","Times tables sprint · 3 minutes a day")}</p>
     <div class="panel">
-      <p class="sub">数学考试不许用计算器，口诀不熟会拖慢所有题。目标：3 分钟答对 25 题以上。${best ? `<strong>目前最好：${best} 题 ⚡</strong>` : ""}</p>
+      <p class="sub">${TB("数学考试不许用计算器，口诀不熟会拖慢所有题。目标：3 分钟答对 25 题以上。","No calculator is allowed in the maths test, so slow tables slow everything down. Goal: 25 or more correct in 3 minutes.")} ${best ? `<strong>${Tp("目前最好：" + best + " 题", "Best so far: " + best)} ⚡</strong>` : ""}</p>
       <div class="q-nav" style="flex-wrap:wrap">
         <button class="btn" data-drill="2,3,5,10">×2 ×3 ×5 ×10 ${T("（考纲）","(the ones tested)")}</button>
         <button class="btn ghost" data-drill="2,10">${T("只练","Just")} ×2 ×10</button>
@@ -2610,7 +2653,7 @@ function renderTrain() {
 
     <p class="eyebrow">${T("限时测验 · 每两周一次","Timed test · once a fortnight")}</p>
     <div class="panel">
-      <p class="sub">从整科随机抽题、倒计时、<strong>中途不显示对错</strong> —— 模拟真实考试节奏。交卷后给出分知识点的表现，错题自动进错题本。${lastTest ? `上次：${BANK[lastTest.subj].label} ${lastTest.right}/${lastTest.total}` : ""}</p>
+      <p class="sub">${TB("从整科随机抽题、倒计时、<strong>中途不显示对错</strong> —— 模拟真实考试节奏。交卷后给出分知识点的表现，错题自动进错题本。","Random questions from a whole subject, on a countdown, with <strong>no answers shown until you finish</strong> — the rhythm of the real test. Afterwards you get a topic-by-topic breakdown, and every mistake goes into your notebook automatically.")} ${lastTest ? `${Tp("上次","Last")}: ${lang === "zh" ? BANK[lastTest.subj].label : BANK[lastTest.subj].en} ${lastTest.right}/${lastTest.total}` : ""}</p>
       <div class="q-nav" style="flex-wrap:wrap">
         <button class="btn" data-exam="numeracy,20,15">${T("数学","Maths")} · 20 ${T("题","Q")} / 15 min</button>
         <button class="btn ghost" data-exam="conventions,20,12">${T("语言规范","Language")} · 20 ${T("题","Q")} / 12 min</button>
@@ -2623,27 +2666,32 @@ function renderTrain() {
    名师锦囊
    ============================================================ */
 function renderCoach() {
-  const order = [["reading", "阅读"], ["writing", "写作"], ["conventions", "语言规范"], ["numeracy", "数学"]];
+  const order = [["reading", "阅读", "Reading"], ["writing", "写作", "Writing"],
+                 ["conventions", "语言规范", "Language"], ["numeracy", "数学", "Maths"]];
   view.innerHTML = `
-    <h2>名师锦囊<span class="en">Teaching methods</span></h2>
-    <p class="lede">下面这些不是我编的学习技巧，而是<strong>澳洲中小学课堂里真实在用的教学法</strong>。每一个都附了「怎么在家用」—— 家长照着做就行，不需要自己是老师。</p>
+    <h2>${T("名师锦囊", "Teaching Methods")}<span class="en">${ZH("名师锦囊") || "Teaching methods"}</span></h2>
+    <p class="lede">${TB("下面这些不是我编的学习技巧，而是<strong>澳洲中小学课堂里真实在用的教学法</strong>。每一个都附了「怎么在家用」—— 家长照着做就行，不需要自己是老师。",
+      "These are not invented study hacks — they are <strong>teaching methods really used in Australian primary classrooms</strong>. Each one comes with how to use it at home, so a parent can follow it without being a teacher.")}</p>
 
-    ${order.map(([id, label]) => `
-      <p class="eyebrow">${label}</p>
+    ${order.map(([id, label, elabel]) => `
+      <p class="eyebrow">${lang === "zh" ? label : elabel}</p>
       ${METHODS[id].map(m => `
         <div class="method">
           <div class="m-head">
             <div>
-              <div class="m-name">${esc(m.n)}</div>
-              <div class="m-en">${esc(m.en)}</div>
+              <div class="m-name">${T(esc(m.n), esc(m.en))}</div>
+              <div class="m-en">${lang === "zh" ? esc(m.en) : ZH(esc(m.n))}</div>
             </div>
-            <span class="m-from">${esc(m.from)}</span>
+            <span class="m-from">${ZH(esc(m.from)) || esc(m.en)}</span>
           </div>
-          <p class="m-why">${esc(m.why)}</p>
+          <p class="m-why">${TB(esc(m.why), esc(m.enWhy))}</p>
           <ol class="m-steps">
-            ${m.steps.map(s => `<li><b>${esc(s[0])}</b><span>${esc(s[1])}</span></li>`).join("")}
+            ${m.steps.map((st, si) => {
+              const e = (m.enSteps || [])[si] || ["", ""];
+              return `<li><b>${T(esc(st[0]), esc(e[0]))}</b><span>${TB(esc(st[1]), esc(e[1]))}</span></li>`;
+            }).join("")}
           </ol>
-          <div class="m-use"><b>在家怎么用</b>${esc(m.use)}</div>
+          <div class="m-use"><b>${T("在家怎么用", "How to use it at home")}</b>${TB(esc(m.use), esc(m.enUse))}</div>
         </div>`).join("")}
     `).join("")}`;
 }
@@ -2876,7 +2924,7 @@ function graphDetail() {
 function renderGraph() {
   const kinds = [["all", "全部关系", "All links"], ["pre", "前置链", "Learn first"], ["same", "跨科同源", "Same idea"], ["mix", "易混对照", "Easy to mix up"], ["use", "用到", "Used in"]];
   view.innerHTML = `
-    <h2>${T("知识图谱","Knowledge Map")}<span class="en">${lang==="zh"?"Knowledge graph":"知识图谱"}</span></h2>
+    <h2>${T("知识图谱","Knowledge Map")}<span class="en">${ZH("知识图谱") || "Knowledge graph"}</span></h2>
     <p class="lede">${TB("52 个概念、" + EDGES.length + " 条关系。<strong>点任意一个概念</strong>，图上只亮起和它有关系的部分，下面给出每条关系的解释。按关系记忆，比按清单背诵牢得多。",
       "52 ideas and " + EDGES.length + " links. <strong>Tap any idea</strong> — the map lights up only what is connected to it, and every link is explained below. Learning by connections sticks far better than learning by lists.")}</p>
 
@@ -2896,14 +2944,14 @@ function renderGraph() {
 
     ${graphDetail()}
 
-    <p class="eyebrow">最值得记的 5 条跨科关系</p>
+    <p class="eyebrow">${T("最值得记的 5 条跨科关系","The 5 cross-subject links most worth remembering")}</p>
     <div class="panel">
       <ol class="m-steps">
-        <li><b>不规则过去式 → 写记叙文</b><span>故事全用过去式。went/saw/came 背不熟，作文里就会写成 goed/seed。这是语言规范和写作的同一块地基。</span></li>
-        <li><b>阅读的五种文体 = 写作的两种体裁</b><span>阅读课上拆解 Narrative 怎么写开头结尾，正是自己写故事时要用的结构。读和写是一件事。</span></li>
-        <li><b>连接词出现在三个科目</b><span>阅读考「However 表示什么」，写作要用 Firstly/Finally，语法考 because/but/or —— 同一批词，三处得分。</span></li>
-        <li><b>数学信号词 = 阅读圈关键词</b><span>altogether / each / left 和阅读题里的 NOT / MOST 一样，都是「先圈出来再答题」的同一个习惯。</span></li>
-        <li><b>写作的标点拼写分 = 语言规范题</b><span>写作 10 项里标点占 5 分、拼写占 6 分。练语言规范题，等于同时在给作文提分。</span></li>
+        <li><b>${T("不规则过去式 → 写记叙文", "Irregular past tenses → writing a narrative")}</b><span>${TB("故事全用过去式。went/saw/came 背不熟，作文里就会写成 goed/seed。这是语言规范和写作的同一块地基。", "Stories are told in the past tense. If went, saw and came are not solid, they turn into goed and seed in your writing. Language and Writing rest on the same foundation here.")}</span></li>
+        <li><b>${T("阅读的五种文体 = 写作的两种体裁", "The five reading text types = the two writing types")}</b><span>${TB("阅读课上拆解 Narrative 怎么写开头结尾，正是自己写故事时要用的结构。读和写是一件事。", "Pulling apart how a narrative opens and closes in reading is exactly the structure you use when writing your own. Reading and writing are one job.")}</span></li>
+        <li><b>${T("连接词出现在三个科目", "Connectives turn up in three subjects")}</b><span>${TB("阅读考「However 表示什么」，写作要用 Firstly/Finally，语法考 because/but/or —— 同一批词，三处得分。", "Reading asks what However signals, Writing needs Firstly and Finally, Grammar tests because, but and or — one set of words, marks in three places.")}</span></li>
+        <li><b>${T("数学信号词 = 阅读圈关键词", "Maths signal words = circling key words in Reading")}</b><span>${TB("altogether / each / left 和阅读题里的 NOT / MOST 一样，都是「先圈出来再答题」的同一个习惯。", "altogether, each and left work just like NOT and MOST in reading questions — the same habit of circling first, answering second.")}</span></li>
+        <li><b>${T("写作的标点拼写分 = 语言规范题", "Writing's punctuation and spelling marks = the Language paper")}</b><span>${TB("写作 10 项里标点占 5 分、拼写占 6 分。练语言规范题，等于同时在给作文提分。", "Of the 10 writing criteria, punctuation is worth 5 marks and spelling 6. Every Language question you practise is also lifting your writing score.")}</span></li>
       </ol>
     </div>`;
 
@@ -3060,60 +3108,253 @@ const MAPS = [
   ]}
 ];
 
+const EN_TREE = {
+  "NAPLAN Year 3": "NAPLAN Year 3", "阅读": "Reading", "写作": "Writing", "语言规范": "Language", "数学": "Maths",
+  "2027年3月 · Year 3": "March 2027 · Year 3", "文体 · 能力 · 策略": "Text types · skills · strategy",
+  "两种体裁都要会": "You need both text types", "语法 · 标点 · 拼写": "Grammar · punctuation · spelling",
+  "不允许使用计算器": "No calculator allowed",
+  "Reading 阅读": "Reading", "Writing 写作": "Writing", "Conventions 语言规范": "Conventions of Language", "Numeracy 数学": "Numeracy",
+  "45分钟 · 39题 · 在线": "45 min · 39 questions · online", "40分钟 · 1篇 · 纸笔": "40 min · 1 piece · pen and paper",
+  "45分钟 · 40题 · 在线": "45 min · 40 questions · online", "45分钟 · 36题 · 无计算器": "45 min · 36 questions · no calculator",
+  "五种文体": "Five text types", "五级阅读能力": "Five reading skills", "答题策略": "Test strategy",
+  "narrative 故事 / information report 说明文 / persuasive 议论 / procedure 步骤 / poetry 诗歌": "narrative / information report / persuasive / procedure / poetry",
+  "字面 → 词义 → 推断 → 手法 → 主旨": "literal → vocabulary → inference → features → main idea",
+  "先通读再做题；每题回原文找证据；不留空": "Read it through first; find evidence for every answer; never leave a blank",
+  "Narrative 记叙文": "Narrative", "Persuasive 议论文": "Persuasive", "10项评分标准": "The 10 marking criteria", "时间分配": "Time plan",
+  "开头（谁·哪·何时）→ 问题 → 解决": "Orientation (who, where, when) → problem → solution",
+  "观点 → 理由123 → 反驳 → 重申": "Opinion → reasons 1-2-3 → rebuttal → restate",
+  "结构·内容·词汇·连贯·分段·句式·标点·拼写…": "structure · ideas · vocabulary · cohesion · paragraphs · sentences · punctuation · spelling",
+  "5分钟构思 → 30分钟写 → 5分钟检查": "5 min planning → 30 min writing → 5 min checking",
+  "Grammar 语法": "Grammar", "Punctuation 标点": "Punctuation", "Spelling 拼写": "Spelling",
+  "词类·时态·主谓一致·连词·句子结构": "word classes · tense · agreement · conjunctions · sentence structure",
+  "大写·句末标点·逗号·撇号·引号": "capitals · end marks · commas · apostrophes · speech marks",
+  "五规则 + 字母组合家族 + 同音词": "five rules + letter families + homophones",
+  "数与代数": "Number & Algebra", "测量与几何": "Measurement & Geometry", "统计与概率": "Statistics & Probability",
+  "位值·加减·乘除·分数·钱币·规律": "place value · +− · ×÷ · fractions · money · patterns",
+  "单位·时间·2D/3D图形·面积周长·方位": "units · time · 2D/3D shapes · area & perimeter · position",
+  "象形图·条形图·可能性五级": "picture graphs · column graphs · chance words",
+  "四科总览": "The four papers",
+  "先认文体，再看题": "Name the text type first, then read the questions",
+  "Narrative 故事": "Narrative",
+  "人物·场景·情节；问题→解决": "Characters, setting, plot; problem → solution",
+  "Information Report 说明文": "Information Report",
+  "事实·小标题·图表": "Facts, headings, tables and diagrams",
+  "观点·理由·反驳": "Opinion, reasons, rebuttal",
+  "Procedure 步骤文": "Procedure",
+  "材料清单·编号步骤·祈使句": "Materials list, numbered steps, imperative verbs",
+  "Poetry 诗歌": "Poetry",
+  "分节·押韵·比喻": "Stanzas, rhyme, imagery",
+  "由易到难": "Easiest to hardest",
+  "1 字面理解": "1 Literal",
+  "答案就写在原文里": "The answer is written in the text",
+  "2 词义猜测": "2 Word meaning",
+  "把选项代回原句读一遍": "Put each choice back into the sentence",
+  "3 推断": "3 Inference",
+  "文中线索 ＋ 常识 ＝ 答案": "Clues in the text + what you know = the answer",
+  "4 结构与手法": "4 Features & techniques",
+  "小标题·加粗·图注·连接词各有用途": "Headings, bold, captions and connectives each have a job",
+  "5 主旨与作者意图": "5 Main idea & purpose",
+  "entertain 讲故事 / inform 给知识 / persuade 说服": "entertain / inform / persuade",
+  "＋ 双文本比较": "+ Comparing two texts",
+  "两篇文章找相同点和不同点": "Find what they agree on and where they differ",
+  "考场上照做": "Do this in the test",
+  "先通读文章 1–2 分钟": "Read the whole text first (1–2 minutes)",
+  "Year 3 文章很短，通读后再逐题回查": "Year 3 texts are short — read it all, then check back for each question",
+  "每题回原文找证据": "Find evidence in the text for every answer",
+  "不凭印象选": "Never choose from memory alone",
+  "小心 NOT / EXCEPT / MOST": "Watch for NOT / EXCEPT / MOST",
+  "看到就圈出来": "Circle them as soon as you see them",
+  "绝不留空": "Never leave a blank",
+  "不倒扣分，不会就排除两个再猜": "No marks are taken off — rule out two and choose",
+  "三段结构": "Three-part structure",
+  "① Orientation 开头": "1 Orientation",
+  "谁 · 在哪 · 什么时候": "Who, where, when",
+  "② Complication 中间": "2 Complication",
+  "发生了一个问题 —— 这是故事的心脏": "A problem happens — the heart of the story",
+  "③ Resolution 结尾": "3 Resolution",
+  "怎么解决的 ＋ 人物的感受": "How it is solved + how they feel",
+  "Sizzling start": "Sizzling start",
+  "用声音／对话／动作开头，别写 One day I went to...": "Open with a sound, speech or action — not One day I went to...",
+  "Show don't tell": "Show, don't tell",
+  "不写 I was scared，写 My hands were shaking": "Not I was scared, but My hands were shaking",
+  "禁忌": "Never do this",
+  "结尾不能是「然后我醒了，原来是个梦」": "Never end with and then I woke up — it was all a dream",
+  "汉堡包结构": "Hamburger structure",
+  "① 亮明观点": "1 State your opinion",
+  "I strongly believe that...": "I strongly believe that...",
+  "② Firstly 理由1": "2 Firstly — reason 1",
+  "理由 ＋ 解释 ＋ 例子": "Reason + explanation + example",
+  "③ Secondly 理由2": "3 Secondly — reason 2",
+  "④ 反驳对立观点": "4 Answer the other side",
+  "Some people say... But that's not true because...": "Some people say... But that's not true because...",
+  "⑤ 重申观点 ＋ 呼吁": "5 Restate + call to action",
+  "That is why... / So come on, ...": "That is why... / So come on, ...",
+  "说服技巧": "Persuasive devices",
+  "修辞提问·三词排比·强观点词·引用权威": "Rhetorical questions, rule of three, strong words, expert evidence",
+  "立场从头到尾不许变": "Never change sides halfway through",
+  "家长批改照这个打分": "Mark against these",
+  "Audience 读者意识 (6分)": "Audience (6 marks)",
+  "读起来吸引人吗": "Is it engaging to read?",
+  "Text structure 结构 (4分)": "Text structure (4 marks)",
+  "开头／中间／结尾齐全吗": "Beginning, middle and end all there?",
+  "Ideas 内容 (5分)": "Ideas (5 marks)",
+  "想法有意思、展开了吗": "Are the ideas interesting and developed?",
+  "Character·Setting / Devices (4分)": "Character & setting / devices (4 marks)",
+  "人物场景生动 / 用了说服技巧吗": "Vivid characters and setting, or persuasive devices used?",
+  "Vocabulary 词汇 (5分)": "Vocabulary (5 marks)",
+  "有升级词吗": "Any upgraded words?",
+  "Cohesion 连贯 (4分) · Paragraphing 分段 (2分)": "Cohesion (4) · Paragraphing (2)",
+  "连接词、代词清楚；一段一个意思": "Clear connectives and pronouns; one idea per paragraph",
+  "Sentence structure 句式 (6分)": "Sentence structure (6 marks)",
+  "句子完整、长短有变化": "Complete sentences with varied length",
+  "Punctuation 标点 (5分) · Spelling 拼写 (6分)": "Punctuation (5) · Spelling (6)",
+  "大写句号对；常见词全对": "Capitals and full stops right; common words spelled correctly",
+  "词类": "Word classes",
+  "名词 · 动词 · 形容词 · 副词 · 代词": "noun · verb · adjective · adverb · pronoun",
+  "时态": "Verb tense",
+  "现在／过去／将来／进行 ＋ 20个不规则过去式": "present / past / future / continuous + 20 irregular past tenses",
+  "时态一致": "Tense agreement",
+  "一句话里时态要统一": "Keep one tense across the sentence",
+  "主谓一致": "Subject-verb agreement",
+  "单数＋s；复数原形；There is / There are": "singular + s; plural plain; There is / There are",
+  "主谓一致进阶": "Agreement, harder",
+  "Each of · Nobody · Everybody · Neither 全当单数": "Each of, Nobody, Everybody and Neither all count as singular",
+  "连词与句子合并": "Conjunctions & joining sentences",
+  "and but or because so when if；不能只用逗号连两句": "and, but, or, because, so, when, if — a comma alone cannot join two sentences",
+  "完整句 · 四种句型": "Complete sentences · four types",
+  "必须有主语＋动词；陈述·疑问·祈使·感叹": "Needs a subject and a verb; statement, question, command, exclamation",
+  "比较级与最高级": "Comparatives & superlatives",
+  "两者用 -er，三者以上用 -est": "-er for two, -est for three or more",
+  "大写字母": "Capital letters",
+  "句首 · 人名地名 · 月份星期 · 单独的 I · 书名": "sentence starts · names and places · months and days · the word I · titles",
+  "句末标点": "End punctuation",
+  "句号 · 问号 · 感叹号": "full stop · question mark · exclamation mark",
+  "逗号": "Commas",
+  "列举（and 前不加）· 句首状语后 · 城市与州之间": "in lists (none before and) · after an opening phrase · between city and state",
+  "撇号用途1：缩写": "Apostrophe 1: short forms",
+  "don't · can't · won't（不规则）· haven't": "don't · can't · won't (irregular) · haven't",
+  "撇号用途2：所有格": "Apostrophe 2: belonging",
+  "单数 girl's ／ 复数 girls' ／ children's men's": "singular girl's / plural girls' / children's and men's",
+  "撇号陷阱": "Apostrophe traps",
+  "its＝它的，it's＝it is；复数绝不加撇号（two dogs）": "its = belonging to it, it's = it is; plurals never take one (two dogs)",
+  "引号": "Speech marks",
+  "问号在引号内；说的话和 said 之间用逗号": "The question mark goes inside; a comma separates the words from said",
+  "五条规则": "Five rules",
+  "双写 stopped · 去e making · y变i babies/cried · es boxes · f变v leaves": "double stopped · drop e making · y to i babies/cried · add es boxes · f to v leaves",
+  "ough / augh / aigh 家族": "The ough / augh / aigh families",
+  "enough · through · laughed · caught · straight": "enough · through · laughed · caught · straight",
+  "不发音字母": "Silent letters",
+  "island · answer · knee · write · half": "island · answer · knee · write · half",
+  "同音词 7 组": "Seven homophone sets",
+  "there/their/they're · to/too/two · its/it's · hear/here · know/no · right/write · your/you're": "there/their/they're · to/too/two · its/it's · hear/here · know/no · right/write · your/you're",
+  "澳洲拼法": "Australian spelling",
+  "-our：favourite colour neighbour ／ -ise：surprise": "-our: favourite, colour, neighbour / -ise: surprise",
+  "高频易错词": "High-frequency tricky words",
+  "because · friend · school · people · Wednesday · February": "because · friend · school · people · Wednesday · February",
+  "占分最大": "The biggest share of marks",
+  "位值（到四位数）": "Place value (to 4 digits)",
+  "3472 里的 4 ＝ 400；比大小·排序·rounding": "The 4 in 3472 is worth 400; comparing, ordering, rounding",
+  "加减法": "Adding & subtracting",
+  "进位借位；带 0 的借位最易错（604−287）": "Carrying and borrowing; borrowing across a zero is the trickiest (604−287)",
+  "心算三招": "Three mental tricks",
+  "凑十 · 拆分 · 补差": "make ten · split the number · count up",
+  "逆运算": "Working backwards",
+  "□＋27＝63 → 63−27": "□ + 27 = 63 → 63 − 27",
+  "乘除法": "Multiplying & dividing",
+  "口诀 ×2 ×3 ×5 ×10；each→乘，shared equally→除": "Tables ×2 ×3 ×5 ×10; each → multiply, shared equally → divide",
+  "多步应用题": "Multi-step word problems",
+  "动笔前先说：第一步算什么，第二步算什么": "Before writing, say what step one is and what step two is",
+  "分数": "Fractions",
+  "½ ⅓ ¼ ⅛；必须等分；分母越大每份越小": "½ ⅓ ¼ ⅛; pieces must be equal; the bigger the bottom number, the smaller the piece",
+  "钱币": "Money",
+  "凑钱·找零（往上数法）；$1＝100c": "Making amounts and giving change (count up); $1 = 100c",
+  "规律": "Patterns",
+  "加减 · ×2 · ×2＋1": "add/subtract · double · double then add 1",
+  "单位换算": "Converting units",
+  "1m＝100cm · 1kg＝1000g · 1L＝1000mL": "1 m = 100 cm · 1 kg = 1000 g · 1 L = 1000 mL",
+  "先统一单位再计算": "Convert before you calculate",
+  "2L−750mL 要先换成 2000mL": "For 2 L − 750 mL, change 2 L to 2000 mL first",
+  "读刻度尺": "Reading a ruler",
+  "不从 0 开始量 → 结束刻度 − 开始刻度": "If it does not start at 0, subtract: end mark − start mark",
+  "时间": "Time",
+  "分针指3＝15分，指6＝30分，指9＝45分（quarter to 下一钟点）": "Minute hand on 3 = 15 past, 6 = half past, 9 = quarter to the next hour",
+  "时间段与日历": "Durations & calendars",
+  "跨小时先算到整点；每周＋7天": "Across the hour, go to the full hour first; a week is +7 days",
+  "2D 图形": "2D shapes",
+  "边数角数 · 对称轴 · flip/slide/turn": "sides and corners · lines of symmetry · flip/slide/turn",
+  "3D 立体": "3D objects",
+  "正方体 面6棱12顶点8；四棱锥 面5棱8顶点5": "Cube 6 faces, 12 edges, 8 corners; square pyramid 5, 8, 5",
+  "面积与周长": "Area & perimeter",
+  "面积＝数格子；周长＝绕一圈；会逆向求边长": "Area = count the squares; perimeter = all the way around; work backwards to find a side",
+  "位置与方向": "Position & direction",
+  "方位词 · 网格坐标 · 半圈转向": "position words · grid references · half and quarter turns",
+  "象形图": "Picture graphs",
+  "第一件事：看图例！一个符号可能代表 2 个或 5 个": "First thing: find the key! One symbol may stand for 2 or 5",
+  "条形图与计数表": "Column graphs & tally charts",
+  "读值 · 比较 · tally 正字计数": "read values · compare · tally marks",
+  "how many more": "how many more",
+  "＝ 两数相减，不是只读一个数": "= subtract one from the other, not just read one number",
+  "可能性五级": "Five chance words",
+  "impossible → unlikely → even chance → likely → certain": "impossible → unlikely → even chance → likely → certain",
+  "n out of m": "n out of m",
+  "4等份中1份蓝 → 1 out of 4": "1 blue part out of 4 equal parts → 1 out of 4"
+};
+
 const TEXT_FLOW = [
-  { q: "有人物和情节吗？", yes: ["Narrative 故事", "考：人物感受 · 事件顺序 · 故事主题"] },
-  { q: "有材料清单和编号步骤吗？", yes: ["Procedure 步骤文", "考：第几步做什么 · 某步骤为何重要"] },
-  { q: "分行分节、可能押韵吗？", yes: ["Poetry 诗歌", "考：押韵词 · 比喻 · 描写的画面"] },
-  { q: "作者有明确的观点吗？", yes: ["Persuasive 议论文", "考：观点是什么 · 用了什么理由 · 事实还是观点"] }
+  { q: "有人物和情节吗？", qe: "Are there characters and a plot?", yes: ["Narrative 故事", "考：人物感受 · 事件顺序 · 故事主题"], yesEn: ["Narrative", "Asks about: feelings · order of events · the theme"] },
+  { q: "有材料清单和编号步骤吗？", qe: "Is there a materials list and numbered steps?", yes: ["Procedure 步骤文", "考：第几步做什么 · 某步骤为何重要"], yesEn: ["Procedure", "Asks about: what happens at each step · why a step matters"] },
+  { q: "分行分节、可能押韵吗？", qe: "Is it in lines and stanzas, maybe rhyming?", yes: ["Poetry 诗歌", "考：押韵词 · 比喻 · 描写的画面"], yesEn: ["Poetry", "Asks about: rhyming words · imagery · the picture it paints"] },
+  { q: "作者有明确的观点吗？", qe: "Does the writer have a clear opinion?", yes: ["Persuasive 议论文", "考：观点是什么 · 用了什么理由 · 事实还是观点"], yesEn: ["Persuasive", "Asks about: the opinion · the reasons · fact vs opinion"] }
 ];
 
 const HOT_SPOTS = [
-  ["象形图不看图例", "数学 → 图表与数据"],
-  ["多步应用题只算一步", "数学 → 多步应用题"],
-  ["带 0 的借位减法（604−287）", "数学 → 加减法"],
-  ["its / it's 混淆、复数误加撇号", "语言规范 → 撇号"],
-  ["推断题只找字面意思", "阅读 → 推断"],
-  ["单位没统一就计算", "数学 → 长度质量容量"]
+  ["象形图不看图例", "数学 → 图表与数据", "Not checking the key on a picture graph", "Maths → Data & graphs"],
+  ["多步应用题只算一步", "数学 → 多步应用题", "Doing only one step of a two-step problem", "Maths → Multi-step problems"],
+  ["带 0 的借位减法（604−287）", "数学 → 加减法", "Borrowing across a zero (604−287)", "Maths → Adding & subtracting"],
+  ["its / it's 混淆、复数误加撇号", "语言规范 → 撇号", "Mixing up its / it's, or adding an apostrophe to a plural", "Language → Apostrophes"],
+  ["推断题只找字面意思", "阅读 → 推断", "Answering inference questions literally", "Reading → Inference"],
+  ["单位没统一就计算", "数学 → 长度质量容量", "Calculating before converting the units", "Maths → Length, mass & capacity"]
 ];
 
 function renderMap() {
   const flow = TEXT_FLOW.map((f, i) => `
-    <div class="flow-q">${i + 1}. ${esc(f.q)}</div>
-    <div class="flow-yes"><b>是 → ${esc(f.yes[0])}</b><span>${esc(f.yes[1])}</span></div>
-    ${i < TEXT_FLOW.length - 1 ? `<div class="flow-arrow">否 ↓ 继续问下一个</div>` : ""}`).join("");
+    <div class="flow-q">${i + 1}. ${T(esc(f.q), esc(f.qe))}</div>
+    <div class="flow-yes"><b>${Tp("是","Yes")} → ${T(esc(f.yes[0]), esc(f.yesEn[0]))}</b><span>${TB(esc(f.yes[1]), esc(f.yesEn[1]))}</span></div>
+    ${i < TEXT_FLOW.length - 1 ? `<div class="flow-arrow">${Tp("否 ↓ 继续问下一个","No ↓ ask the next one")}</div>` : ""}`).join("");
 
   view.innerHTML = `
-    <h2>知识框架<span class="en">Knowledge map</span></h2>
-    <p class="lede">四科知识点全貌。<strong style="color:var(--coral)">红色</strong>标出的是最容易失分的地方 —— 这些要重点练。学完一块，就在纸质资料《知识框架图.md》的打勾表上打一个勾。</p>
+    <h2>${T("知识框架","Knowledge Outline")}<span class="en">${ZH("知识大纲") || "Outline"}</span></h2>
+    <p class="lede">${TB("四科知识点全貌。<strong style=\"color:var(--coral)\">红色</strong>标出的是最容易失分的地方 —— 这些要重点练。学完一块，就在纸质资料《知识框架图.md》的打勾表上打一个勾。",
+      "Everything the four papers cover. The items in <strong style=\"color:var(--coral)\">red</strong> are where marks are most often lost — give those extra practice. Tick each block off in the paper workbook as you finish it.")}</p>
 
     ${MAPS.map(m => `
-      <p class="eyebrow">${esc(m.title)}</p>
+      <p class="eyebrow">${TX(m.title)}</p>
       <div class="tree" style="--acc:var(--${m.acc});--acc-soft:var(--${m.acc}-soft)">
-        <div class="tree-root">${esc(m.root)}<small>${esc(m.sub)}</small></div>
+        <div class="tree-root">${TX(m.root)}<small>${TX(m.sub)}</small></div>
         <div class="branches">
           ${m.branches.map(b => `
             <div class="branch">
-              <div class="branch-head">${esc(b.h)}${b.m ? `<em>${esc(b.m)}</em>` : ""}</div>
+              <div class="branch-head">${TX(b.h)}${b.m ? `<em>${TX(b.m)}</em>` : ""}</div>
               <ul class="leaves">
-                ${b.l.map(x => `<li class="${x[2] ? "hot" : ""}"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></li>`).join("")}
+                ${b.l.map(x => `<li class="${x[2] ? "hot" : ""}"><b>${TX(x[0])}</b><span>${TXB(x[1])}</span></li>`).join("")}
               </ul>
             </div>`).join("")}
         </div>
       </div>`).join("")}
 
-    <p class="eyebrow">阅读：一篇文章是什么文体？照这个顺序问</p>
+    <p class="eyebrow">${T("阅读：一篇文章是什么文体？照这个顺序问","Reading: which text type is this? Ask in this order")}</p>
     <div class="tree" style="--acc:var(--sky);--acc-soft:var(--sky-soft)">
       <div class="flow">${flow}</div>
-      <div class="flow-arrow" style="padding-left:0;margin-top:10px">四个都答「否」 ↓</div>
-      <div class="flow-yes"><b>Information Report 说明文</b><span>考：找具体事实 · 小标题作用 · 图表信息</span></div>
+      <div class="flow-arrow" style="padding-left:0;margin-top:10px">${Tp("四个都答「否」 ↓","No to all four ↓")}</div>
+      <div class="flow-yes"><b>${T("Information Report 说明文","Information Report")}</b><span>${TB("考：找具体事实 · 小标题作用 · 图表信息","Asks about: finding facts · what headings do · reading tables")}</span></div>
     </div>
 
-    <p class="eyebrow">高频失分点 TOP 6</p>
+    <p class="eyebrow">${T("高频失分点 TOP 6","Top 6 places marks are lost")}</p>
     <div class="panel scroll-x">
       <table>
-        <thead><tr><th class="num">#</th><th>失分点</th><th>去哪练</th></tr></thead>
+        <thead><tr><th class="num">#</th><th>${T("失分点","Where marks go")}</th><th>${T("去哪练","Practise here")}</th></tr></thead>
         <tbody>${HOT_SPOTS.map((h, i) =>
-          `<tr><td class="num">${i + 1}</td><td>${esc(h[0])}</td><td>${esc(h[1])}</td></tr>`).join("")}
+          `<tr><td class="num">${i + 1}</td><td>${T(esc(h[0]), esc(h[2]))}</td><td>${T(esc(h[1]), esc(h[3]))}</td></tr>`).join("")}
         </tbody>
       </table>
     </div>`;
