@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Chloe 的 NAPLAN Year 3 练习本</title>
 <style>
   :root {
@@ -9,6 +10,8 @@
     --sky-soft: #E3EDF3;
     --coral: #C2453D;
     --coral-soft: #FBE7E5;
+    --plum: #6B4E8F;
+    --plum-soft: #EDE7F4;
     --ink: #161C19;
     --slate: #5C6B64;
     --hairline: #DDE3DE;
@@ -37,6 +40,8 @@
       --sky-soft: #1B282F;
       --coral: #E8837B;
       --coral-soft: #33201E;
+      --plum: #B79BD6;
+      --plum-soft: #241E30;
       --ink: #E7EDE9;
       --slate: #9BAAA2;
       --hairline: #2C3833;
@@ -57,6 +62,8 @@
     --sky-soft: #1B282F;
     --coral: #E8837B;
     --coral-soft: #33201E;
+    --plum: #B79BD6;
+    --plum-soft: #241E30;
     --ink: #E7EDE9;
     --slate: #9BAAA2;
     --hairline: #2C3833;
@@ -76,6 +83,8 @@
     --sky-soft: #E3EDF3;
     --coral: #C2453D;
     --coral-soft: #FBE7E5;
+    --plum: #6B4E8F;
+    --plum-soft: #EDE7F4;
     --ink: #161C19;
     --slate: #5C6B64;
     --hairline: #DDE3DE;
@@ -358,6 +367,71 @@
   .flow-arrow { color: var(--slate); font-size: .8rem; padding-left: 6px; margin: 2px 0; }
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
+
+  /* ---------- 知识图谱 ---------- */
+  .g-bar {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    flex-wrap: wrap; margin-bottom: 12px;
+  }
+  .g-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fchip {
+    border: 1px solid var(--hairline); background: var(--card); color: var(--slate);
+    border-radius: 100px; padding: 6px 14px; font-size: .86rem; font-weight: 650; cursor: pointer;
+  }
+  .fchip:hover { color: var(--ink); }
+  .fchip.on { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .g-legend { display: flex; gap: 13px; flex-wrap: wrap; }
+  .lg { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--slate); }
+  .lg i { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+
+  .g-wrap {
+    background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    overflow-x: auto; overflow-y: hidden; padding: 6px;
+    /* 图谱比正文宽：在大屏上突破 940px 的正文宽度限制 */
+    width: min(1160px, calc(100vw - 36px));
+    margin-left: calc(min(0px, (904px - min(1160px, 100vw - 36px)) / 2));
+  }
+  .g-wrap svg { display: block; }
+  .gnode { cursor: pointer; transition: opacity .18s; }
+  .gnode:hover rect { stroke-width: 3; }
+  .gnode.off { opacity: .16; }
+  .gnode.sel rect { filter: drop-shadow(0 3px 8px rgba(0,0,0,.22)); }
+  .gnode text { pointer-events: none; font-family: var(--ui); }
+  .gnode:focus-visible rect { stroke-width: 3.5; }
+
+  .link-btn {
+    border: none; background: none; color: var(--sky); font-family: var(--ui);
+    font-size: .86rem; font-weight: 650; cursor: pointer; padding: 0 0 0 8px; text-decoration: underline;
+  }
+
+  .g-detail {
+    background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    padding: 18px 20px 20px; margin-bottom: 22px;
+  }
+  .empty-detail b { display: block; font-size: 1.02rem; margin-bottom: 6px; }
+  .empty-detail p { margin: 0; color: var(--slate); font-size: .93rem; line-height: 1.65; }
+  .gd-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .gd-cl {
+    font-size: .72rem; font-weight: 700; letter-spacing: .08em; color: var(--acc);
+    background: var(--acc-soft); border-radius: 5px; padding: 3px 8px;
+  }
+  .gd-name { font-size: 1.32rem; font-weight: 750; margin-top: 7px; }
+  .gd-tip { font-size: 1rem; line-height: 1.65; margin: 12px 0 18px; }
+  .gd-rel { margin-bottom: 14px; }
+  .gd-rel-h {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    font-size: .88rem; font-weight: 700; margin-bottom: 7px;
+  }
+  .gd-rel-h em { font-style: normal; font-weight: 500; color: var(--slate); font-size: .8rem; }
+  .dotk { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+  .gd-item {
+    display: block; width: 100%; text-align: left; background: var(--card-sunk);
+    border: 1px solid transparent; border-radius: var(--r-sm);
+    padding: 10px 13px; margin-bottom: 6px; cursor: pointer; font-family: var(--ui);
+  }
+  .gd-item:hover { border-color: var(--acc); background: var(--acc-soft); }
+  .gd-item b { display: block; font-size: .97rem; color: var(--ink); }
+  .gd-item span { display: block; color: var(--slate); font-size: .87rem; margin-top: 2px; line-height: 1.5; }
 
   /* ---------- 标签徽标 / 计时 ---------- */
   .badge {
@@ -1289,7 +1363,8 @@ function toast(badge) {
    视图
    ============================================================ */
 const TABS = [
-  { id: "map",         label: "知识框架" },
+  { id: "graph",       label: "知识图谱" },
+  { id: "map",         label: "知识大纲" },
   { id: "reading",     label: "阅读" },
   { id: "writing",     label: "写作" },
   { id: "conventions", label: "语言规范" },
@@ -1299,7 +1374,7 @@ const TABS = [
   { id: "coach",       label: "名师锦囊" },
   { id: "progress",    label: "我的进度" }
 ];
-let current = "map";
+let current = "graph";
 const view = document.getElementById("view");
 
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
@@ -2209,7 +2284,273 @@ function renderCoach() {
     `).join("")}`;
 }
 
-/* ---------- 知识框架图 ---------- */
+/* ============================================================
+   知识图谱：节点 = 概念，边 = 关系
+   ============================================================ */
+const CLUSTERS = {
+  r: { label: "阅读",     c: "sky",      ox: 34,  oy: 78 },
+  w: { label: "写作",     c: "plum",     ox: 610, oy: 78 },
+  c: { label: "语言规范", c: "eucalypt", ox: 34,  oy: 400 },
+  n: { label: "数学",     c: "wattle",   ox: 610, oy: 400 }
+};
+const COL_W = 174, ROW_H = 56;
+
+/* [id, 簇, 名称, 列, 行, 一句话说明, 可跳转的练习知识点] */
+const NODES = [
+  // ---- 阅读 ----
+  ["texttype", "r", "五种文体", 0, 0, "先认出文体，再看题 —— 不同文体的出题套路完全不同。"],
+  ["literal",  "r", "字面理解", 1, 0, "答案原封不动写在原文某一句里，回去找那句话。", ["reading", "字面理解"]],
+  ["infer",    "r", "推断", 2, 0, "文中只给线索，要加上常识。口头公式：文中说了__，我知道__，所以__。", ["reading", "推断"]],
+  ["features", "r", "文本特征", 0, 1, "小标题、加粗、图注是作者给的路标，先扫路标再读正文。", ["reading", "结构与写作手法"]],
+  ["vocab_r",  "r", "词义猜测", 1, 1, "把选项代回原句读一遍，看哪个通顺。", ["reading", "词义与比喻"]],
+  ["main",     "r", "主旨与意图", 2, 1, "选项要能盖住整篇。只盖住一段的是细节，不是主旨。", ["reading", "主旨与作者意图"]],
+  ["factop",   "r", "事实 vs 观点", 0, 2, "带 believe / think / best / should 的是观点，能查证的是事实。", ["reading", "结构与写作手法"]],
+  ["conn_r",   "r", "连接词的功能", 1, 2, "However 表转折，Firstly 表顺序 —— 认出连接词就知道文章要拐弯了。", ["reading", "结构与写作手法"]],
+  ["compare",  "r", "双文本比较", 2, 2, "两篇文章找相同点和不同点，考试后半段常出现。", ["reading", "主旨与作者意图"]],
+
+  // ---- 写作 ----
+  ["narr",     "w", "记叙文结构", 0, 0, "开头（谁·哪·何时）→ 问题 → 解决 + 感受。只讲一件事，写细。"],
+  ["pers",     "w", "议论文结构", 1, 0, "观点 → Firstly → Secondly → 反驳 → 重申。立场不许中途变。"],
+  ["rubric",   "w", "10 项评分标准", 2, 0, "结构·内容·词汇·连贯·分段·句式·标点·拼写 —— 家长照这张表改。"],
+  ["sizzle",   "w", "抓人开头", 0, 1, "用声音／对话／动作开头，绝不写 One day I went to..."],
+  ["devices",  "w", "说服技巧", 1, 1, "修辞提问·三词排比·强观点词·引用权威·反驳对立观点。"],
+  ["vocab_w",  "w", "升级词", 2, 1, "said→whispered，big→enormous。每篇目标 ≥3 个。"],
+  ["show",     "w", "Show not Tell", 0, 2, "不写 I was scared，写 My hands were shaking。"],
+  ["conn_w",   "w", "连接词", 1, 2, "First / Suddenly / However / Finally —— VCOP 里的 C。"],
+  ["para",     "w", "分段", 2, 2, "一段一个意思。不分段直接扣分。"],
+  ["punc_w",   "w", "标点（评分项）", 0, 3, "大写和句号是基本分，敢用感叹号引号是加分。"],
+  ["spell_w",  "w", "拼写（评分项）", 1, 3, "常见词必须全对，敢用难词额外加分。"],
+
+  // ---- 语言规范 ----
+  ["wordclass", "c", "词类", 0, 0, "名词·动词·形容词·副词·代词 —— 所有语法题的地基。", ["conventions", "词类"]],
+  ["tense",     "c", "动词时态", 1, 0, "Yesterday→过去，every day→现在，Tomorrow→will。", ["conventions", "动词时态"]],
+  ["agree",     "c", "主谓一致", 2, 0, "单数＋s，复数原形；There is / There are。", ["conventions", "主谓一致"]],
+  ["irreg",     "c", "不规则过去式", 0, 1, "went·saw·came·ate·made·flew·drew·caught·thought，20 个必背。", ["conventions", "动词时态"]],
+  ["indef",     "c", "不定代词当单数", 1, 1, "Each / Nobody / Everybody / Neither 看着像很多人，语法上当一个人。", ["conventions", "主谓一致"]],
+  ["conj",      "c", "连词", 2, 1, "and·but·or·because·so·when·if；两句不能只用逗号连。", ["conventions", "连词与句子"]],
+  ["sentence",  "c", "完整句", 0, 2, "必须有主语＋动词。Running to the shops. 不是句子。", ["conventions", "连词与句子"]],
+  ["caps",      "c", "大写字母", 1, 2, "句首·人名地名·月份星期·单独的 I·书名主要单词。", ["conventions", "大写字母"]],
+  ["quotes",    "c", "引号", 2, 2, "问号在引号内；说的话和 said 之间用逗号。", ["conventions", "标点与引号"]],
+  ["apos_c",    "c", "撇号 · 缩写", 0, 3, "don't · can't · won't（不规则）· haven't。撇号补在省略的字母处。", ["conventions", "撇号"]],
+  ["apos_p",    "c", "撇号 · 所有格", 1, 3, "单数 girl's ／ 复数 girls' ／ children's · men's。", ["conventions", "撇号"]],
+  ["plural",    "c", "复数加 s", 2, 3, "two dogs —— 复数永远不加撇号。这是最常错的一题。", ["conventions", "词类"]],
+  ["itsmix",    "c", "its 还是 it's", 0, 4, "its＝它的（无撇号）；it's＝it is。分不清就把句子念成 it is 试试。", ["conventions", "撇号"]],
+  ["homo",      "c", "同音词", 1, 4, "there/their/they're · to/too/two · hear/here · know/no · right/write。", ["conventions", "同音词"]],
+  ["spellrule", "c", "拼写五规则", 2, 4, "双写·去e·y变i·es复数·f变v。先判断词尾，比死记单词高效。", ["conventions", "拼写规则"]],
+  ["ough",      "c", "ough / augh 家族", 0, 5, "enough·through·thought·laughed·caught·straight —— 成组记。", ["conventions", "高频易错词"]],
+
+  // ---- 数学 ----
+  ["place",     "n", "位值", 0, 0, "3472 里的 4 值 400。所有加减乘除的地基。", ["numeracy", "位值与比大小"]],
+  ["addsub",    "n", "加减法", 1, 0, "进位借位；心算三招：凑十·拆分·补差。", ["numeracy", "加减法"]],
+  ["borrow",    "n", "带 0 的借位", 2, 0, "604−287 这类全套最易错。把 604 看成 60 个十加 4 个一。", ["numeracy", "加减法"]],
+  ["times",     "n", "乘法口诀", 0, 1, "×2 ×3 ×5 ×10 必须脱口而出，不熟会拖慢所有题。", ["numeracy", "乘除法"]],
+  ["divide",    "n", "除法", 1, 1, "平均分；除法是乘法的逆运算，想「几乘几等于它」。", ["numeracy", "乘除法"]],
+  ["fraction",  "n", "分数", 2, 1, "½ of 30 就是 30÷2。分母越大，每一份越小。", ["numeracy", "分数"]],
+  ["signal",    "n", "读题信号词", 0, 2, "altogether加 · left减 · each乘 · shared equally除。圈出来再算。", ["numeracy", "多步应用题"]],
+  ["multistep", "n", "多步应用题", 1, 2, "动笔前先说：第一步算__，第二步算__。说不出就是没读懂。", ["numeracy", "多步应用题"]],
+  ["money",     "n", "钱币找零", 2, 2, "找零用往上数：$3.20→$4 是 80c，$4→$5 是 $1。", ["numeracy", "钱币"]],
+  ["units",     "n", "单位换算", 0, 3, "1m=100cm · 1kg=1000g · 1L=1000mL。计算前先统一单位。", ["numeracy", "长度质量容量"]],
+  ["time",      "n", "时间", 1, 3, "分针指3=15分，指6=30分，指9=45分（quarter to 下一钟点）。", ["numeracy", "时间"]],
+  ["shapes",    "n", "图形 面棱顶点", 2, 3, "正方体 6·12·8；四棱锥 5·8·5。背成一串数字。", ["numeracy", "2D 与 3D 图形"]],
+  ["area",      "n", "面积", 0, 4, "数格子。长×宽。", ["numeracy", "面积与周长"]],
+  ["perim",     "n", "周长", 1, 4, "绕一圈的长度。(长+宽)×2。", ["numeracy", "面积与周长"]],
+  ["pictokey",  "n", "象形图图例", 2, 4, "看到象形图第一个动作：找图例，问「一个符号代表几个？」", ["numeracy", "图表与数据"]],
+  ["chance",    "n", "可能性", 0, 5, "impossible → unlikely → even chance → likely → certain。", ["numeracy", "可能性"]]
+];
+
+/* 边：[起点, 终点, 类型, 说明] 类型 pre=前置 same=跨科同源 mix=易混 use=用到 */
+const EDGES = [
+  // 前置链
+  ["literal", "infer", "pre", "先能找到原文的答案，才谈得上推断"],
+  ["infer", "main", "pre", "会推断了，才读得出整篇的主旨"],
+  ["texttype", "features", "pre", "认出文体，才知道该看哪些文本特征"],
+  ["wordclass", "tense", "pre", "先认识动词，才谈得上时态"],
+  ["wordclass", "agree", "pre", "先分清单复数名词，才能判断主谓一致"],
+  ["tense", "irreg", "pre", "规则时态会了，再攻 20 个不规则过去式"],
+  ["agree", "indef", "pre", "主谓一致熟了，再记 Each / Nobody 当单数"],
+  ["spellrule", "ough", "pre", "五条规则之外，ough 家族要单独成组记"],
+  ["place", "addsub", "pre", "懂位值才懂进位借位在借什么"],
+  ["addsub", "borrow", "pre", "普通借位会了，再练带 0 的"],
+  ["times", "divide", "pre", "口诀是除法的基础：想「几乘几等于它」"],
+  ["divide", "fraction", "pre", "½ of 30 本质就是 30÷2"],
+  ["addsub", "multistep", "pre", "两步题的第二步通常是加减"],
+  ["times", "multistep", "pre", "两步题的第一步常是乘法"],
+  ["narr", "sizzle", "pre", "抓人开头是记叙文结构的第一段"],
+  ["pers", "devices", "pre", "说服技巧服务于议论文结构"],
+
+  // 跨科同源 —— 同一个概念在不同科目出现
+  ["conn_r", "conn_w", "same", "阅读里认连接词，写作里就要会用连接词"],
+  ["conn_w", "conj", "same", "写作的 First/However 和语法题的 because/but 是同一类词"],
+  ["texttype", "narr", "same", "阅读读的 Narrative，就是写作要写的记叙文"],
+  ["texttype", "pers", "same", "阅读读的 Persuasive，就是写作要写的议论文"],
+  ["factop", "pers", "same", "阅读判断事实与观点，写议论文时就要用事实支撑观点"],
+  ["vocab_r", "vocab_w", "same", "阅读猜词义，写作用升级词 —— 词汇量是同一个储备"],
+  ["punc_w", "caps", "same", "写作评分的标点项，考的就是语言规范里的大写规则"],
+  ["punc_w", "quotes", "same", "写故事有对话，就要用引号"],
+  ["spell_w", "spellrule", "same", "写作拼写占 6 分，靠的就是语言规范的拼写规则"],
+  ["signal", "literal", "same", "数学圈信号词和阅读圈关键词，是同一个动作"],
+
+  // 易混 —— 放一起对照记
+  ["apos_p", "plural", "mix", "所有格加 's，复数只加 s。two dogs 不是 two dog's"],
+  ["apos_c", "itsmix", "mix", "it's 是缩写，its 是所有格 —— 唯一不加撇号的所有格"],
+  ["itsmix", "homo", "mix", "its/it's 属于同音词大家族，一起记"],
+  ["area", "perim", "mix", "面积是里面铺满，周长是绕一圈走一遍"],
+  ["borrow", "place", "mix", "借位错，多半是位值没想清楚"],
+
+  // 用到
+  ["irreg", "narr", "use", "写故事都用过去式 —— 不规则过去式背不熟，作文就会错"],
+  ["vocab_w", "narr", "use", "升级词直接决定作文的 Vocabulary 得分"],
+  ["conn_w", "pers", "use", "Firstly / Secondly 是议论文的骨架"],
+  ["addsub", "money", "use", "算找零就是减法"],
+  ["times", "money", "use", "算总价就是乘法"],
+  ["addsub", "time", "use", "算时间段就是加减法"],
+  ["times", "pictokey", "use", "象形图 4 个符号 × 每个代表 2 个 = 8"],
+  ["units", "area", "use", "量长度要先统一单位再算面积"],
+  ["show", "narr", "use", "用身体动作写情绪，是记叙文拿分的关键"],
+  ["sentence", "para", "use", "写不出完整句，分段也救不了"]
+];
+
+const EDGE_KIND = {
+  pre:  { n: "前置", d: "先会 A 才学得动 B", col: "var(--slate)",  dash: "" },
+  same: { n: "跨科同源", d: "不同科目里其实是同一个概念", col: "var(--wattle)", dash: "7 5" },
+  mix:  { n: "易混", d: "容易搞混，必须放一起对照记", col: "var(--coral)", dash: "2 5" },
+  use:  { n: "用到", d: "B 要用到 A", col: "var(--sky)", dash: "" }
+};
+
+const NODE_BY_ID = {};
+NODES.forEach(nd => {
+  const [id, cl, name, col, row, tip, kp] = nd;
+  const C = CLUSTERS[cl];
+  NODE_BY_ID[id] = { id, cl, name, tip, kp, x: C.ox + col * COL_W + 82, y: C.oy + row * ROW_H };
+});
+
+let graphSel = null, graphFilter = "all";
+
+function neighbours(id) {
+  return EDGES.filter(e => e[0] === id || e[1] === id)
+    .map(e => ({ other: e[0] === id ? e[1] : e[0], type: e[2], why: e[3], from: e[0] === id }));
+}
+
+function graphSvg() {
+  const W = 1132, H = 726;
+  const shown = EDGES.filter(e => graphFilter === "all" || e[2] === graphFilter);
+  const active = graphSel ? new Set([graphSel, ...neighbours(graphSel).map(n => n.other)]) : null;
+
+  const edges = shown.map(e => {
+    const a = NODE_BY_ID[e[0]], b = NODE_BY_ID[e[1]], k = EDGE_KIND[e[2]];
+    const on = !active || (active.has(e[0]) && active.has(e[1]));
+    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const far = Math.abs(a.x - b.x) > 260 || Math.abs(a.y - b.y) > 200;
+    const d = far
+      ? `M${a.x} ${a.y} Q ${mx + (b.y - a.y) * .14} ${my - (b.x - a.x) * .14} ${b.x} ${b.y}`
+      : `M${a.x} ${a.y} L${b.x} ${b.y}`;
+    return `<path d="${d}" fill="none" stroke="${k.col}" stroke-width="${on ? (e[2] === "same" ? 2.6 : 2) : 1.2}"
+      stroke-dasharray="${k.dash}" opacity="${on ? (active ? .95 : .5) : .07}"
+      ${e[2] === "pre" || e[2] === "use" ? 'marker-end="url(#ar-' + e[2] + ')"' : ""}></path>`;
+  }).join("");
+
+  const nodes = NODES.map(nd => {
+    const n = NODE_BY_ID[nd[0]], C = CLUSTERS[n.cl];
+    const on = !active || active.has(n.id);
+    const sel = graphSel === n.id;
+    const w = Math.max(76, n.name.replace(/[^\x00-\xff]/g, "aa").length * 7.4 + 22);
+    return `<g class="gnode ${on ? "" : "off"} ${sel ? "sel" : ""}" data-node="${n.id}" tabindex="0" role="button"
+        aria-label="${esc(n.name)}" transform="translate(${n.x} ${n.y})">
+      <rect x="${-w / 2}" y="-17" width="${w}" height="34" rx="17"
+        fill="var(--${C.c}-soft)" stroke="var(--${C.c})" stroke-width="${sel ? 3 : 1.5}"></rect>
+      <text y="5" text-anchor="middle" fill="var(--${C.c})" font-size="14.5" font-weight="650">${esc(n.name)}</text>
+    </g>`;
+  }).join("");
+
+  const labels = Object.entries(CLUSTERS).map(([k, C]) =>
+    `<text x="${C.ox + 10}" y="${C.oy - 34}" fill="var(--${C.c})" font-size="19" font-weight="750"
+      opacity=".85">${esc(C.label)}</text>`).join("");
+
+  const arrows = ["pre", "use"].map(t =>
+    `<marker id="ar-${t}" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="${EDGE_KIND[t].col}"></path></marker>`).join("");
+
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img"
+    aria-label="NAPLAN Year 3 知识图谱"><defs>${arrows}</defs>
+    ${labels}${edges}${nodes}</svg>`;
+}
+
+function graphDetail() {
+  if (!graphSel) {
+    return `<div class="g-detail empty-detail">
+      <b>点任意一个概念看它的关联</b>
+      <p>这张图的价值不在「有哪些知识点」，而在<strong>知识点之间的关系</strong>：
+      哪些要先学、哪些在不同科目里其实是同一个东西、哪些最容易搞混。
+      按关系记比按清单背牢得多。</p></div>`;
+  }
+  const n = NODE_BY_ID[graphSel];
+  const ns = neighbours(graphSel);
+  const byType = {};
+  ns.forEach(x => (byType[x.type] = byType[x.type] || []).push(x));
+  return `<div class="g-detail" style="--acc:var(--${CLUSTERS[n.cl].c});--acc-soft:var(--${CLUSTERS[n.cl].c}-soft)">
+    <div class="gd-head">
+      <div>
+        <span class="gd-cl">${esc(CLUSTERS[n.cl].label)}</span>
+        <div class="gd-name">${esc(n.name)}</div>
+      </div>
+      ${n.kp ? `<button class="btn" data-quiz="${n.kp[0]}" data-kp="${esc(n.kp[1])}">去练这个知识点 →</button>` : ""}
+    </div>
+    <p class="gd-tip">${esc(n.tip)}</p>
+    ${Object.entries(byType).map(([t, list]) => `
+      <div class="gd-rel">
+        <div class="gd-rel-h"><span class="dotk" style="background:${EDGE_KIND[t].col}"></span>
+          ${EDGE_KIND[t].n}<em>${EDGE_KIND[t].d}</em></div>
+        ${list.map(x => `<button class="gd-item" data-node="${x.other}">
+          <b>${t === "pre" && x.from ? "→ " : t === "pre" ? "← " : ""}${esc(NODE_BY_ID[x.other].name)}</b>
+          <span>${esc(x.why)}</span></button>`).join("")}
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderGraph() {
+  const kinds = [["all", "全部关系"], ["pre", "前置链"], ["same", "跨科同源"], ["mix", "易混对照"], ["use", "用到"]];
+  view.innerHTML = `
+    <h2>知识图谱<span class="en">Knowledge graph</span></h2>
+    <p class="lede">52 个概念、${EDGES.length} 条关系。<strong>点任意一个概念</strong>，图上只亮起和它有关系的部分，下面给出每条关系的解释。
+    按关系记忆，比按清单背诵牢得多。</p>
+
+    <div class="g-bar">
+      <div class="g-filters">
+        ${kinds.map(([k, l]) => `<button class="fchip ${graphFilter === k ? "on" : ""}" data-gfilter="${k}">${l}</button>`).join("")}
+      </div>
+      <div class="g-legend">
+        ${Object.entries(EDGE_KIND).map(([k, v]) =>
+          `<span class="lg"><i style="background:${v.col};${v.dash ? "opacity:.7" : ""}"></i>${v.n}</span>`).join("")}
+      </div>
+    </div>
+
+    <div class="g-wrap" id="gWrap">${graphSvg()}</div>
+    <p class="map-note">图较宽，手机上可左右拖动查看。${graphSel ? `<button class="link-btn" data-gclear="1">清除选中</button>` : ""}</p>
+
+    ${graphDetail()}
+
+    <p class="eyebrow">最值得记的 5 条跨科关系</p>
+    <div class="panel">
+      <ol class="m-steps">
+        <li><b>不规则过去式 → 写记叙文</b><span>故事全用过去式。went/saw/came 背不熟，作文里就会写成 goed/seed。这是语言规范和写作的同一块地基。</span></li>
+        <li><b>阅读的五种文体 = 写作的两种体裁</b><span>阅读课上拆解 Narrative 怎么写开头结尾，正是自己写故事时要用的结构。读和写是一件事。</span></li>
+        <li><b>连接词出现在三个科目</b><span>阅读考「However 表示什么」，写作要用 Firstly/Finally，语法考 because/but/or —— 同一批词，三处得分。</span></li>
+        <li><b>数学信号词 = 阅读圈关键词</b><span>altogether / each / left 和阅读题里的 NOT / MOST 一样，都是「先圈出来再答题」的同一个习惯。</span></li>
+        <li><b>写作的标点拼写分 = 语言规范题</b><span>写作 10 项里标点占 5 分、拼写占 6 分。练语言规范题，等于同时在给作文提分。</span></li>
+      </ol>
+    </div>`;
+
+  const wrap = document.getElementById("gWrap");
+  if (wrap) {
+    const svg = wrap.querySelector("svg");
+    if (graphSel && svg) {
+      const scale = (svg.getBoundingClientRect().width || 1132) / 1132;
+      wrap.scrollLeft = NODE_BY_ID[graphSel].x * scale - wrap.clientWidth / 2;
+    } else if (svg) wrap.scrollLeft = 0;
+  }
+}
+
+/* ---------- 知识框架图（大纲） ---------- */
 const MAPS = [
   { title: "四科总览", root: "NAPLAN Year 3", sub: "2027年3月 · Year 3", acc: "eucalypt", branches: [
     { h: "Reading 阅读", m: "45分钟 · 39题 · 在线", l: [
@@ -2415,7 +2756,8 @@ function renderMap() {
 function render() {
   renderTabs();
   updateRing();
-  if (current === "map") renderMap();
+  if (current === "graph") renderGraph();
+  else if (current === "map") renderMap();
   else if (current === "writing") renderWriting();
   else if (current === "train") renderTrain();
   else if (current === "wrong") renderWrong();
@@ -2442,7 +2784,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.id === "themeBtn") {
@@ -2505,6 +2847,15 @@ document.addEventListener("click", e => {
   }
   if (t.dataset.esubmit) { finishExam(); return; }
   if (t.dataset.quitexam) { finishExam(); return; }
+
+  /* 知识图谱 */
+  if (t.dataset.gfilter) { graphFilter = t.dataset.gfilter; renderGraph(); return; }
+  if (t.dataset.gclear) { graphSel = null; renderGraph(); return; }
+  if (t.dataset.node) {
+    graphSel = (graphSel === t.dataset.node) ? null : t.dataset.node;
+    renderGraph();
+    return;
+  }
 
   /* 错题本 */
   if (t.dataset.review) { current = "wrong"; renderTabs(); startReview(); return; }
