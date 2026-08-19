@@ -118,6 +118,7 @@
   .head-in {
     max-width: 940px; margin: 0 auto; padding: 14px 18px 0;
     display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
   }
   .brand h1 {
     margin: 0; font-size: 1.28rem; font-weight: 700; letter-spacing: -.01em;
@@ -387,7 +388,69 @@
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
 
-  /* ---------- 今天做什么 ---------- */
+  /* ---------- 我的形象 · 商店 ---------- */
+function renderShop() {
+  const L = look(), own = owned();
+  view.innerHTML = `
+    <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
+    <p class="lede">${TB("每做对一题、每完成一项任务都能赚金币，用金币给自己换发型、衣服、宠物和背景。金币只能靠练习赚，不能跳过。",
+      "Every correct answer and every finished task earns coins. Spend them on hair, outfits, pets and backgrounds. Coins can only be earned by practising — there is no shortcut.")}</p>
+
+    <div class="av-stage">
+      <div class="av-big">${avatarSvg(200)}</div>
+      <div class="av-side">
+        <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
+        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
+        <div class="av-rate">
+          <div>${T("答对一题", "Correct answer")}<b>+${COIN.correct}</b></div>
+          <div>${T("拓展题答对", "Challenge question")}<b>+${COIN.challenge}</b></div>
+          <div>${T("完成一项任务", "Finish a task")}<b>+${COIN.task}</b></div>
+          <div>${T("一组全对", "Perfect set")}<b>+${COIN.perfectSet}</b></div>
+          <div>${T("今天全部做完", "All tasks done today")}<b>+${COIN.allTasks}</b></div>
+          <div>${T("获得徽章", "Earn a badge")}<b>+${COIN.badge}</b></div>
+        </div>
+      </div>
+    </div>
+
+    ${Object.entries(SHOP).map(([cat, c]) => `
+      <p class="eyebrow">${T(c.zh, c.en)}</p>
+      <div class="shop-grid">
+        ${c.items.map(([id, zh, en, price]) => {
+          const has = own.includes(id), on = L[cat] === id, can = coins() >= price;
+          return `<button class="shop-item ${on ? "on" : ""} ${has ? "has" : can ? "" : "cant"}"
+              data-buy="${cat}:${id}:${price}">
+            <div class="si-prev">${previewSvg(cat, id)}</div>
+            <div class="si-n">${T(esc(zh), esc(en))}</div>
+            <div class="si-p">${on ? T("使用中", "Wearing") : has ? T("已拥有", "Owned") : `🪙 ${price}`}</div>
+          </button>`;
+        }).join("")}
+      </div>`).join("")}`;
+}
+
+/* 商店缩略图：临时套用该项后渲染小图 */
+function previewSvg(cat, id) {
+  const real = progress.look;
+  progress.look = Object.assign({}, look(), { [cat]: id });
+  const svg = avatarSvg(64);
+  progress.look = real;
+  return svg;
+}
+
+function buyOrWear(cat, id, price) {
+  const own = owned();
+  if (!own.includes(id)) {
+    if (!spendCoins(price)) {
+      const el = document.querySelector(`[data-buy="${cat}:${id}:${price}"]`);
+      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
+      return;
+    }
+    own.push(id);
+  }
+  look()[cat] = id;
+  save(); updateCoinUI(); renderShop();
+}
+
+/* ---------- 今天做什么 ---------- */
   .today-head {
     display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     margin-bottom: 22px;
@@ -706,6 +769,16 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+  @media (max-width: 620px) {
+    .ring { display: none; }
+    .head-right { gap: 8px; }
+    .lang-sw button { padding: 6px 9px; font-size: .74rem; }
+    .av-stage { padding: 16px; gap: 16px; }
+    .av-big svg { width: 132px; height: 132px; }
+    .av-side { min-width: 0; }
+    .av-rate { grid-template-columns: 1fr; }
+    .shop-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+  }
   @media (max-width: 560px) {
     .brand h1 { font-size: 1.12rem; }
     .kp-grid { grid-template-columns: 1fr; }
@@ -725,6 +798,10 @@
       <p id="brandSub">知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月</p>
     </div>
     <div class="head-right">
+      <button class="coin-box" id="coinBox" data-tab="shop" title="金币 / Coins">
+        <span id="headAvatar" class="head-av"></span>
+        <span class="c-ic">🪙</span><b id="coinN">0</b>
+      </button>
       <div class="ring" title="总体掌握度">
         <svg viewBox="0 0 44 44" width="52" height="52" aria-hidden="true">
           <circle cx="22" cy="22" r="18" fill="none" stroke="var(--card-sunk)" stroke-width="5"></circle>
@@ -795,6 +872,18 @@ const READING_TEXTS = {
     <p>My umbrella is a mushroom<br>that blooms when clouds turn grey,<br>a little roof that follows me<br>and keeps the rain away.</p>
     <p>The raindrops play their drum song —<br><em>tap-tap</em>, <em>tappity-tap</em> —<br>while I stay dry as toast beneath<br>my mushroom's friendly cap.</p>
     <p>But when the sun peeks out again<br>and paints the puddles gold,<br>I shake my sleeping mushroom dry<br>and fold away its fold.</p>` },
+
+  letters: { type: "Two letters", typeZh: "两封信", title: "The New Bell", html: `
+    <p class="sub">Letter 1 — from a student</p>
+    <p>Dear Mr Vale,</p>
+    <p>I know I am only in Year 3, but I want to say something about the new bell. It does not ring like the old one did. It screeches. Every morning it makes me jump, and Ellie in my class covers her ears until it stops.</p>
+    <p>I understand why we have a bell. I just do not understand why it has to sound like that.</p>
+    <p>Yours sincerely,<br>Nina Alvarez</p>
+    <p class="sub">Letter 2 — from the principal</p>
+    <p>Dear Nina,</p>
+    <p>Thank you for writing. The bell was installed in January, and I will be honest with you: it is the best change we have made all year. It rings at 8:55 each morning, and nobody has been late to class since.</p>
+    <p>I had not thought about how it sounds to somebody standing close to it. I will ask the office to look into that.</p>
+    <p>Kind regards,<br>Mr Vale</p>` },
 
   playtime: { type: "Persuasive", typeZh: "议论文", title: "Kids Need More Playtime!", html: `
     <p>Do you think lunchtime at school is long enough? I don't! I believe children should have more playtime at school, and here is why.</p>
@@ -964,6 +1053,61 @@ const BANK = {
         { q: "<em>___ turn is it to feed the fish?</em>", o: ["Whose", "Who's"], a: 0, e: "问「谁的轮次」→ Whose。Who's ＝ Who is。", s: "语言第3辑 Q37" },
         { q: "<em>She wanted to ___ her new dress to the party.</em>", o: ["where", "wear"], a: 1, e: "「穿」→ wear。where 问地点。", s: "语言第3辑 Q40" },
         { q: "<em>Please ___ down your name and address.</em>", o: ["right", "write"], a: 1, e: "「写」→ write（w 不发音）。right ＝ 对的／右边。", s: "模拟卷3 语言 Q39" }
+      ]}
+    ]
+  },
+
+
+  challenge: {
+    label: "拓展题", en: "Challenge", accent: "plum",
+    groups: [
+      { kp: "多步与逆向", en: "Multi-step & working backwards", tip: "三步题：先说出「第一步、第二步、第三步」再动笔。逆向题：把算式倒过来走。", qs: [
+        { q: "Pencils come in packs of 6. Mia buys 4 packs, then gives 5 pencils to her brother. How many does she have left?", o: ["19", "24", "29", "14"], a: 0, e: "三步：4×6＝24；24−5＝19。", s: "拓展 M1" },
+        { q: "□ × 3 + 5 = 26. What number goes in the box?", o: ["6", "7", "9", "21"], a: 1, e: "倒着走：26−5＝21；21÷3＝7。逆向题要从最后一步开始拆。", s: "拓展 M2" },
+        { q: "A book costs $8.60. Dad pays with a $20 note. His change is a $10 note, a $1 coin and two more coins. What are the two coins?", o: ["50c and 20c", "$1 and 20c", "20c and 20c", "50c and 10c"], a: 2, e: "$20−$8.60＝$11.40。$10＋$1 之后还剩 40c，只能是 20c＋20c。", s: "拓展 M3" },
+        { q: "Sam had some marbles. He gave away 12, then found 7. Now he has 25. How many did he start with?", o: ["30", "20", "44", "6"], a: 0, e: "倒着走：25−7＝18；18＋12＝30。", s: "拓展 M4" },
+        { q: "A rectangle has a perimeter of 26 cm. One side is 8 cm. How long is the side next to it?", o: ["5 cm", "9 cm", "13 cm", "18 cm"], a: 0, e: "两条 8 cm 共 16；26−16＝10；10÷2＝5 cm。", s: "拓展 M5" },
+        { q: "What is the next number? 1, 3, 7, 15, __", o: ["23", "31", "30", "22"], a: 1, e: "规律是「×2 再 ＋1」：15×2＋1＝31。", s: "拓展 M6" }
+      ]},
+      { kp: "更大的数与乘除", en: "Bigger numbers", tip: "两位数乘一位数：把它拆开算。23×4 ＝ 20×4 ＋ 3×4。", qs: [
+        { q: "23 × 4 = ?", o: ["82", "92", "86", "112"], a: 1, e: "拆开算：20×4＝80，3×4＝12，80＋12＝92。", s: "拓展 M7" },
+        { q: "What is ¼ of 48?", o: ["10", "12", "14", "16"], a: 1, e: "48÷4＝12。分数题的数变大，方法不变。", s: "拓展 M8" },
+        { q: "96 lollies are shared equally between 8 children. How many does each get?", o: ["11", "12", "13", "8"], a: 1, e: "96÷8＝12。想 8×12＝96。", s: "拓展 M9" },
+        { q: "Which is the same as 5 × 14?", o: ["5 × 10 + 5 × 4", "5 × 10 + 4", "5 + 14", "5 × 7 × 2 × 2"], a: 0, e: "把 14 拆成 10＋4：5×10＋5×4＝50＋20＝70。这叫分配律。", s: "拓展 M10" },
+        { q: "A number rounded to the nearest ten is 70. What is the SMALLEST it could be?", o: ["60", "65", "66", "71"], a: 1, e: "65 四舍五入到十位是 70；64 就变成 60 了。逆向 rounding。", s: "拓展 M11" },
+        { q: "3 boxes hold 12 books each. 2 boxes hold 9 books each. How many books altogether?", o: ["54", "42", "63", "36"], a: 0, e: "两组分别算再相加：3×12＝36；2×9＝18；36＋18＝54。", s: "拓展 M12" }
+      ]},
+      { kp: "测量与图形进阶", en: "Measurement & shape+", tip: "先统一单位，再计算。图形题要会从面积倒推边长。", qs: [
+        { q: "A jug holds 1.5 litres. How many 250 mL cups can you fill?", o: ["4", "5", "6", "7"], a: 2, e: "先换单位：1.5 L＝1500 mL；1500÷250＝6 杯。", s: "拓展 M13" },
+        { q: "A film starts at 7:50 pm and runs for 1 hour 40 minutes. When does it finish?", o: ["9:20 pm", "9:30 pm", "8:30 pm", "9:40 pm"], a: 1, e: "7:50＋1小时＝8:50；8:50＋40分 → 8:50→9:00 是 10 分，还剩 30 分 → 9:30 pm。", s: "拓展 M14" },
+        { q: "A square has an area of 36 squares. How long is each side?", o: ["4", "6", "9", "18"], a: 1, e: "正方形面积＝边×边；6×6＝36 → 边长 6。从面积倒推边长。", s: "拓展 M15" },
+        { q: "Three parcels weigh 450 g, 1.2 kg and 800 g. What is the total in kilograms?", o: ["2.45 kg", "1.45 kg", "2.05 kg", "3.45 kg"], a: 0, e: "统一成克：450＋1200＋800＝2450 g＝2.45 kg。", s: "拓展 M16" },
+        { q: "A shape has 6 faces, but they are NOT all squares. What could it be?", o: ["cube", "rectangular prism", "cylinder", "square pyramid"], a: 1, e: "长方体也有 6 个面，但面是长方形不是正方形。正方体的 6 面才全是正方形。", s: "拓展 M17" },
+        { q: "Swimming is every Tuesday and Friday. If the first lesson is Tuesday 2 March, what is the date of the 5th lesson?", o: ["12 March", "16 March", "13 March", "19 March"], a: 1, e: "2日(二)、5日(五)、9日(二)、12日(五)、16日(二) → 第5次是 16 March。一周两次要交替数。", s: "拓展 M18" }
+      ]},
+      { kp: "句子与时态进阶", en: "Sentences & tense+", tip: "长句子要先找主语和动词。时态在整段里都要保持一致。", qs: [
+        { q: "Which sentence is written correctly?", o: ["When the bell rang, we packed up and went outside.", "When the bell rang, we packed up and go outside.", "When the bell rings, we packed up and went outside.", "When the bell rang we packed up, and went outside."], a: 0, e: "全句过去时一致（rang / packed / went），且从句在前要加逗号。", s: "拓展 L1" },
+        { q: "Combine into ONE sentence: <em>The rain stopped. We went to the park. We took a ball.</em>", o: ["The rain stopped, we went to the park and we took a ball.", "When the rain stopped, we took a ball and went to the park.", "The rain stopped and we went to the park and we took a ball and played.", "The rain stopped. We went to the park with a ball."], a: 1, e: "B 用从句 When... 把三件事合成一句，最紧凑。A 是逗号粘连句，C 全靠 and 串，D 没合并。", s: "拓展 L2" },
+        { q: "<em>Yesterday she ___ her bike to school, but today she ___ the bus.</em>", o: ["rode / takes", "rides / took", "rode / took", "rides / takes"], a: 0, e: "Yesterday 用过去式 rode；today 用现在式 takes。同一句里两个时态可以不同 —— 看各自的时间词。", s: "拓展 L3" },
+        { q: "Which word is the subject of this sentence? <em>After lunch, the two excited puppies chased the ball.</em>", o: ["lunch", "puppies", "chased", "ball"], a: 1, e: "主语＝做动作的人或物。谁在 chased？puppies。After lunch 只是时间状语。", s: "拓展 L4" },
+        { q: "<em>Neither the teacher nor the students ___ ready.</em>", o: ["is", "are", "was", "am"], a: 1, e: "Neither A nor B 的动词跟最近的那个走 —— students 是复数 → are。", s: "拓展 L5" },
+        { q: "Which sentence uses a subordinate clause?", o: ["I like apples and oranges.", "Because it was raining, we stayed inside.", "The dog barked loudly.", "Run to the gate!"], a: 1, e: "Because it was raining 不能独立成句，是从句（subordinate clause）。", s: "拓展 L6" }
+      ]},
+      { kp: "标点与拼写进阶", en: "Punctuation & spelling+", tip: "撇号的难点在复数所有格；拼写的难点在多音节词的中间部分。", qs: [
+        { q: "Which is correct? (The bikes belong to several children.)", o: ["The childrens' bikes", "The children's bikes", "The childrens bikes", "The children bikes'"], a: 1, e: "children 本身已是复数，所有格只加 's → children's。不要因为「是复数」就把撇号放到 s 后面。", s: "拓展 L7" },
+        { q: "Which sentence is punctuated correctly?", o: ['"Are we there yet?" asked Ben, "I am tired."', '"Are we there yet?" asked Ben. "I am tired."', '"Are we there yet? asked Ben. I am tired."', '"Are we there yet," asked Ben? "I am tired."'], a: 1, e: "两句话是分开的，所以 asked Ben 后面用句号，不是逗号。分割引语才用逗号。", s: "拓展 L8" },
+        { q: "<em>She walked ___ the shop, then went ___ it to buy milk.</em>", o: ["passed / in", "past / into", "past / in to", "passed / into"], a: 1, e: "past＝经过（介词）；passed 是 pass 的过去式。into＝进入里面。", s: "拓展 L9" },
+        { q: "Which spelling is correct?", o: ["begining", "beginning", "begginning", "beginnning"], a: 1, e: "begin 重读在后一音节 → 双写 n 再加 ing → beginning。", s: "拓展 L10" },
+        { q: "Which spelling is correct?", o: ["quietly", "quietley", "quitely", "queitly"], a: 0, e: "quiet ＋ ly → quietly。注意 quiet（安静）和 quite（相当）是两个词。", s: "拓展 L11" },
+        { q: "<em>I have ___ apples ___ you.</em>", o: ["more / then", "more / than", "then / than", "than / then"], a: 1, e: "than 用于比较；then 表示「然后」。这一对比 there/their 更容易混。", s: "拓展 L12" }
+      ]},
+      { kp: "深度推断与比较", en: "Deeper inference", tip: "人物的语气和态度藏在用词里。比较题要同时抓住相同点和不同点。", qs: [
+        { t: "letters", q: "How does Nina feel about the new bell?", o: ["She likes it.", "She finds it annoying.", "She has not noticed it.", "She is frightened of it."], a: 1, e: "她说 \"screeches\"、\"makes me jump\" —— 用词带明显负面情绪。语气题看形容词和动词的选择。", s: "拓展 R1" },
+        { t: "letters", q: "What does Mr Vale think the bell is FOR?", o: ["Waking students up", "Making sure nobody is late", "Testing the speakers", "Celebrating the new term"], a: 1, e: "他写 \"nobody has been late since\" —— 说明他认为铃声的作用是防止迟到。", s: "拓展 R2" },
+        { t: "letters", q: "What do Nina and Mr Vale AGREE on?", o: ["The bell is too loud.", "The bell has changed how students behave.", "The bell should be switched off.", "The old bell was better."], a: 1, e: "比较题：两人都承认铃声改变了学生的行为 —— 只是一个觉得是好事，一个觉得是困扰。", s: "拓展 R3" },
+        { t: "letters", q: "Nina writes \"I know I am only in Year 3, but...\". She includes this to —", o: ["apologise for writing", "show she knows some people may not take her seriously, then argue anyway", "explain that she is too young to decide", "ask Mr Vale to write back"], a: 1, e: "这是一种说服手法：先承认自己可能被轻视，再照样提出论点，反而显得有底气。", s: "拓展 R4" },
+        { t: "letters", q: "Which sentence from Mr Vale's letter is an OPINION?", o: ["The bell was installed in January.", "Nobody has been late to class since.", "It is the best change we have made all year.", "It rings at 8:55 each morning."], a: 2, e: "\"the best change\" 无法查证 → 观点。其余三句都是可核实的事实。", s: "拓展 R5" },
+        { t: "letters", q: "If Nina wrote again, which suggestion would best fit her argument?", o: ["Remove the bell completely", "Make the bell quieter or softer in tone", "Ring the bell more often", "Move the bell to the office"], a: 1, e: "她的不满是「太刺耳」而不是「不该有铃」，所以「调轻柔」最贴合她的论点。推断题要顺着人物的真实立场走。", s: "拓展 R6" }
       ]}
     ]
   },
@@ -1480,7 +1624,43 @@ const EN_EXP = {
 "数学第2辑 Q34": "A dice only has 1 to 6, so rolling a 7 is impossible.",
 "数学第2辑 Q35": "1 blue part out of 4 equal parts → 1 out of 4.",
 "数学第3辑 Q34": "Only 2 blue — the fewest → least likely. Note it asks for LEAST likely.",
-"数学第3辑 Q36": '"Very unlikely" means a small chance, but not impossible. C is the common wrong pick.'
+"数学第3辑 Q36": '"Very unlikely" means a small chance, but not impossible. C is the common wrong pick.',
+"拓展 M1": "Three steps: 4 \u00d7 6 = 24, then 24 \u2212 5 = 19.",
+"拓展 M2": "Work backwards: 26 \u2212 5 = 21, then 21 \u00f7 3 = 7. Always unpick the last step first.",
+"拓展 M3": "$20 \u2212 $8.60 = $11.40. After the $10 note and the $1 coin, 40c is left \u2014 that can only be 20c + 20c.",
+"拓展 M4": "Work backwards: 25 \u2212 7 = 18, then 18 + 12 = 30.",
+"拓展 M5": "Two sides of 8 make 16; 26 \u2212 16 = 10; 10 \u00f7 2 = 5 cm.",
+"拓展 M6": "The rule is double then add 1: 15 \u00d7 2 + 1 = 31.",
+"拓展 M7": "Split it up: 20 \u00d7 4 = 80 and 3 \u00d7 4 = 12, so 80 + 12 = 92.",
+"拓展 M8": "48 \u00f7 4 = 12. Bigger numbers, same method.",
+"拓展 M9": "96 \u00f7 8 = 12. Think 8 \u00d7 12 = 96.",
+"拓展 M10": "Split 14 into 10 + 4: 5 \u00d7 10 + 5 \u00d7 4 = 50 + 20 = 70. This is the distributive law.",
+"拓展 M11": "65 rounds up to 70; 64 would round down to 60. So 65 is the smallest.",
+"拓展 M12": "Work out each group, then add: 3 \u00d7 12 = 36 and 2 \u00d7 9 = 18, so 36 + 18 = 54.",
+"拓展 M13": "Convert first: 1.5 L = 1500 mL; 1500 \u00f7 250 = 6 cups.",
+"拓展 M14": "7:50 + 1 hour = 8:50. Then 8:50 \u2192 9:00 is 10 minutes, leaving 30 more \u2192 9:30 pm.",
+"拓展 M15": "Area of a square = side \u00d7 side, and 6 \u00d7 6 = 36, so each side is 6.",
+"拓展 M16": "Put everything in grams: 450 + 1200 + 800 = 2450 g = 2.45 kg.",
+"拓展 M17": "A rectangular prism also has 6 faces, but they are rectangles. Only a cube has 6 square faces.",
+"拓展 M18": "2nd (Tue), 5th (Fri), 9th (Tue), 12th (Fri), 16th (Tue) \u2014 the 5th lesson is 16 March. Two days a week means alternating.",
+"拓展 L1": "The whole sentence stays in the past (rang / packed / went), and a clause at the front needs a comma after it.",
+"拓展 L2": "B uses a When... clause to fold all three events into one sentence. A is a comma splice, C just strings and together, D does not combine them.",
+"拓展 L3": "Yesterday takes the past tense rode; today takes the present takes. Two tenses in one sentence is fine \u2014 each follows its own time word.",
+"拓展 L4": "The subject is who or what does the action. Who chased? The puppies. After lunch is only a time phrase.",
+"拓展 L5": "With Neither A nor B, the verb agrees with whichever part is nearest \u2014 students is plural, so are.",
+"拓展 L6": "Because it was raining cannot stand alone as a sentence, so it is a subordinate clause.",
+"拓展 L7": "children is already plural, so the possessive just adds 's \u2192 children's. Do not move the apostrophe after the s just because it means several.",
+"拓展 L8": "They are two separate sentences, so asked Ben is followed by a full stop, not a comma. A comma is only for split speech.",
+"拓展 L9": "past = going by (a preposition); passed is the past tense of pass. into means going inside.",
+"拓展 L10": "begin is stressed on the second syllable, so the n doubles before ing \u2192 beginning.",
+"拓展 L11": "quiet + ly \u2192 quietly. Careful: quiet (silent) and quite (fairly) are different words.",
+"拓展 L12": "than is for comparing; then means next. This pair trips people up even more than there/their.",
+"拓展 R1": "She says it \"screeches\" and \"makes me jump\" \u2014 clearly negative word choices. For tone questions, look at the adjectives and verbs.",
+"拓展 R2": "He writes \"nobody has been late since\", so he sees the bell as a way of stopping lateness.",
+"拓展 R3": "A comparison question: both agree the bell has changed how students behave \u2014 one thinks that is good, the other finds it hard to bear.",
+"拓展 R4": "This is a persuasive move: admit that some people might dismiss you, then make the argument anyway. It actually sounds more confident.",
+"拓展 R5": "\"the best change\" cannot be checked, so it is an opinion. The other three are all verifiable facts.",
+"拓展 R6": "Her complaint is that it is harsh, not that a bell is wrong \u2014 so making it gentler fits her argument best. Inference must follow what the character actually wants."
 };
 
 /* 每组知识点的英文提示 */
@@ -1513,7 +1693,13 @@ const EN_TIP = {
   "2D 与 3D 图形": "Cube: 6 faces, 12 edges, 8 corners. Square pyramid: 5 faces, 8 edges, 5 corners.",
   "面积与周长": "Area = count the squares inside. Perimeter = the distance all the way around the outside.",
   "图表与数据": "With a picture graph, always find the key first: how many does one symbol stand for?",
-  "可能性": "impossible → unlikely → even chance → likely → certain."
+  "可能性": "impossible → unlikely → even chance → likely → certain.",
+  "多步与逆向": "Three-step problems: say step one, step two, step three before you write. Working backwards: run the number sentence in reverse.",
+  "更大的数与乘除": "For 2-digit × 1-digit, split it up: 23 × 4 = 20 × 4 + 3 × 4.",
+  "测量与图形进阶": "Convert to the same unit first. For shapes, be ready to work back from the area to a side.",
+  "句子与时态进阶": "In a long sentence, find the subject and the verb first. Keep the tense consistent across the whole thing.",
+  "标点与拼写进阶": "The hard part of apostrophes is plural possessives; the hard part of spelling is the middle of longer words.",
+  "深度推断与比较": "A character's attitude hides in their word choices. Comparison questions need both what is shared and what differs."
 };
 
 /* 知识图谱节点的英文 */
@@ -1694,6 +1880,155 @@ const COACH = {
 };
 
 /* ============================================================
+   金币与形象装饰
+   ============================================================ */
+const COIN = { correct: 2, perfectSet: 15, task: 10, allTasks: 25, dictAll: 20,
+               drill25: 25, cleared: 5, badge: 50, challenge: 3 };
+
+function coins() { return progress.coins || 0; }
+function addCoins(n, why) {
+  if (n <= 0) return;
+  progress.coins = coins() + n;
+  progress.earned = (progress.earned || 0) + n;
+  save(); updateCoinUI();
+  coinPop(n, why);
+}
+function spendCoins(n) {
+  if (coins() < n) return false;
+  progress.coins = coins() - n; save(); updateCoinUI(); return true;
+}
+function updateCoinUI() {
+  const el = document.getElementById("coinN");
+  if (el) el.textContent = coins();
+  const av = document.getElementById("headAvatar");
+  if (av) av.innerHTML = avatarSvg(28);
+}
+function coinPop(n, why) {
+  const host = document.getElementById("coinBox");
+  if (!host) return;
+  const e = document.createElement("span");
+  e.className = "coin-pop";
+  e.textContent = "+" + n;
+  e.title = why || "";
+  host.appendChild(e);
+  setTimeout(() => e.remove(), 1400);
+}
+
+/* ---- 装饰品目录：全部用内联 SVG 绘制，无外部资源 ---- */
+const SHOP = {
+  hair:  { zh: "发型", en: "Hair", items: [
+    ["h1", "短发", "Short", 0], ["h2", "双马尾", "Pigtails", 80], ["h3", "长发", "Long hair", 80],
+    ["h4", "丸子头", "Bun", 120], ["h5", "卷发", "Curly", 150] ] },
+  eyes:  { zh: "眼睛", en: "Eyes", items: [
+    ["e1", "圆眼", "Round", 0], ["e2", "笑眼", "Happy", 60], ["e3", "闪亮", "Sparkly", 120], ["e4", "认真", "Focused", 90] ] },
+  outfit:{ zh: "衣服", en: "Outfit", items: [
+    ["o1", "校服", "School uniform", 0], ["o2", "连衣裙", "Dress", 100], ["o3", "运动服", "Sports kit", 120],
+    ["o4", "太空服", "Space suit", 260], ["o5", "斗篷", "Cape", 220] ] },
+  hat:   { zh: "头饰", en: "Head", items: [
+    ["x0", "无", "None", 0], ["x1", "蝴蝶结", "Bow", 70], ["x2", "王冠", "Crown", 240],
+    ["x3", "太阳帽", "Sun hat", 130], ["x4", "耳机", "Headphones", 180], ["x5", "花环", "Flower crown", 200] ] },
+  pet:   { zh: "宠物", en: "Pet", items: [
+    ["p0", "无", "None", 0], ["p1", "小猫", "Cat", 160], ["p2", "小狗", "Dog", 160],
+    ["p3", "袋熊", "Wombat", 300], ["p4", "小鸟", "Bird", 140] ] },
+  bg:    { zh: "背景", en: "Background", items: [
+    ["b1", "薄荷", "Mint", 0], ["b2", "天空", "Sky", 60], ["b3", "日落", "Sunset", 90],
+    ["b4", "星空", "Night sky", 180], ["b5", "彩虹", "Rainbow", 220] ] }
+};
+const DEFAULT_LOOK = { hair: "h1", eyes: "e1", outfit: "o1", hat: "x0", pet: "p0", bg: "b1" };
+function look() {
+  progress.look = Object.assign({}, DEFAULT_LOOK, progress.look || {});
+  return progress.look;
+}
+function owned() {
+  if (!progress.owned) progress.owned = Object.values(SHOP)
+    .flatMap(c => c.items.filter(i => i[3] === 0).map(i => i[0]));
+  return progress.owned;
+}
+
+const BG_FILL = {
+  b1: ["#DCEFE4", "#BFE0CE"], b2: ["#D6E9F5", "#AFD3ED"], b3: ["#FBE0C8", "#F7BE93"],
+  b4: ["#2B3358", "#141A33"], b5: ["#F9D9E4", "#D8E4FA"]
+};
+function avatarSvg(size) {
+  const L = look(), bg = BG_FILL[L.bg] || BG_FILL.b1;
+  const dark = L.bg === "b4";
+  const hair = { h1: "#5A3B2E", h2: "#7A4A2F", h3: "#3E2A22", h4: "#8B5E3C", h5: "#4A2F26" }[L.hair] || "#5A3B2E";
+  const parts = [];
+  parts.push(`<defs><linearGradient id="bgg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient></defs>`);
+  parts.push(`<rect width="100" height="100" rx="18" fill="url(#bgg)"/>`);
+  if (L.bg === "b4") parts.push(`<g fill="#FFF" opacity=".85">
+    <circle cx="20" cy="18" r="1.4"/><circle cx="76" cy="14" r="1.1"/><circle cx="86" cy="34" r="1.5"/>
+    <circle cx="14" cy="42" r="1"/><circle cx="62" cy="9" r="1.2"/></g>`);
+  if (L.bg === "b5") parts.push(`<g fill="none" stroke-width="4" opacity=".55">
+    <path d="M4 96a46 46 0 0 1 92 0" stroke="#F6A6B2"/><path d="M12 96a38 38 0 0 1 76 0" stroke="#F8CE8E"/>
+    <path d="M20 96a30 30 0 0 1 60 0" stroke="#A8D8B0"/></g>`);
+
+  /* 长发／卷发在头后 */
+  if (L.hair === "h3") parts.push(`<path d="M24 44c0-16 8-24 26-24s26 8 26 24v30c0 4-6 5-9 2V46H33v30c-3 3-9 2-9-2z" fill="${hair}"/>`);
+  if (L.hair === "h5") parts.push(`<g fill="${hair}"><circle cx="26" cy="46" r="10"/><circle cx="74" cy="46" r="10"/><circle cx="30" cy="60" r="8"/><circle cx="70" cy="60" r="8"/></g>`);
+  if (L.hair === "h2") parts.push(`<g fill="${hair}"><circle cx="22" cy="50" r="9"/><circle cx="78" cy="50" r="9"/></g>`);
+
+  /* 身体 */
+  const body = { o1: "#3E6C93", o2: "#C4739B", o3: "#4C9E72", o4: "#8E93B8", o5: "#7A4FA3" }[L.outfit] || "#3E6C93";
+  parts.push(`<path d="M28 100V84c0-9 9-14 22-14s22 5 22 14v16z" fill="${body}"/>`);
+  if (L.outfit === "o1") parts.push(`<path d="M50 70l-6 8 6 6 6-6z" fill="#F2F4F1"/><rect x="47" y="84" width="6" height="16" fill="#C0392B" opacity=".8"/>`);
+  if (L.outfit === "o3") parts.push(`<path d="M36 88h28" stroke="#FFF" stroke-width="3" opacity=".7"/>`);
+  if (L.outfit === "o4") parts.push(`<circle cx="50" cy="86" r="6" fill="#CFE6F5" stroke="#6E7BA8" stroke-width="2"/>`);
+  if (L.outfit === "o5") parts.push(`<path d="M28 84c-6 4-8 10-8 16h60c0-6-2-12-8-16z" fill="#5B3A86"/>`);
+
+  /* 脸 */
+  parts.push(`<circle cx="50" cy="44" r="21" fill="#F3D3B6"/>`);
+  /* 刘海 */
+  if (L.hair === "h4") parts.push(`<circle cx="50" cy="18" r="8" fill="${hair}"/>`);
+  parts.push(`<path d="M29 42c0-14 9-22 21-22s21 8 21 22c0-6-8-9-21-9s-21 3-21 9z" fill="${hair}"/>`);
+
+  /* 眼睛 */
+  const eye = {
+    e1: `<circle cx="42" cy="45" r="3.2" fill="#2B2B2B"/><circle cx="58" cy="45" r="3.2" fill="#2B2B2B"/>`,
+    e2: `<path d="M38 46q4-5 8 0M54 46q4-5 8 0" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
+    e3: `<circle cx="42" cy="45" r="3.6" fill="#2B2B2B"/><circle cx="58" cy="45" r="3.6" fill="#2B2B2B"/>
+         <circle cx="43.4" cy="43.6" r="1.3" fill="#FFF"/><circle cx="59.4" cy="43.6" r="1.3" fill="#FFF"/>`,
+    e4: `<rect x="38.5" y="43.5" width="7" height="3.2" rx="1.6" fill="#2B2B2B"/><rect x="54.5" y="43.5" width="7" height="3.2" rx="1.6" fill="#2B2B2B"/>`
+  }[L.eyes] || "";
+  parts.push(eye);
+  parts.push(`<path d="M45 54q5 4 10 0" stroke="#B5705A" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+
+  /* 头饰 */
+  const hat = {
+    x1: `<g fill="#E0577E"><circle cx="34" cy="26" r="5"/><circle cx="44" cy="26" r="5"/><circle cx="39" cy="26" r="2.6" fill="#B23A5E"/></g>`,
+    x2: `<path d="M34 24l4 8h24l4-8-7 4-4-8-4 8-4-8-4 8z" fill="#EFC050" stroke="#C79B28" stroke-width="1.4"/>`,
+    x3: `<ellipse cx="50" cy="26" rx="28" ry="6" fill="#E8C79A"/><path d="M36 26a14 10 0 0 1 28 0z" fill="#D9B383"/>`,
+    x4: `<path d="M28 44V38a22 22 0 0 1 44 0v6" stroke="#3A4A5C" stroke-width="4" fill="none"/>
+         <rect x="22" y="40" width="9" height="14" rx="4" fill="#3A4A5C"/><rect x="69" y="40" width="9" height="14" rx="4" fill="#3A4A5C"/>`,
+    x5: `<g><circle cx="32" cy="27" r="4" fill="#F4A0B8"/><circle cx="42" cy="23" r="4" fill="#FBD46D"/>
+         <circle cx="52" cy="22" r="4" fill="#A8D8B0"/><circle cx="62" cy="24" r="4" fill="#F4A0B8"/><circle cx="70" cy="28" r="4" fill="#FBD46D"/></g>`
+  }[L.hat] || "";
+  parts.push(hat);
+
+  /* 宠物 */
+  const pet = {
+    p1: `<g transform="translate(74 74)"><ellipse cx="0" cy="6" rx="11" ry="9" fill="#8C8C8C"/>
+         <circle cx="0" cy="-4" r="8" fill="#9C9C9C"/><path d="M-7-9l-1-6 6 3zM7-9l1-6-6 3z" fill="#9C9C9C"/>
+         <circle cx="-3" cy="-5" r="1.4" fill="#222"/><circle cx="3" cy="-5" r="1.4" fill="#222"/></g>`,
+    p2: `<g transform="translate(74 74)"><ellipse cx="0" cy="6" rx="11" ry="9" fill="#C69C6D"/>
+         <circle cx="0" cy="-4" r="8" fill="#D6AC7D"/><ellipse cx="-8" cy="-4" rx="3" ry="6" fill="#A87F51"/>
+         <ellipse cx="8" cy="-4" rx="3" ry="6" fill="#A87F51"/><circle cx="-3" cy="-5" r="1.4" fill="#222"/>
+         <circle cx="3" cy="-5" r="1.4" fill="#222"/><ellipse cx="0" cy="-1" rx="2.4" ry="1.8" fill="#5A3B2E"/></g>`,
+    p3: `<g transform="translate(74 74)"><ellipse cx="0" cy="5" rx="13" ry="10" fill="#9B7B5E"/>
+         <circle cx="0" cy="-4" r="8" fill="#AB8B6E"/><circle cx="-7" cy="-9" r="3.4" fill="#8B6B4E"/>
+         <circle cx="7" cy="-9" r="3.4" fill="#8B6B4E"/><circle cx="-3" cy="-4" r="1.4" fill="#222"/>
+         <circle cx="3" cy="-4" r="1.4" fill="#222"/><ellipse cx="0" cy="0" rx="2.6" ry="2" fill="#5A3B2E"/></g>`,
+    p4: `<g transform="translate(76 72)"><ellipse cx="0" cy="2" rx="8" ry="9" fill="#F0B04A"/>
+         <circle cx="0" cy="-6" r="6" fill="#F5C168"/><path d="M5-6l6 2-6 2z" fill="#E07B39"/>
+         <circle cx="-2" cy="-7" r="1.3" fill="#222"/><path d="M-6 4q-6 2-8 8" stroke="#E07B39" stroke-width="3" fill="none" stroke-linecap="round"/></g>`
+  }[L.pet] || "";
+  parts.push(pet);
+
+  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="avatar">${parts.join("")}</svg>`;
+}
+
+/* ============================================================
    徽章与打卡（寓教于乐）
    ============================================================ */
 const BADGES = [
@@ -1713,6 +2048,7 @@ function earn(id) {
   if (!progress.badges) progress.badges = {};
   if (progress.badges[id]) return null;
   progress.badges[id] = Date.now(); save();
+  addCoins(COIN.badge, "badge");
   return BADGES.find(b => b.id === id);
 }
 
@@ -1727,6 +2063,17 @@ function touchStreak() {
   if (s.days >= 3) earn("streak3");
   if (s.days >= 7) earn("streak7");
   return s;
+}
+
+function checkAllDone() {
+  const pl = planState(), k = todayKey();
+  pl.bonus = pl.bonus || {};
+  if (pl.bonus[k]) return;
+  const done = doneToday();
+  if (todayTasks().every(t => done.includes(t.id))) {
+    pl.bonus[k] = 1; save();
+    addCoins(COIN.allTasks, "allTasks");
+  }
 }
 
 function checkMilestones() {
@@ -1779,6 +2126,7 @@ const TABS = [
   { id: "numeracy",    label: "数学",      en: "Maths" },
   { id: "train",       label: "专项训练",  en: "Drills" },
   { id: "wrong",       label: "错题本",    en: "My mistakes" },
+  { id: "shop",        label: "我的形象",  en: "Character" },
   { id: "coach",       label: "名师锦囊",  en: "Teaching tips" },
   { id: "progress",    label: "我的进度",  en: "Progress" }
 ];
@@ -1934,6 +2282,7 @@ function pick(n) {
   const ok = n === q.a;
   quiz.results[quiz.i] = ok;
   if (ok) markRight(quiz.subj, quiz.kp, quiz.i); else markWrong(quiz.subj, quiz.kp, quiz.i);
+  if (ok) addCoins(quiz.subj === "challenge" ? COIN.challenge : COIN.correct);
 
   document.querySelectorAll("#opts .opt").forEach((b, idx) => {
     b.disabled = true;
@@ -1968,6 +2317,9 @@ function finish() {
   const right = quiz.results.filter(Boolean).length;
   recordRun(quiz.subj, quiz.kp, right, total);
   markTask("kp:" + quiz.subj + ":" + quiz.kp);
+  addCoins(COIN.task, "task");
+  if (right === total) addCoins(COIN.perfectSet, "perfect");
+  checkAllDone();
   touchStreak();
   checkMilestones();
   renderTabs();
@@ -2306,6 +2658,9 @@ function nextDict() {
 function finishDict() {
   const total = dict.words.length, right = dict.results.filter(Boolean).length;
   touchStreak(); markTask("dict");
+  addCoins(COIN.task + right * COIN.correct, "dict");
+  if (right === total) addCoins(COIN.dictAll, "dictAll");
+  checkAllDone();
   if (right === total) toast(earn("speller"));
   const wrongs = dict.words.filter((_, n) => !dict.results[n]);
   view.innerHTML = `
@@ -2423,6 +2778,9 @@ function finishDrill() {
   progress.drill.best = best;
   progress.drill.runs = (progress.drill.runs || []).concat([{ right, at: Date.now() }]).slice(-20);
   save(); touchStreak(); markTask("drill");
+  addCoins(COIN.task + right, "drill");
+  if (right >= 25) addCoins(COIN.drill25, "drill25");
+  checkAllDone();
   if (right >= 25) toast(earn("times"));
 
   view.innerHTML = `
@@ -2517,7 +2875,8 @@ function finishExam() {
   const used = Math.max(0, (exam.total0 || 0) - Math.max(0, exam.left));
   const timedOut = exam.left <= 0;
   progress.tests = (progress.tests || []).concat([{ subj: exam.subj, right, total, at: Date.now() }]).slice(-20);
-  save(); touchStreak(); checkMilestones(); markTask("exam"); renderTabs();
+  save(); touchStreak(); checkMilestones(); markTask("exam");
+  addCoins(COIN.task + right * COIN.correct, "exam"); checkAllDone(); renderTabs();
 
   const rows = Object.entries(byKp).sort((a, b) => (a[1].r / a[1].t) - (b[1].r / b[1].t))
     .map(([kp, s]) => {
@@ -2605,7 +2964,7 @@ function reviewPick(n) {
     const before = progress.wrong[wrongKey(item.subj, item.kp, item.i)];
     const wasStreak = before ? before.streak || 0 : 0;
     markRight(item.subj, item.kp, item.i);
-    if (wasStreak + 1 >= 2) progress.cleared = (progress.cleared || 0) + 1;
+    if (wasStreak + 1 >= 2) { progress.cleared = (progress.cleared || 0) + 1; addCoins(COIN.cleared, "cleared"); }
     save();
   } else markWrong(item.subj, item.kp, item.i);
   renderTabs();
@@ -2635,6 +2994,7 @@ function reviewPick(n) {
 function reviewNext() {
   if (review.i === review.list.length - 1) {
     touchStreak(); checkMilestones(); markTask("review");
+    addCoins(COIN.task, "review"); checkAllDone();
     if ((progress.cleared || 0) >= 5) toast(earn("fixer"));
     review = null;
     return renderWrong();
@@ -2919,6 +3279,19 @@ function todayTasks() {
       go: { dict: lv } });
   }
 
+  /* 拓展题：已学过的知识点掌握得好时出现 */
+  const mastered = CURRICULUM.filter(([a, k]) => { const st = kpStat(a, k); return st.total && st.right / st.total >= .85; }).length;
+  if (mastered >= 3 && d % 2 === 0) {
+    const cg = BANK.challenge.groups.filter(g => kpStat("challenge", g.kp).total === 0)[0]
+            || BANK.challenge.groups.map(g => ({ g, st: kpStat("challenge", g.kp) }))
+                 .sort((a, b) => (a.st.right / a.st.total) - (b.st.right / b.st.total))[0].g;
+    t.push({ id: "kp:challenge:" + cg.kp, icon: "🚀", min: 8,
+      zh: "拓展题：" + cg.kp + "（6 题，金币 ×1.5）", en: "Challenge: " + cg.en + " (6 questions, 1.5× coins)",
+      zhWhy: "仍在 Year 3 范围内，但题型更难 —— 拿 Exceeding 靠的就是这些",
+      enWhy: "Still Year 3 content, but the harder question types — this is what Exceeding is built on",
+      go: { quiz: "challenge", kp: cg.kp } });
+  }
+
   if (d % 10 === 0) t.push({ id: "write", icon: "✏️", min: 40,
     zh: "整篇作文一次（严格 40 分钟）", en: "One full piece of writing (strict 40 minutes)",
     zhWhy: "写作是唯一的纸笔科目，要在真的作文纸上手写", enWhy: "Writing is the only pen-and-paper paper — do it on real lined paper",
@@ -3194,6 +3567,68 @@ function renderGraph() {
       wrap.scrollLeft = NODE_BY_ID[graphSel].x * scale - wrap.clientWidth / 2;
     } else if (svg) wrap.scrollLeft = 0;
   }
+}
+
+/* ---------- 我的形象 · 商店 ---------- */
+function renderShop() {
+  const L = look(), own = owned();
+  view.innerHTML = `
+    <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
+    <p class="lede">${TB("每做对一题、每完成一项任务都能赚金币，用金币给自己换发型、衣服、宠物和背景。金币只能靠练习赚，不能跳过。",
+      "Every correct answer and every finished task earns coins. Spend them on hair, outfits, pets and backgrounds. Coins can only be earned by practising — there is no shortcut.")}</p>
+
+    <div class="av-stage">
+      <div class="av-big">${avatarSvg(200)}</div>
+      <div class="av-side">
+        <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
+        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
+        <div class="av-rate">
+          <div>${T("答对一题", "Correct answer")}<b>+${COIN.correct}</b></div>
+          <div>${T("拓展题答对", "Challenge question")}<b>+${COIN.challenge}</b></div>
+          <div>${T("完成一项任务", "Finish a task")}<b>+${COIN.task}</b></div>
+          <div>${T("一组全对", "Perfect set")}<b>+${COIN.perfectSet}</b></div>
+          <div>${T("今天全部做完", "All tasks done today")}<b>+${COIN.allTasks}</b></div>
+          <div>${T("获得徽章", "Earn a badge")}<b>+${COIN.badge}</b></div>
+        </div>
+      </div>
+    </div>
+
+    ${Object.entries(SHOP).map(([cat, c]) => `
+      <p class="eyebrow">${T(c.zh, c.en)}</p>
+      <div class="shop-grid">
+        ${c.items.map(([id, zh, en, price]) => {
+          const has = own.includes(id), on = L[cat] === id, can = coins() >= price;
+          return `<button class="shop-item ${on ? "on" : ""} ${has ? "has" : can ? "" : "cant"}"
+              data-buy="${cat}:${id}:${price}">
+            <div class="si-prev">${previewSvg(cat, id)}</div>
+            <div class="si-n">${T(esc(zh), esc(en))}</div>
+            <div class="si-p">${on ? T("使用中", "Wearing") : has ? T("已拥有", "Owned") : `🪙 ${price}`}</div>
+          </button>`;
+        }).join("")}
+      </div>`).join("")}`;
+}
+
+/* 商店缩略图：临时套用该项后渲染小图 */
+function previewSvg(cat, id) {
+  const real = progress.look;
+  progress.look = Object.assign({}, look(), { [cat]: id });
+  const svg = avatarSvg(64);
+  progress.look = real;
+  return svg;
+}
+
+function buyOrWear(cat, id, price) {
+  const own = owned();
+  if (!own.includes(id)) {
+    if (!spendCoins(price)) {
+      const el = document.querySelector(`[data-buy="${cat}:${id}:${price}"]`);
+      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
+      return;
+    }
+    own.push(id);
+  }
+  look()[cat] = id;
+  save(); updateCoinUI(); renderShop();
 }
 
 /* ---------- 今天做什么 ---------- */
@@ -3691,6 +4126,7 @@ function render() {
   else if (current === "writing") renderWriting();
   else if (current === "train") renderTrain();
   else if (current === "wrong") renderWrong();
+  else if (current === "shop") renderShop();
   else if (current === "coach") renderCoach();
   else if (current === "progress") renderProgress();
   else renderSubject(current);
@@ -3714,7 +4150,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -3725,6 +4161,7 @@ document.addEventListener("click", e => {
     root.setAttribute("data-theme", isDark ? "light" : "dark");
     return;
   }
+  if (t.dataset.buy) { const [c, i, pr] = t.dataset.buy.split(":"); buyOrWear(c, i, +pr); return; }
   if (t.dataset.go) {
     const g = JSON.parse(t.dataset.go);
     leave();
@@ -3819,4 +4256,5 @@ document.addEventListener("change", e => {
 });
 
 render();
+updateCoinUI();
 </script>
