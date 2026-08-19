@@ -388,7 +388,8 @@
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
 
-  /* ---------- 我的形象 · 商店 ---------- */
+  
+
 function renderShop() {
   const L = look(), own = owned();
   view.innerHTML = `
@@ -402,13 +403,11 @@ function renderShop() {
         <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
         <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
         <div class="av-rate">
-          <div>${T("答对一题", "Correct answer")}<b>+${COIN.correct}</b></div>
-          <div>${T("拓展题答对", "Challenge question")}<b>+${COIN.challenge}</b></div>
-          <div>${T("完成一项任务", "Finish a task")}<b>+${COIN.task}</b></div>
-          <div>${T("一组全对", "Perfect set")}<b>+${COIN.perfectSet}</b></div>
-          <div>${T("今天全部做完", "All tasks done today")}<b>+${COIN.allTasks}</b></div>
-          <div>${T("获得徽章", "Earn a badge")}<b>+${COIN.badge}</b></div>
+          <div>${T("口诀答对一题", "Each tables answer")}<b>+${COIN.perAnswer}</b></div>
+          <div>${T("3 分钟答对 25 题以上", "25+ in 3 minutes")}<b>+${COIN.sprint25}</b></div>
         </div>
+        <p class="av-hint">${TB("金币只从<strong>乘法口诀抢答</strong>赚 —— 口诀是唯一靠反复练熟的东西，用金币推它正合适。别的学习不发金币，因为那些本身应该有意思。",
+          "Coins come only from the <strong>times tables sprint</strong>. Tables are the one thing that just needs drilling, so a reward fits there. Nothing else pays coins — the rest should be worth doing for its own sake.")}</p>
       </div>
     </div>
 
@@ -769,6 +768,86 @@ function buyOrWear(cat, id, price) {
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+  /* ---------- 奖励：故事 · 花园 · 回放 · 小老师 ---------- */
+  .story-meter { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    padding: 15px 18px; margin-bottom: 18px; }
+  .sm-k { font-size: .88rem; color: var(--slate); margin-bottom: 8px; }
+  .sm-k b { font-family: var(--data); font-size: 1.5rem; color: var(--eucalypt); }
+  .sm-s { font-size: .85rem; color: var(--slate); margin-top: 8px; }
+
+  .chap { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); margin-bottom: 9px; }
+  .chap summary { display: flex; align-items: center; gap: 12px; padding: 14px 17px; cursor: pointer;
+    font-weight: 700; font-size: 1.02rem; list-style: none; }
+  .chap summary::-webkit-details-marker { display: none; }
+  .ch-n { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--sky-soft); color: var(--sky); font-family: var(--data); font-size: .8rem; font-weight: 700; }
+  .chap[open] .ch-n { background: var(--sky); color: var(--card); }
+  .ch-body { padding: 0 20px 18px 57px; font-family: var(--read); font-size: 1.04rem; line-height: 1.75; }
+  .ch-body p { margin: 0 0 .8em; }
+
+  .garden-card { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    padding: 12px; margin-bottom: 18px; overflow-x: auto; }
+  .garden-card svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+
+  .replay { background: var(--card); border: 1px solid var(--hairline); border-left: 3px solid var(--eucalypt);
+    border-radius: var(--r-md); padding: 14px 17px; margin-bottom: 9px; }
+  .rp-h { font-size: .8rem; color: var(--eucalypt); font-weight: 700; display: flex; gap: 9px; flex-wrap: wrap; align-items: baseline; }
+  .rp-h em { font-style: normal; color: var(--slate); font-weight: 500; }
+  .rp-q { font-size: .98rem; margin: 7px 0 5px; line-height: 1.5; }
+  .rp-a { font-size: .93rem; color: var(--eucalypt); font-weight: 650; }
+
+  .teach { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+    background: var(--card); border: 1.5px solid var(--hairline); border-radius: var(--r-md);
+    padding: 14px 16px; margin-bottom: 9px; font-family: var(--ui); color: var(--ink); }
+  .teach:hover { border-color: var(--wattle); }
+  .teach.ok { background: var(--eucalypt-soft); border-color: var(--eucalypt); }
+  .tc-ic { flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--card-sunk); font-size: 1.15rem; }
+  .teach.ok .tc-ic { background: var(--eucalypt); color: var(--card); font-weight: 800; }
+  .tc-b { flex: 1; min-width: 0; }
+  .tc-b b { display: block; font-size: 1rem; }
+  .tc-b span { display: block; color: var(--slate); font-size: .85rem; margin-top: 2px; line-height: 1.45; }
+  .tc-s { flex-shrink: 0; font-size: .76rem; color: var(--slate); white-space: nowrap; }
+  .teach.ok .tc-s { color: var(--eucalypt); font-weight: 700; }
+
+  /* ---------- 大目标 ---------- */
+  .goal-card { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-lg);
+    padding: 20px 22px; margin-bottom: 22px; box-shadow: var(--shadow); }
+  .gc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+  .gc-k { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--slate); font-weight: 700; }
+  .gc-name { font-size: 1.4rem; font-weight: 750; margin-top: 3px; }
+  .gc-pct { font-family: var(--data); font-size: 2rem; font-weight: 700; color: var(--wattle); }
+  .goal-bar { position: relative; height: 12px; border-radius: 99px; background: var(--card-sunk); margin: 16px 0 10px; }
+  .goal-bar i { display: block; height: 100%; border-radius: 99px; background: var(--wattle); transition: width .4s; }
+  .gm { position: absolute; top: -3px; width: 3px; height: 18px; background: var(--hairline); transform: translateX(-50%); border-radius: 2px; }
+  .gm.hit { background: var(--eucalypt); }
+  .gc-sub { font-size: .86rem; color: var(--slate); }
+  .gm-list { margin-top: 16px; }
+  .gm-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--hairline); }
+  .gm-row:last-child { border-bottom: none; }
+  .gm-n { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--card-sunk); color: var(--slate); font-family: var(--data); font-size: .76rem; font-weight: 700; }
+  .gm-row.hit .gm-n { background: var(--eucalypt); color: var(--card); }
+  .gm-b { flex: 1; min-width: 0; }
+  .gm-b b { font-size: .95rem; }
+  .gm-b span { display: block; color: var(--slate); font-size: .85rem; }
+  .gm-s { flex-shrink: 0; font-size: .78rem; color: var(--slate); white-space: nowrap; }
+  .gm-row.hit .gm-s { color: var(--eucalypt); font-weight: 700; }
+
+  .fld { display: block; margin-bottom: 12px; }
+  .fld span { display: block; font-size: .82rem; color: var(--slate); font-weight: 650; margin-bottom: 5px; }
+  .fld input { width: 100%; padding: 10px 13px; font-family: var(--ui); font-size: .97rem;
+    border: 1.5px solid var(--hairline); border-radius: var(--r-sm); background: var(--card-sunk); color: var(--ink); }
+  .fld input:focus { border-color: var(--eucalypt); outline: none; background: var(--card); }
+  .fld-row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+  .av-hint { font-size: .82rem; color: var(--slate); margin: 12px 0 0; line-height: 1.55; }
+
+  @media (max-width: 620px) {
+    .ch-body { padding: 0 16px 16px 16px; }
+    .gc-name { font-size: 1.15rem; }
+    .tc-s, .gm-s { display: none; }
+  }
+
   @media (max-width: 620px) {
     .ring { display: none; }
     .head-right { gap: 8px; }
@@ -1882,8 +1961,8 @@ const COACH = {
 /* ============================================================
    金币与形象装饰
    ============================================================ */
-const COIN = { correct: 2, perfectSet: 15, task: 10, allTasks: 25, dictAll: 20,
-               drill25: 25, cleared: 5, badge: 50, challenge: 3 };
+/* 金币只从乘法口诀赚 —— 纯熟练度的枯燥练习，外部奖励用在这里最合适 */
+const COIN = { perAnswer: 3, sprint25: 40 };
 
 function coins() { return progress.coins || 0; }
 function addCoins(n, why) {
@@ -2048,7 +2127,6 @@ function earn(id) {
   if (!progress.badges) progress.badges = {};
   if (progress.badges[id]) return null;
   progress.badges[id] = Date.now(); save();
-  addCoins(COIN.badge, "badge");
   return BADGES.find(b => b.id === id);
 }
 
@@ -2072,7 +2150,9 @@ function checkAllDone() {
   const done = doneToday();
   if (todayTasks().every(t => done.includes(t.id))) {
     pl.bonus[k] = 1; save();
-    addCoins(COIN.allTasks, "allTasks");
+    const ch = unlockChapter();
+    if (ch) toast({ icon: "📖", n: "解锁第 " + ch + " 章", en: "Chapter " + ch + " unlocked",
+                    d: "去「我的收获」读", de: "Read it in My Rewards" });
   }
 }
 
@@ -2107,7 +2187,8 @@ function toast(badge) {
   const el = document.createElement("div");
   el.className = "toast";
   el.innerHTML = `<span class="t-icon">${badge.icon}</span><span><b>${
-    T("获得徽章：" + badge.n, "Badge earned: " + badge.en)}</b><small>${T(badge.d, badge.de)}</small></span>`;
+    Tp(badge.n.length > 8 ? badge.n : "获得徽章：" + badge.n, badge.en.length > 12 ? badge.en : "Badge earned: " + badge.en)
+    }</b><small>${Tp(badge.d, badge.de)}</small></span>`;
   document.body.appendChild(el);
   setTimeout(() => el.classList.add("in"), 20);
   setTimeout(() => { el.classList.remove("in"); setTimeout(() => el.remove(), 400); }, 3200);
@@ -2127,6 +2208,8 @@ const TABS = [
   { id: "train",       label: "专项训练",  en: "Drills" },
   { id: "wrong",       label: "错题本",    en: "My mistakes" },
   { id: "shop",        label: "我的形象",  en: "Character" },
+  { id: "rewards",     label: "我的收获",  en: "Rewards" },
+  { id: "goal",        label: "大目标",    en: "Big goal" },
   { id: "coach",       label: "名师锦囊",  en: "Teaching tips" },
   { id: "progress",    label: "我的进度",  en: "Progress" }
 ];
@@ -2282,7 +2365,7 @@ function pick(n) {
   const ok = n === q.a;
   quiz.results[quiz.i] = ok;
   if (ok) markRight(quiz.subj, quiz.kp, quiz.i); else markWrong(quiz.subj, quiz.kp, quiz.i);
-  if (ok) addCoins(quiz.subj === "challenge" ? COIN.challenge : COIN.correct);
+
 
   document.querySelectorAll("#opts .opt").forEach((b, idx) => {
     b.disabled = true;
@@ -2317,8 +2400,6 @@ function finish() {
   const right = quiz.results.filter(Boolean).length;
   recordRun(quiz.subj, quiz.kp, right, total);
   markTask("kp:" + quiz.subj + ":" + quiz.kp);
-  addCoins(COIN.task, "task");
-  if (right === total) addCoins(COIN.perfectSet, "perfect");
   checkAllDone();
   touchStreak();
   checkMilestones();
@@ -2658,8 +2739,6 @@ function nextDict() {
 function finishDict() {
   const total = dict.words.length, right = dict.results.filter(Boolean).length;
   touchStreak(); markTask("dict");
-  addCoins(COIN.task + right * COIN.correct, "dict");
-  if (right === total) addCoins(COIN.dictAll, "dictAll");
   checkAllDone();
   if (right === total) toast(earn("speller"));
   const wrongs = dict.words.filter((_, n) => !dict.results[n]);
@@ -2778,8 +2857,7 @@ function finishDrill() {
   progress.drill.best = best;
   progress.drill.runs = (progress.drill.runs || []).concat([{ right, at: Date.now() }]).slice(-20);
   save(); touchStreak(); markTask("drill");
-  addCoins(COIN.task + right, "drill");
-  if (right >= 25) addCoins(COIN.drill25, "drill25");
+  addCoins(right * 3 + (right >= 25 ? 40 : 0), "drill");
   checkAllDone();
   if (right >= 25) toast(earn("times"));
 
@@ -2876,7 +2954,7 @@ function finishExam() {
   const timedOut = exam.left <= 0;
   progress.tests = (progress.tests || []).concat([{ subj: exam.subj, right, total, at: Date.now() }]).slice(-20);
   save(); touchStreak(); checkMilestones(); markTask("exam");
-  addCoins(COIN.task + right * COIN.correct, "exam"); checkAllDone(); renderTabs();
+  checkAllDone(); renderTabs();
 
   const rows = Object.entries(byKp).sort((a, b) => (a[1].r / a[1].t) - (b[1].r / b[1].t))
     .map(([kp, s]) => {
@@ -2964,7 +3042,10 @@ function reviewPick(n) {
     const before = progress.wrong[wrongKey(item.subj, item.kp, item.i)];
     const wasStreak = before ? before.streak || 0 : 0;
     markRight(item.subj, item.kp, item.i);
-    if (wasStreak + 1 >= 2) { progress.cleared = (progress.cleared || 0) + 1; addCoins(COIN.cleared, "cleared"); }
+    if (wasStreak + 1 >= 2) {
+      progress.cleared = (progress.cleared || 0) + 1;
+      progress.beaten = (progress.beaten || []).concat([{ s: item.subj, k: item.kp, i: item.i, at: Date.now() }]).slice(-60);
+    }
     save();
   } else markWrong(item.subj, item.kp, item.i);
   renderTabs();
@@ -2994,7 +3075,7 @@ function reviewPick(n) {
 function reviewNext() {
   if (review.i === review.list.length - 1) {
     touchStreak(); checkMilestones(); markTask("review");
-    addCoins(COIN.task, "review"); checkAllDone();
+    checkAllDone();
     if ((progress.cleared || 0) >= 5) toast(earn("fixer"));
     review = null;
     return renderWrong();
@@ -3569,6 +3650,278 @@ function renderGraph() {
   }
 }
 
+
+/* ============================================================
+   故事连载：完成当天任务解锁一章（Year 3 阅读水平）
+   奖励本身就是阅读 —— 这是唯一和学习目标同向的奖励
+   ============================================================ */
+const STORY = [
+["The Key in the Gum Tree","Tilly was not looking for anything unusual. She was looking for her hat, which the wind had taken over the back fence and into the reserve.\nShe found the hat caught in the roots of an old gum tree. She also found something else: a small brass key, green with age, wedged deep in a split in the bark.\nThe key was warm. That was the first strange thing. It had been in the shade all morning, and it was warm."],
+["Nobody Else Can See It","At school on Monday, Tilly put the key on her desk and asked Priya what she thought it opened.\n\"What key?\" said Priya.\nTilly looked down. The key was right there, lying on her maths book.\n\"That one,\" she said.\nPriya laughed and went to line up. Tilly did not laugh. She put the key in her pocket and kept her hand around it all afternoon."],
+["The Door Under the Stairs","There was a cupboard under the stairs at Tilly's grandmother's house. It had no handle and no lock, and Tilly had walked past it a thousand times.\nOn Saturday she stood in front of it with the key in her fist and felt ridiculous.\nThen a keyhole appeared in the wood. It did not fade in slowly. It was simply there, as if it had always been there and she had never once looked."],
+["Grandmother Knew","Tilly did not turn the key. She went and found her grandmother in the kitchen and held out her hand.\nHer grandmother went very still.\n\"Where did you find that?\"\n\"In the gum tree in the reserve.\"\nHer grandmother sat down slowly. \"I put it there,\" she said, \"when I was nine years old. I hoped nobody would ever find it again.\""],
+["What Happened in 1961","\"There is a place behind that door,\" her grandmother said. \"I went there once. I was gone twenty minutes. When I came back, three days had passed and my mother had called the police.\"\nTilly stared. \"Three days?\"\n\"Time runs differently there. Faster, or slower — I never worked out which.\" She looked at the key. \"I was going to throw it in the river. I could not do it.\""],
+["The Rule","Her grandmother made Tilly promise one thing.\n\"You may open it. I am not going to pretend I could stop you, because I could not have been stopped either. But you take a clock.\"\n\"A clock?\"\n\"A clock. And you come back before the hands go all the way round once. Whatever you find in there, whatever is happening — you come back.\"\nTilly promised."],
+["Through","The door opened onto grass.\nNot a room. Grass, and a low grey sky, and a wind that smelled like rain that had not arrived yet. Behind her, the cupboard door stood open in the middle of a field with nothing holding it up.\nTilly checked the small clock in her pocket. Two minutes past eleven.\nShe walked."],
+["The Signpost","She came to a wooden signpost at a crossroads. It had four arms, and all four arms pointed the same way — back towards the door.\nSomebody had scratched words into the post with a nail. Tilly crouched to read them.\nTHE PATHS MOVE. THE POST DOES NOT. IF YOU ARE LOST, COME BACK HERE.\nUnderneath, much smaller, in careful old-fashioned handwriting: E.M. 1961.\nHer grandmother's initials."],
+["The Boy with the Bucket","There was a boy filling a bucket at a stream. He looked about Tilly's age. He looked up without surprise, as if children came out of doors in fields every day.\n\"You're new,\" he said. \"Don't drink the water past the third bend. How long have you got?\"\n\"An hour.\"\nHe nodded slowly, the way adults nod at bad news. \"Then we should hurry.\""],
+["Ansel","His name was Ansel. He said he had been there a long time and would not say how long.\n\"Are there others?\" Tilly asked.\n\"A few. We don't go near the ones by the water.\" He shouldered the bucket. \"There was a girl, years back. She came through and went home again. Everyone talks about her like she's a story.\"\nTilly said nothing at all. Her grandmother's initials were still in her head."],
+["The Third Bend","The stream bent three times before it reached the trees. Ansel stopped well short of the third bend and would not go closer.\n\"What happens?\" Tilly asked.\n\"Nothing happens. That's the trouble.\" He picked up a stone and threw it. It went into the water past the bend and made no sound at all. No splash. Nothing.\nTilly watched the surface stay perfectly flat, and stepped back."],
+["Twenty-Two Minutes","Tilly checked her clock. Twenty-two minutes past eleven.\nShe had walked to the signpost, and to the stream, and along the bank. She had talked to Ansel for what felt like an hour, easily.\nTwenty minutes.\n\"Does the clock work here?\" she asked.\nAnsel looked at it for a long moment. \"That is exactly the question,\" he said, \"that the girl asked.\""],
+["The Wall of Doors","Ansel took her up the hill. On the other side, laid flat in the grass like fallen fence panels, were doors. Dozens of them. Blue doors, glass doors, a door with a cat flap, a door painted with faded yellow flowers.\n\"Every one of these opened once,\" Ansel said. \"Somebody came through. Somebody didn't go back.\"\nTilly counted forty-one doors before she made herself stop counting."],
+["Which One Is Mine","A cold thought arrived. Tilly turned around and looked down the hill.\nShe could not see her own door. Grass, the stream, the signpost — no door.\n\"It moves?\" Her voice came out higher than she wanted.\n\"The paths move,\" Ansel said. \"The post doesn't.\" He was already walking. \"That's why she carved it.\""],
+["Running","They ran. Tilly's clock said thirty-eight minutes and she did not believe it, and she ran anyway.\nAt the signpost she turned in a full circle, and there it was — her grandmother's cupboard door, standing open in the grass about two hundred metres off, exactly where the four arms pointed.\nShe stopped. Ansel had stopped too, further back.\n\"You're not coming,\" she said."],
+["What Ansel Said","\"I've tried,\" said Ansel. \"Eleven times. It isn't my door.\" He said it without any drama at all, which somehow made it worse. \"Yours is warm. Put your hand on it and you'll feel it.\"\nTilly thought about a small brass key, warm in the shade of a gum tree.\n\"Then I'll find yours,\" she said.\nAnsel smiled at her the way you smile at somebody being kind about something impossible."],
+["Back","She came through onto the hallway carpet and the smell of her grandmother's kitchen, and she sat down hard.\nHer clock said fifty-one minutes.\nThe clock on the kitchen wall said four hours had gone.\nHer grandmother was standing in the doorway with a tea towel in her hands, and she had clearly been standing there for some time."],
+["Two Questions","Her grandmother asked two questions.\n\"Did you go past the third bend?\"\n\"No.\"\n\"Did you meet anybody?\"\nTilly thought about lying, and did not.\n\"A boy. Ansel. He said there was a girl who came through and went home, and everyone talks about her like a story.\"\nHer grandmother put the tea towel down very carefully, as if it might break."],
+["The Thing She Never Told Anyone","\"His name was Ansel then too,\" her grandmother said. \"He walked me to my door and he did not come with me.\"\nTilly did the sum in her head and could not make it work. \"But that was sixty years ago. He's my age.\"\n\"Yes.\"\n\"Grandma. He's been there sixty years?\"\n\"For him,\" her grandmother said, \"it may have been Tuesday.\""],
+["What Tilly Decided","That night Tilly lay in bed with the key on her chest, going up and down.\nForty-one doors on the hill. One of them warm to somebody.\nShe thought about how her grandmother had carved that message into the signpost when she was nine — not for herself, because she was going home. For whoever came next.\nTilly got up, found a pencil, and started a list of everything she would need.\nShe was going back."]
+];
+
+function chaptersUnlocked() { return Math.min(STORY.length, (progress.chapters || 0)); }
+function unlockChapter() {
+  if ((progress.chapters || 0) >= STORY.length) return null;
+  progress.chapters = (progress.chapters || 0) + 1;
+  save();
+  return progress.chapters;
+}
+
+
+/* ============================================================
+   会长大的花园：练习让它生长，不能花掉，只会累积
+   ============================================================ */
+function gardenLevel() {
+  const days = activeDays(), mastered = CURRICULUM.filter(([a, k]) => {
+    const st = kpStat(a, k); return st.total && st.right / st.total >= .85; }).length;
+  return days + mastered * 2;
+}
+function gardenSvg(size) {
+  const L = gardenLevel(), P = [];
+  P.push(`<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#CDE7F5"/><stop offset="1" stop-color="#EAF6EE"/></linearGradient></defs>`);
+  P.push(`<rect width="300" height="170" rx="16" fill="url(#sky)"/>`);
+  P.push(`<circle cx="252" cy="34" r="16" fill="#F6C860"/>`);
+  P.push(`<path d="M0 130q40-12 80 0t80 0 80 0 60 0v40H0z" fill="#8FCB9B"/>`);
+  P.push(`<path d="M0 148q60-8 120 0t180 0v22H0z" fill="#6FB981"/>`);
+  const sprout = (x, h, c) => `<path d="M${x} 150v-${h}" stroke="#4E8C5F" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="${x}" cy="${150 - h}" r="${Math.min(11, 4 + h / 6)}" fill="${c}"/>`;
+  const tree = (x, sc) => `<g transform="translate(${x} 150) scale(${sc})">
+    <rect x="-5" y="-42" width="10" height="42" rx="4" fill="#8A6242"/>
+    <circle cx="0" cy="-52" r="24" fill="#5FA36F"/><circle cx="-16" cy="-42" r="16" fill="#6FB981"/>
+    <circle cx="16" cy="-42" r="16" fill="#6FB981"/></g>`;
+  if (L >= 1) P.push(sprout(46, 14, "#8FCB9B"));
+  if (L >= 3) P.push(sprout(74, 22, "#F4A0B8"));
+  if (L >= 6) P.push(sprout(104, 30, "#FBD46D"));
+  if (L >= 10) P.push(tree(150, .8));
+  if (L >= 15) P.push(sprout(196, 26, "#A8C8F0"));
+  if (L >= 20) P.push(tree(232, 1));
+  if (L >= 26) P.push(`<g><ellipse cx="86" cy="140" rx="12" ry="9" fill="#D9B383"/>
+    <circle cx="86" cy="130" r="8" fill="#E8C79A"/><circle cx="80" cy="127" r="3" fill="#C09A6B"/>
+    <circle cx="92" cy="127" r="3" fill="#C09A6B"/><circle cx="83" cy="130" r="1.2" fill="#333"/>
+    <circle cx="89" cy="130" r="1.2" fill="#333"/></g>`);
+  if (L >= 34) P.push(`<g fill="#F0B04A"><ellipse cx="262" cy="112" rx="7" ry="8"/><circle cx="262" cy="104" r="5.5"/>
+    <path d="M266 104l6 2-6 2z" fill="#E07B39"/><circle cx="260" cy="103" r="1.2" fill="#222"/></g>`);
+  if (L >= 44) P.push(`<g opacity=".9"><path d="M120 60q10-10 20 0t20 0" stroke="#FFF" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M40 44q8-8 16 0t16 0" stroke="#FFF" stroke-width="5" fill="none" stroke-linecap="round"/></g>`);
+  return `<svg viewBox="0 0 300 170" width="${size}" height="${Math.round(size * 170 / 300)}" role="img" aria-label="garden">${P.join("")}</svg>`;
+}
+const GARDEN_STEPS = [[1,"第一株嫩芽","Your first sprout"],[3,"粉色小花","A pink flower"],[6,"黄色小花","A yellow flower"],
+  [10,"一棵小树","A small tree"],[15,"蓝色小花","A blue flower"],[20,"第二棵树","A second tree"],
+  [26,"袋熊来了","A wombat moves in"],[34,"小鸟来了","A bird arrives"],[44,"云朵飘来","Clouds drift in"]];
+
+/* ============================================================
+   进步回放：把以前做错、现在做对的题拿出来给她看
+   ============================================================ */
+function beatenList() {
+  return (progress.beaten || []).map(b => {
+    const g = BANK[b.s] && BANK[b.s].groups.find(x => x.kp === b.k);
+    if (!g || !g.qs[b.i]) return null;
+    return { ...b, q: g.qs[b.i], gEn: g.en };
+  }).filter(Boolean).reverse();
+}
+function daysAgo(ts) { return Math.max(1, Math.round((Date.now() - ts) / 864e5)); }
+
+/* ============================================================
+   她当小老师：讲给家长听
+   ============================================================ */
+function teachCards() {
+  return CURRICULUM.map(([sub, kp]) => {
+    const st = kpStat(sub, kp);
+    if (!st.total || st.right / st.total < .85) return null;
+    const g = BANK[sub].groups.find(x => x.kp === kp);
+    return { sub, kp, en: g.en, tip: g.tip, tipEn: EN_TIP[kp] || "",
+             taught: (progress.taught || {})[sub + "::" + kp] };
+  }).filter(Boolean);
+}
+function markTaught(sub, kp) {
+  progress.taught = progress.taught || {};
+  const k = sub + "::" + kp;
+  if (progress.taught[k]) delete progress.taught[k]; else progress.taught[k] = Date.now();
+  save(); renderRewards();
+}
+
+/* ---------- 奖励页：故事 · 花园 · 进步回放 · 小老师 ---------- */
+let rewardTab = "story";
+function renderRewards() {
+  const tabs = [["story", "故事", "Story"], ["garden", "花园", "Garden"],
+                ["replay", "进步回放", "Look how far"], ["teach", "小老师", "Teach me"]];
+  const inner = { story: rewardStory, garden: rewardGarden, replay: rewardReplay, teach: rewardTeach }[rewardTab]();
+  view.innerHTML = `
+    <h2>${T("我的收获", "My Rewards")}<span class="en">${Tp("练习换来的东西", "What practice earns you")}</span></h2>
+    <div class="g-filters" style="margin-bottom:18px">
+      ${tabs.map(([id, zh, en]) => `<button class="fchip ${rewardTab === id ? "on" : ""}" data-rtab="${id}">${lang === "zh" ? zh : en}</button>`).join("")}
+    </div>
+    ${inner}`;
+}
+
+function rewardStory() {
+  const n = chaptersUnlocked();
+  return `<p class="lede">${TB("20 章连载，每完成一天的任务解锁下一章。奖励本身就是阅读 —— 这是整套备考里回报最高的一件事。",
+      "A twenty-chapter serial: finish a day's tasks and the next chapter unlocks. The reward here is reading itself, which is the highest-value thing in this whole preparation.")}</p>
+    <div class="story-meter">
+      <div class="sm-k">${T("已解锁", "Unlocked")} <b>${n}</b> / ${STORY.length}</div>
+      <div class="bar"><i style="width:${Math.round(n / STORY.length * 100)}%"></i></div>
+      <div class="sm-s">${n < STORY.length
+        ? T("完成今天的任务解锁第 " + (n + 1) + " 章", "Finish today's tasks to unlock Chapter " + (n + 1))
+        : "🎉 " + T("整个故事都读完了", "You have the whole story")}</div>
+    </div>
+    ${n === 0 ? `<div class="panel"><p class="sub" style="margin:0">${T("还没有解锁任何章节。去「今天」把任务做完。", "No chapters yet — head to Today and work through the list.")}</p></div>` : ""}
+    ${STORY.slice(0, n).map((c, i) => `
+      <details class="chap" ${i === n - 1 ? "open" : ""}>
+        <summary><span class="ch-n">${i + 1}</span><span class="ch-t">${esc(c[0])}</span></summary>
+        <div class="ch-body">${c[1].split("\n").map(x => `<p>${esc(x)}</p>`).join("")}</div>
+      </details>`).reverse().join("")}`;
+}
+
+function rewardGarden() {
+  const L = gardenLevel();
+  const next = GARDEN_STEPS.find(x => x[0] > L);
+  return `<p class="lede">${TB("每一天的练习都让花园长大一点。它<strong>不能被花掉</strong>，只会累积 —— 漏一天也不会清零，只是那天没长。",
+      "Every day of practice grows the garden a little. It <strong>cannot be spent</strong> — it only adds up. Miss a day and nothing is lost; it just does not grow that day.")}</p>
+    <div class="garden-card">${gardenSvg(560)}</div>
+    <div class="story-meter">
+      <div class="sm-k">${T("成长值", "Growth")} <b>${L}</b></div>
+      <div class="sm-s">${next
+        ? Tp("再有 " + (next[0] - L) + " 点就会出现：" + next[1], (next[0] - L) + " more to go: " + next[2])
+        : T("花园已经长满了 🌳", "Your garden is full 🌳")}</div>
+    </div>
+    <p class="eyebrow">${T("成长值怎么来", "Where growth comes from")}</p>
+    <div class="panel"><p class="sub" style="margin:0">${TB("每练习一天 +1，每掌握一个知识点 +2。都是累积的，不会减少。",
+      "Each day you practise adds 1. Each topic you master adds 2. It only ever goes up.")}</p></div>
+    <p class="eyebrow">${T("接下来会长出什么", "What comes next")}</p>
+    <div class="panel">
+      ${GARDEN_STEPS.map(x => `<div class="gm-row ${L >= x[0] ? "hit" : ""}">
+        <span class="gm-n">${L >= x[0] ? "✓" : x[0]}</span>
+        <span class="gm-b"><b>${T(esc(x[1]), esc(x[2]))}</b></span>
+      </div>`).join("")}
+    </div>`;
+}
+
+function rewardReplay() {
+  const list = beatenList();
+  return `<p class="lede">${TB("这里是你<strong>以前做错、后来做对</strong>的题。翻一翻 —— 这些是实打实变强的证据，比任何奖励都真实。",
+      "These are questions you <strong>once got wrong and later got right</strong>. Scroll through them: this is hard evidence that you got better, and it is more real than any prize.")}</p>
+    ${list.length ? list.map(b => `
+      <div class="replay">
+        <div class="rp-h">${Tp(daysAgo(b.at) + " 天前你还做错这道题", daysAgo(b.at) + " days ago you got this wrong")}
+          <em>${esc(lang === "zh" ? b.k : b.gEn)}</em></div>
+        <div class="rp-q">${b.q.q}</div>
+        <div class="rp-a">✓ ${b.q.o[b.q.a]}</div>
+      </div>`).join("")
+    : `<div class="panel"><p class="sub" style="margin:0">${T("还没有记录。做错的题连续答对两次之后就会出现在这里。", "Nothing here yet. Once you get a mistake right twice in a row, it lands here.")}</p></div>`}`;
+}
+
+function rewardTeach() {
+  const cards = teachCards();
+  const n = cards.filter(c => c.taught).length;
+  return `<p class="lede">${TB("掌握一个知识点之后，把它<strong>讲给爸爸妈妈听</strong>。讲一遍比多做十道题记得牢 —— 讲完了让家长在这里点一下。",
+      "Once you have a topic, <strong>teach it to a parent</strong>. Explaining it once sticks better than ten more questions. When you have, get them to tap it here.")}</p>
+    <div class="story-meter"><div class="sm-k">${T("已讲过", "Taught")} <b>${n}</b> / ${cards.length}</div>
+      <div class="bar"><i style="width:${cards.length ? Math.round(n / cards.length * 100) : 0}%"></i></div></div>
+    ${cards.length ? cards.map(c => `
+      <button class="teach ${c.taught ? "ok" : ""}" data-teach="${c.sub}::${c.kp}">
+        <span class="tc-ic">${c.taught ? "✓" : "🎓"}</span>
+        <span class="tc-b"><b>${T(esc(c.kp), esc(c.en))}</b>
+          <span>${TB(esc(c.tip), esc(c.tipEn))}</span></span>
+        <span class="tc-s">${c.taught ? T("她教过我了", "she taught me") : T("点一下确认", "tap when taught")}</span>
+      </button>`).join("")
+    : `<div class="panel"><p class="sub" style="margin:0">${T("先把一个知识点练到 85% 以上，就会出现在这里。", "Get a topic above 85% and it will appear here to teach.")}</p></div>`}`;
+}
+
+/* ---------- 大目标：家长设定的真实世界奖励 ---------- */
+function goal() {
+  if (!progress.goal) progress.goal = { name: "", target: 120, milestones: ["", "", "", ""] };
+  return progress.goal;
+}
+function goalDays() { return activeDays(); }
+function goalPct() { const g = goal(); return Math.min(100, Math.round(goalDays() / g.target * 100)); }
+
+function renderGoal() {
+  const g = goal(), days = goalDays(), pct = goalPct();
+  const marks = [.25, .5, .75, 1];
+  const perWeek = 5;
+  const weeksLeft = Math.max(0, Math.ceil((g.target - days) / perWeek));
+  const eta = new Date(Date.now() + weeksLeft * 7 * 864e5).toISOString().slice(0, 10);
+
+  view.innerHTML = `
+    <h2>${T("大目标", "Big Goal")}<span class="en">${Tp("靠坚持赚来的真实奖励", "A real reward, earned by turning up")}</span></h2>
+    <p class="lede">${TB("由家长设定一个真正想要的东西，用<strong>学习天数</strong>来解锁 —— 不挂在考试分数上。分数不完全由孩子控制，把大奖绑在分数上只会制造焦虑；坚持是她自己能控制的。",
+      "A parent sets something she really wants, unlocked by <strong>days practised</strong> — never by test scores. Scores are not fully in a child's control, and tying a big prize to them just creates anxiety. Turning up is something she controls.")}</p>
+
+    ${g.name ? `
+      <div class="goal-card">
+        <div class="gc-top">
+          <div>
+            <div class="gc-k">${T("目标", "Goal")}</div>
+            <div class="gc-name">🎁 ${esc(g.name)}</div>
+          </div>
+          <div class="gc-pct">${pct}%</div>
+        </div>
+        <div class="goal-bar">
+          <i style="width:${pct}%"></i>
+          ${marks.map(m => `<span class="gm ${days >= g.target * m ? "hit" : ""}" style="left:${m * 100}%"></span>`).join("")}
+        </div>
+        <div class="gc-sub">${Tp("已完成 " + days + " / " + g.target + " 个学习日", days + " of " + g.target + " practice days done")}
+          ${days < g.target ? " · " + Tp("按每周 5 天，约在 " + eta, "at 5 days a week, about " + eta) : " · 🎉"}</div>
+
+        <div class="gm-list">
+          ${marks.map((m, n) => {
+            const need = Math.round(g.target * m), hit = days >= need;
+            return `<div class="gm-row ${hit ? "hit" : ""}">
+              <span class="gm-n">${hit ? "✓" : n + 1}</span>
+              <span class="gm-b"><b>${Tp(need + " 天", need + " days")}</b>
+                <span>${esc(g.milestones[n] || (n === 3 ? g.name : Tp("（未设定小奖励）", "(no reward set)")))}</span></span>
+              <span class="gm-s">${hit ? T("已解锁", "unlocked") : Tp("还差 " + (need - days) + " 天", (need - days) + " to go")}</span>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>` : `<div class="panel"><p class="sub" style="margin:0">${T("还没设定目标。在下面填一个她真正想要的东西。", "No goal yet. Set one below — something she genuinely wants.")}</p></div>`}
+
+    <p class="eyebrow">${T("家长设置", "Parent settings")}</p>
+    <div class="panel">
+      <label class="fld"><span>${T("大奖是什么", "What is the big reward?")}</span>
+        <input id="gName" type="text" value="${esc(g.name)}" placeholder="${Tp("例如：3D 打印机", "e.g. a 3D printer")}"></label>
+      <label class="fld"><span>${T("需要多少个学习日", "How many practice days?")}</span>
+        <input id="gTarget" type="number" min="20" max="400" value="${g.target}"></label>
+      <div class="fld-row">
+        ${[0, 1, 2, 3].map(n => `<label class="fld"><span>${Tp("第 " + (n + 1) + " 档小奖励", "Milestone " + (n + 1))}</span>
+          <input id="gm${n}" type="text" value="${esc(g.milestones[n] || "")}" placeholder="${
+            Tp(["一次冰淇淋", "一本新书", "一次看电影", "大奖"][n], ["an ice cream", "a new book", "a movie trip", "the big one"][n])}"></label>`).join("")}
+      </div>
+      <div class="q-nav"><button class="btn" id="saveGoal">${Tp("保存", "Save")}</button></div>
+      <p class="sub" style="margin:14px 0 0">${TB("<strong>为什么建议 120 天：</strong>每周 5 天，120 个学习日大约是 6 个月，正好覆盖到考试。中间四档小奖励很重要 —— 七岁孩子撑不住一个半年后才兑现的承诺，中途要有看得见的兑现。",
+        "<strong>Why 120 days:</strong> at 5 days a week that is about six months, which carries her right through to the test. The four milestones matter — a seven-year-old cannot run on a promise that only pays out half a year later, so something has to land along the way.")}</p>
+    </div>`;
+}
+
+function saveGoal() {
+  const g = goal();
+  g.name = document.getElementById("gName").value.trim();
+  g.target = Math.max(20, Math.min(400, +document.getElementById("gTarget").value || 120));
+  g.milestones = [0, 1, 2, 3].map(n => document.getElementById("gm" + n).value.trim());
+  save(); renderGoal();
+}
+
 /* ---------- 我的形象 · 商店 ---------- */
 function renderShop() {
   const L = look(), own = owned();
@@ -3583,13 +3936,11 @@ function renderShop() {
         <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
         <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
         <div class="av-rate">
-          <div>${T("答对一题", "Correct answer")}<b>+${COIN.correct}</b></div>
-          <div>${T("拓展题答对", "Challenge question")}<b>+${COIN.challenge}</b></div>
-          <div>${T("完成一项任务", "Finish a task")}<b>+${COIN.task}</b></div>
-          <div>${T("一组全对", "Perfect set")}<b>+${COIN.perfectSet}</b></div>
-          <div>${T("今天全部做完", "All tasks done today")}<b>+${COIN.allTasks}</b></div>
-          <div>${T("获得徽章", "Earn a badge")}<b>+${COIN.badge}</b></div>
+          <div>${T("口诀答对一题", "Each tables answer")}<b>+${COIN.perAnswer}</b></div>
+          <div>${T("3 分钟答对 25 题以上", "25+ in 3 minutes")}<b>+${COIN.sprint25}</b></div>
         </div>
+        <p class="av-hint">${TB("金币只从<strong>乘法口诀抢答</strong>赚 —— 口诀是唯一靠反复练熟的东西，用金币推它正合适。别的学习不发金币，因为那些本身应该有意思。",
+          "Coins come only from the <strong>times tables sprint</strong>. Tables are the one thing that just needs drilling, so a reward fits there. Nothing else pays coins — the rest should be worth doing for its own sake.")}</p>
       </div>
     </div>
 
@@ -4127,6 +4478,8 @@ function render() {
   else if (current === "train") renderTrain();
   else if (current === "wrong") renderWrong();
   else if (current === "shop") renderShop();
+  else if (current === "goal") renderGoal();
+  else if (current === "rewards") renderRewards();
   else if (current === "coach") renderCoach();
   else if (current === "progress") renderProgress();
   else renderSubject(current);
@@ -4150,7 +4503,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-rtab],[data-teach],#saveGoal,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -4161,6 +4514,9 @@ document.addEventListener("click", e => {
     root.setAttribute("data-theme", isDark ? "light" : "dark");
     return;
   }
+  if (t.dataset.rtab) { rewardTab = t.dataset.rtab; renderRewards(); return; }
+  if (t.dataset.teach) { const [a, b2] = t.dataset.teach.split("::"); markTaught(a, b2); return; }
+  if (t.id === "saveGoal") { saveGoal(); return; }
   if (t.dataset.buy) { const [c, i, pr] = t.dataset.buy.split(":"); buyOrWear(c, i, +pr); return; }
   if (t.dataset.go) {
     const g = JSON.parse(t.dataset.go);
