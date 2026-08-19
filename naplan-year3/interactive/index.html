@@ -882,6 +882,22 @@ function buyOrWear(cat, id, price) {
   .tc-s { flex-shrink: 0; font-size: .76rem; color: var(--slate); white-space: nowrap; }
   .teach.ok .tc-s { color: var(--eucalypt); font-weight: 700; }
 
+  /* ---------- 云同步 ---------- */
+  .sync-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .sync-dot.off { background: var(--hairline); }
+  .sync-dot.ok { background: var(--eucalypt); }
+  .sync-dot.busy { background: var(--wattle); animation: pulse 1s infinite; }
+  .sync-dot.bad { background: var(--coral); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+  .sy-on { display: flex; align-items: flex-start; gap: 11px; }
+  .sy-on b { display: block; font-size: 1rem; }
+  .sy-on span { display: block; color: var(--slate); font-size: .87rem; margin-top: 2px; line-height: 1.5; }
+  .sy-on code, .sy-steps code { font-family: var(--data); background: var(--card-sunk); padding: 1px 6px; border-radius: 4px; }
+  .sy-steps { margin-top: 10px; }
+  .sy-steps .bk-box { font-size: .72rem; }
+  #syNote .ok { color: var(--eucalypt); font-weight: 700; }
+  #syNote .bad { color: var(--coral); font-weight: 700; }
+
   /* ---------- 备份与恢复 ---------- */
   .bk-warn { background: var(--wattle-soft); color: var(--wattle); border-radius: var(--r-md);
     padding: 13px 16px; margin-bottom: 18px; font-size: .92rem; font-weight: 600; line-height: 1.55; }
@@ -972,6 +988,7 @@ function buyOrWear(cat, id, price) {
       <p id="brandSub">知识框架 · 知识点对应题目 · 即时批改 &nbsp;|&nbsp; 考试：2027 年 3 月</p>
     </div>
     <div class="head-right">
+      <span class="sync-dot off" id="syncDot" title=""></span>
       <button class="coin-box" id="coinBox" data-tab="shop" title="金币 / Coins">
         <span id="headAvatar" class="head-av"></span>
         <span class="c-ic">🪙</span><b id="coinN">0</b>
@@ -1471,7 +1488,9 @@ function wrongList() {
   }).filter(Boolean).sort((a, b) => (a.meta.due || 0) - (b.meta.due || 0) || b.meta.times - a.meta.times);
 }
 function save() {
+  progress.updatedAt = Date.now();
   try { localStorage.setItem(STORE, JSON.stringify(progress)); } catch (e) {}
+  if (typeof syncSoon === "function") syncSoon();
 }
 function kpKey(subj, kp) { return subj + "::" + kp; }
 function kpStat(subj, kp) {
@@ -4165,6 +4184,132 @@ function rewardTeach() {
     : `<div class="panel"><p class="sub" style="margin:0">${T("先把一个知识点练到 85% 以上，就会出现在这里。", "Get a topic above 85% and it will appear here to teach.")}</p></div>`}`;
 }
 
+
+/* ============================================================
+   云同步（可选）：配置后任何设备自动同步进度
+   在 artifact 沙箱里网络被禁用，这段代码会静默失败并退回本地存储
+   ============================================================ */
+const SYNC_KEY = "chloe-sync-cfg";
+let syncCfg = (() => { try { return JSON.parse(localStorage.getItem(SYNC_KEY)) || null; } catch (e) { return null; } })();
+let syncState = { on: false, busy: false, last: null, err: null };
+
+function saveSyncCfg(c) {
+  syncCfg = c;
+  try { c ? localStorage.setItem(SYNC_KEY, JSON.stringify(c)) : localStorage.removeItem(SYNC_KEY); } catch (e) {}
+}
+function syncReady() { return !!(syncCfg && syncCfg.url && syncCfg.key && syncCfg.code); }
+function syncHeaders() {
+  return { "apikey": syncCfg.key, "Authorization": "Bearer " + syncCfg.key,
+           "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates,return=minimal" };
+}
+function syncUrl(q) { return syncCfg.url.replace(/\/+$/, "") + "/rest/v1/progress" + (q || ""); }
+
+async function syncPull() {
+  if (!syncReady()) return null;
+  const r = await fetch(syncUrl("?code=eq." + encodeURIComponent(syncCfg.code) + "&select=data,updated_at"),
+    { headers: syncHeaders() });
+  if (!r.ok) throw new Error("pull " + r.status);
+  const rows = await r.json();
+  return rows && rows[0] ? rows[0] : null;
+}
+async function syncPush() {
+  if (!syncReady()) return;
+  progress.updatedAt = Date.now();
+  const r = await fetch(syncUrl(), {
+    method: "POST", headers: syncHeaders(),
+    body: JSON.stringify([{ code: syncCfg.code, data: progress, updated_at: new Date().toISOString() }])
+  });
+  if (!r.ok) throw new Error("push " + r.status);
+}
+
+let pushTimer = null;
+function syncSoon() {
+  if (!syncReady()) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(async () => {
+    syncState.busy = true; paintSync();
+    try { await syncPush(); syncState.last = Date.now(); syncState.err = null; }
+    catch (e) { syncState.err = String(e.message || e); }
+    syncState.busy = false; paintSync();
+  }, 4000);
+}
+
+/* 粗略衡量一份进度里有多少内容，用来防止「空的覆盖有的」 */
+function weightOf(pr) {
+  if (!pr) return 0;
+  return Object.keys(pr.kp || {}).length * 10
+       + Object.keys((pr.plan || {}).done || {}).length * 5
+       + Object.keys(pr.wrong || {}).length
+       + (pr.chapters || 0) * 3
+       + Math.min(50, (pr.earned || 0) / 10);
+}
+
+/* 决定采用云端还是上传本地 —— 连接时和每次打开都走这一段 */
+async function syncMerge() {
+  const row = await syncPull();
+  const remoteAt = row ? new Date(row.updated_at).getTime() : 0;
+  const localAt = progress.updatedAt || 0;
+  const rW = weightOf(row && row.data), lW = weightOf(progress);
+  /* 云端有内容而本机是空的 → 一律采用云端，绝不用空的覆盖 */
+  const adopt = row && (rW > 0 && lW === 0 ? true : remoteAt > localAt + 1000);
+  if (adopt) {
+    progress = row.data || progress;
+    for (const k in BLANK) if (progress[k] === undefined) progress[k] = JSON.parse(JSON.stringify(BLANK[k]));
+    try { localStorage.setItem(STORE, JSON.stringify(progress)); } catch (e) {}
+    render(); updateCoinUI();
+    return "pulled";
+  }
+  if (lW > 0 || !row) { await syncPush(); return "pushed"; }
+  return "none";
+}
+
+/* 打开页面时：远端更新则采用远端，否则把本地推上去 */
+async function syncBoot() {
+  if (!syncReady()) return;
+  syncState.on = true; syncState.busy = true; paintSync();
+  try { await syncMerge(); syncState.last = Date.now(); syncState.err = null; }
+  catch (e) { syncState.err = String(e.message || e); }
+  syncState.busy = false; paintSync();
+}
+
+function paintSync() {
+  const el = document.getElementById("syncDot");
+  if (!el) return;
+  el.className = "sync-dot " + (!syncReady() ? "off" : syncState.busy ? "busy" : syncState.err ? "bad" : "ok");
+  el.title = !syncReady() ? Tp("未开启云同步", "Cloud sync off")
+    : syncState.busy ? Tp("同步中…", "Syncing…")
+    : syncState.err ? Tp("同步失败：" + syncState.err, "Sync failed: " + syncState.err)
+    : Tp("已同步", "Synced");
+}
+
+function packCfg(c) { try { return btoa(unescape(encodeURIComponent(JSON.stringify(c)))).replace(/=+$/, ""); } catch (e) { return ""; } }
+function unpackCfg(t) {
+  try { const o = JSON.parse(decodeURIComponent(escape(atob(t.trim()))));
+    return (o && o.url && o.key && o.code) ? o : null; } catch (e) { return null; }
+}
+
+async function testSync(cfg) {
+  const note = document.getElementById("syNote");
+  const set = (cls, msg) => { if (note) note.innerHTML = `<span class="${cls}">${msg}</span>`; };
+  set("", Tp("正在连接…", "Connecting…"));
+  const old = syncCfg;
+  syncCfg = cfg;
+  try {
+    const how = await syncMerge();
+    saveSyncCfg(cfg);
+    syncState.on = true; syncState.err = null; syncState.last = Date.now();
+    set("ok", "✓ " + (how === "pulled"
+      ? Tp("连接成功，已从云端取回进度。", "Connected — your progress has been pulled down from the cloud.")
+      : Tp("连接成功，本机进度已上传。以后任何设备粘贴连接码即可同步。",
+           "Connected — this device's progress is uploaded. Paste the connection code on any other device to join.")));
+    paintSync();
+  } catch (e) {
+    syncCfg = old;
+    set("bad", "✗ " + Tp("连接失败：" + (e.message || e) + "。请检查网址、密钥，以及表是否建好。",
+      "Failed: " + (e.message || e) + ". Check the URL, the key, and that the table exists."));
+  }
+}
+
 /* ============================================================
    备份与恢复：进度存在本地浏览器，换设备／换浏览器需要手动搬
    ============================================================ */
@@ -4223,6 +4368,60 @@ function renderBackup() {
         <div><b>${sum.items}</b><span>${T("装扮", "items")}</span></div>
         <div><b>${sum.chapters}</b><span>${T("故事章节", "chapters")}</span></div>
       </div>
+    </div>
+
+    <p class="eyebrow">${T("云同步 · 推荐", "Cloud sync · recommended")}</p>
+    <div class="panel">
+      ${syncReady() ? `
+        <div class="sy-on">
+          <span class="sync-dot ok"></span>
+          <div><b>${T("云同步已开启", "Cloud sync is on")}</b>
+            <span>${TB("进度会自动上传，任何设备打开都能接着练。同步码：<code>" + esc(syncCfg.code) + "</code>",
+              "Progress uploads automatically — open it on any device and carry on. Sync code: <code>" + esc(syncCfg.code) + "</code>")}</span></div>
+        </div>
+        <p class="eyebrow" style="margin-top:18px">${T("在另一台设备上开启", "Turn it on for another device")}</p>
+        <p class="sub">${TB("在新设备的这一页，把下面这串<strong>连接码</strong>粘进去就行 —— 只要粘一次。",
+          "On the new device, paste this <strong>connection code</strong> into this page. Once only.")}</p>
+        <textarea class="bk-box" id="syPack" readonly rows="3">${esc(packCfg(syncCfg))}</textarea>
+        <div class="q-nav">
+          <button class="btn" id="syCopy">${Tp("复制连接码","Copy connection code")}</button>
+          <button class="btn ghost" id="syOff">${Tp("关闭云同步","Turn off")}</button>
+        </div>
+      ` : `
+        <p class="sub">${TB("开启之后，<strong>任何设备、任何浏览器</strong>打开都是同一份进度，不用再手动搬。免费，设置一次约五分钟。",
+          "Once this is on, <strong>any device and any browser</strong> shows the same progress and nothing needs moving by hand. It is free and takes about five minutes to set up once.")}</p>
+
+        <p class="eyebrow" style="margin-top:16px">${T("已经在别的设备设置过？", "Already set up on another device?")}</p>
+        <textarea class="bk-box" id="syPaste" rows="3" placeholder="${Tp("把连接码粘到这里","Paste the connection code here")}"></textarea>
+        <div class="q-nav"><button class="btn" id="syUse">${Tp("用连接码开启","Connect with code")}</button></div>
+
+        <p class="eyebrow" style="margin-top:20px">${T("第一次设置（家长做一次）", "First-time setup — a parent does this once")}</p>
+        <ol class="m-steps sy-steps">
+          <li><b>${T("注册 Supabase", "Create a Supabase account")}</b><span>${TB("打开 supabase.com，用邮箱免费注册，不需要信用卡。新建一个 project（名字随便，区域选 Sydney）。",
+            "Go to supabase.com and sign up free with an email — no card needed. Create a new project (any name; pick the Sydney region).")}</span></li>
+          <li><b>${T("建一张表", "Create the table")}</b><span>${TB("左边菜单进 SQL Editor，把下面这段贴进去点 Run。",
+            "Open SQL Editor in the left menu, paste the block below and press Run.")}</span>
+            <textarea class="bk-box" readonly rows="7">create table progress (
+  code text primary key,
+  data jsonb,
+  updated_at timestamptz default now()
+);
+alter table progress enable row level security;
+create policy anon_all on progress for all
+  to anon using (true) with check (true);</textarea></li>
+          <li><b>${T("拿到网址和密钥", "Copy the URL and key")}</b><span>${TB("Project Settings → API，复制 <strong>Project URL</strong> 和 <strong>anon public</strong> 那一串密钥。",
+            "Project Settings → API. Copy the <strong>Project URL</strong> and the <strong>anon public</strong> key.")}</span></li>
+          <li><b>${T("填在下面", "Fill them in below")}</b><span>${TB("同步码自己起一个别人猜不到的（比如 chloe-8f3k2）—— 所有设备用同一个。",
+            "Choose a sync code nobody could guess (for example chloe-8f3k2) — every device uses the same one.")}</span></li>
+        </ol>
+        <label class="fld"><span>Project URL</span><input id="syUrl" type="text" placeholder="https://xxxx.supabase.co"></label>
+        <label class="fld"><span>anon public key</span><input id="syKey" type="text" placeholder="eyJhbGciOi..."></label>
+        <label class="fld"><span>${T("同步码（自己起）", "Sync code (make one up)")}</span><input id="syCode" type="text" placeholder="chloe-8f3k2"></label>
+        <div class="q-nav"><button class="btn" id="syGo">${Tp("连接并开启","Connect")}</button></div>
+      `}
+      <p class="sub" id="syNote" style="margin:12px 0 0"></p>
+      <p class="sub" style="margin:12px 0 0">${TB("说明：云同步需要联网，<strong>只在部署到网页服务器的版本上可用</strong>；在 Claude 的 artifact 预览里网络被沙箱禁止，会自动退回本地存储。",
+        "Note: cloud sync needs network access and <strong>only works on the version hosted on a web server</strong>. Inside the Claude artifact preview the sandbox blocks it, and the page falls back to local storage.")}</p>
     </div>
 
     <p class="eyebrow">${T("① 备份（在有记录的那台设备上做）", "1. Back up — on the device that has the progress")}</p>
@@ -4974,7 +5173,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#bkCopy,#rsGo,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -4999,6 +5198,26 @@ document.addEventListener("click", e => {
     progress.lastBackup = new Date().toISOString(); progress.needBackup = 0; save();
     return;
   }
+  if (t.id === "syGo") {
+    testSync({ url: document.getElementById("syUrl").value.trim(),
+               key: document.getElementById("syKey").value.trim(),
+               code: document.getElementById("syCode").value.trim() }).then(() => renderBackup());
+    return;
+  }
+  if (t.id === "syUse") {
+    const c = unpackCfg(document.getElementById("syPaste").value);
+    if (!c) { document.getElementById("syNote").innerHTML = `<span class="bad">✗ ${Tp("连接码无效","That connection code is not valid")}</span>`; return; }
+    testSync(c).then(() => renderBackup());
+    return;
+  }
+  if (t.id === "syCopy") {
+    const ta = document.getElementById("syPack"); ta.select(); ta.setSelectionRange(0, 999999);
+    try { document.execCommand("copy"); } catch (e) {}
+    if (navigator.clipboard) { try { navigator.clipboard.writeText(ta.value); } catch (e) {} }
+    document.getElementById("syNote").innerHTML = `<span class="ok">✓ ${Tp("连接码已复制","Connection code copied")}</span>`;
+    return;
+  }
+  if (t.id === "syOff") { saveSyncCfg(null); syncState.on = false; paintSync(); renderBackup(); return; }
   if (t.id === "rsGo") { applyBackup(document.getElementById("rsText").value.trim()); return; }
   if (t.id === "wtStart") { startWTimer(); return; }
   if (t.id === "wtStop") { stopWTimer(); renderWriting(); return; }
@@ -5107,4 +5326,5 @@ document.addEventListener("change", e => {
 
 render();
 updateCoinUI();
+syncBoot();
 </script>
