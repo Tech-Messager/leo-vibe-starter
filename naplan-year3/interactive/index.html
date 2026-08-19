@@ -387,6 +387,68 @@
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
 
+  /* ---------- 今天做什么 ---------- */
+  .today-head {
+    display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-bottom: 22px;
+  }
+  .th-l { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 15px 17px; }
+  .th-k { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--slate); font-weight: 700; }
+  .th-v { font-family: var(--data); font-size: 1.85rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.25; }
+  .th-v.sm { font-size: 1.25rem; }
+  .th-v small { font-size: .8rem; color: var(--slate); font-weight: 500; }
+  .th-s { font-size: .78rem; color: var(--slate); margin-top: 3px; }
+
+  .tasks { display: flex; flex-direction: column; gap: 9px; }
+  .task {
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+    background: var(--card); border: 1.5px solid var(--hairline); border-radius: var(--r-md);
+    padding: 15px 17px; font-family: var(--ui); color: var(--ink);
+    transition: border-color .14s, transform .12s, box-shadow .14s;
+  }
+  .task:hover { border-color: var(--eucalypt); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .task.ok { background: var(--eucalypt-soft); border-color: var(--eucalypt); }
+  .task.ok .t-body b { text-decoration: line-through; text-decoration-color: var(--slate); opacity: .7; }
+  .t-ic {
+    flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 1.28rem;
+    background: var(--card-sunk);
+  }
+  .task.ok .t-ic { background: var(--eucalypt); color: var(--card); font-weight: 800; }
+  .t-body { flex: 1; min-width: 0; }
+  .t-body b { display: block; font-size: 1.03rem; font-weight: 700; line-height: 1.35; }
+  .t-body span { display: block; color: var(--slate); font-size: .87rem; margin-top: 2px; line-height: 1.45; }
+  .t-min {
+    flex-shrink: 0; font-family: var(--data); font-size: .76rem; color: var(--slate);
+    background: var(--card-sunk); border-radius: 100px; padding: 4px 10px; white-space: nowrap;
+  }
+  .task.ok .t-min { background: transparent; color: var(--eucalypt); font-weight: 700; }
+
+  .phases { display: grid; gap: 9px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-bottom: 22px; }
+  .phase {
+    border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 13px 15px;
+    background: var(--card);
+  }
+  .phase.now { border-color: var(--eucalypt); background: var(--eucalypt-soft); }
+  .phase.past { opacity: .5; }
+  .ph-h { font-weight: 750; font-size: 1rem; display: flex; align-items: baseline; gap: 8px; }
+  .ph-h em {
+    font-style: normal; font-size: .68rem; font-weight: 700; letter-spacing: .07em;
+    background: var(--eucalypt); color: var(--on-accent); border-radius: 99px; padding: 2px 8px;
+  }
+  .ph-d { font-size: .86rem; color: var(--slate); margin-top: 5px; line-height: 1.5; }
+  .ph-t { font-family: var(--data); font-size: .72rem; color: var(--slate); margin-top: 7px; }
+
+  .done-banner {
+    background: var(--wattle-soft); color: var(--wattle); border-radius: var(--r-md);
+    padding: 14px 18px; font-weight: 700; margin-bottom: 20px; font-size: 1rem;
+  }
+
+  @media (max-width: 560px) {
+    .t-min { display: none; }
+    .th-v { font-size: 1.5rem; }
+  }
+
   /* ---------- 知识图谱 ---------- */
   .g-bar {
     display: flex; align-items: center; justify-content: space-between; gap: 14px;
@@ -1708,6 +1770,7 @@ function toast(badge) {
    视图
    ============================================================ */
 const TABS = [
+  { id: "today",       label: "今天",      en: "Today" },
   { id: "graph",       label: "知识图谱",  en: "Map" },
   { id: "map",         label: "知识大纲",  en: "Outline" },
   { id: "reading",     label: "阅读",      en: "Reading" },
@@ -1719,7 +1782,7 @@ const TABS = [
   { id: "coach",       label: "名师锦囊",  en: "Teaching tips" },
   { id: "progress",    label: "我的进度",  en: "Progress" }
 ];
-let current = "graph";
+let current = "today";
 const view = document.getElementById("view");
 
 /* 题目出处：数学第2辑 Q7 → Maths Set 2 Q7 */
@@ -1904,6 +1967,7 @@ function finish() {
   const total = quiz.group.qs.length;
   const right = quiz.results.filter(Boolean).length;
   recordRun(quiz.subj, quiz.kp, right, total);
+  markTask("kp:" + quiz.subj + ":" + quiz.kp);
   touchStreak();
   checkMilestones();
   renderTabs();
@@ -2241,7 +2305,7 @@ function nextDict() {
 
 function finishDict() {
   const total = dict.words.length, right = dict.results.filter(Boolean).length;
-  touchStreak();
+  touchStreak(); markTask("dict");
   if (right === total) toast(earn("speller"));
   const wrongs = dict.words.filter((_, n) => !dict.results[n]);
   view.innerHTML = `
@@ -2358,7 +2422,7 @@ function finishDrill() {
   const isBest = right > (progress.drill.best || 0);
   progress.drill.best = best;
   progress.drill.runs = (progress.drill.runs || []).concat([{ right, at: Date.now() }]).slice(-20);
-  save(); touchStreak();
+  save(); touchStreak(); markTask("drill");
   if (right >= 25) toast(earn("times"));
 
   view.innerHTML = `
@@ -2453,7 +2517,7 @@ function finishExam() {
   const used = Math.max(0, (exam.total0 || 0) - Math.max(0, exam.left));
   const timedOut = exam.left <= 0;
   progress.tests = (progress.tests || []).concat([{ subj: exam.subj, right, total, at: Date.now() }]).slice(-20);
-  save(); touchStreak(); checkMilestones(); renderTabs();
+  save(); touchStreak(); checkMilestones(); markTask("exam"); renderTabs();
 
   const rows = Object.entries(byKp).sort((a, b) => (a[1].r / a[1].t) - (b[1].r / b[1].t))
     .map(([kp, s]) => {
@@ -2570,7 +2634,7 @@ function reviewPick(n) {
 
 function reviewNext() {
   if (review.i === review.list.length - 1) {
-    touchStreak(); checkMilestones();
+    touchStreak(); checkMilestones(); markTask("review");
     if ((progress.cleared || 0) >= 5) toast(earn("fixer"));
     review = null;
     return renderWrong();
@@ -2694,6 +2758,173 @@ function renderCoach() {
           <div class="m-use"><b>${T("在家怎么用", "How to use it at home")}</b>${TB(esc(m.use), esc(m.enUse))}</div>
         </div>`).join("")}
     `).join("")}`;
+}
+
+/* ============================================================
+   学习序列：29 个知识点，按前置关系排序 + 三科交替
+   （交替 interleaving 比一科刷到底更利于长期保持）
+   ============================================================ */
+const CURRICULUM = [
+  ["numeracy", "位值与比大小"], ["conventions", "词类"],       ["reading", "字面理解"],
+  ["numeracy", "加减法"],       ["conventions", "动词时态"],
+  ["numeracy", "乘除法"],       ["conventions", "主谓一致"],   ["reading", "词义与比喻"],
+  ["numeracy", "分数"],         ["conventions", "连词与句子"],
+  ["numeracy", "多步应用题"],   ["conventions", "大写字母"],   ["reading", "推断"],
+  ["numeracy", "钱币"],         ["conventions", "撇号"],
+  ["numeracy", "规律"],         ["conventions", "标点与引号"], ["reading", "结构与写作手法"],
+  ["numeracy", "长度质量容量"], ["conventions", "代词与比较级"],
+  ["numeracy", "时间"],         ["conventions", "拼写规则"],   ["reading", "主旨与作者意图"],
+  ["numeracy", "2D 与 3D 图形"],["conventions", "高频易错词"],
+  ["numeracy", "面积与周长"],   ["conventions", "同音词"],
+  ["numeracy", "图表与数据"],   ["numeracy", "可能性"]
+];
+
+/* 三阶段：3 个月学完 → 3 个月复习 → 考前冲刺 */
+const PHASES = [
+  { id: "learn",  from: "2026-08-01", to: "2026-10-31",
+    zh: "学习期", en: "Learning",
+    zhD: "3 个月学完全部 29 个知识点，并且每个都练两遍",
+    enD: "Cover all 29 topics in 3 months, and practise each one twice" },
+  { id: "revise", from: "2026-11-01", to: "2027-01-31",
+    zh: "复习期", en: "Revision",
+    zhD: "3 个月清错题、升级听写、每周一次限时测验",
+    enD: "3 months of clearing mistakes, harder dictation and a timed test each week" },
+  { id: "final",  from: "2027-02-01", to: "2027-03-10",
+    zh: "考前冲刺", en: "Final weeks",
+    zhD: "只做模拟卷和错题，不学新内容",
+    enD: "Mock papers and your mistakes only — nothing new" }
+];
+function currentPhase() {
+  const t = todayKey();
+  return PHASES.find(p => t >= p.from && t <= p.to) || (t < PHASES[0].from ? PHASES[0] : PHASES[2]);
+}
+function daysBetween(a, b) { return Math.round((new Date(b) - new Date(a)) / 864e5); }
+
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+function planState() {
+  if (!progress.plan) progress.plan = { done: {}, writes: 0 };
+  if (!progress.plan.done) progress.plan.done = {};
+  return progress.plan;
+}
+function doneToday() { return planState().done[todayKey()] || []; }
+function markTask(id) {
+  const pl = planState(), k = todayKey();
+  pl.done[k] = pl.done[k] || [];
+  if (!pl.done[k].includes(id)) pl.done[k].push(id);
+  save();
+}
+/* 已学过的知识点数量（有过练习记录即算） */
+function learnedCount() { return CURRICULUM.filter(([s, k]) => kpStat(s, k).total > 0).length; }
+function nextNewKp() { return CURRICULUM.find(([s, k]) => kpStat(s, k).total === 0) || null; }
+/* 已完成学习的天数（有任何任务完成即算一天） */
+function activeDays() { return Object.keys(planState().done).filter(d => planState().done[d].length).length; }
+
+/* 今天该做什么（按阶段分化） */
+function weakestKp(threshold) {
+  return CURRICULUM.map(([s, k]) => ({ s, k, st: kpStat(s, k) }))
+    .filter(x => x.st.total && x.st.right / x.st.total < threshold)
+    .sort((a, b) => (a.st.right / a.st.total) - (b.st.right / b.st.total))[0];
+}
+/* 当天任务一旦生成就锁定，做完能看到打勾，不会立刻被下一个替换 */
+function dayAssign() {
+  const pl = planState(), k = todayKey();
+  pl.assign = pl.assign || {};
+  if (!pl.assign[k]) {
+    const nk = nextNewKp(), w9 = weakestKp(.9), w95 = weakestKp(.95);
+    pl.assign[k] = {
+      d: activeDays() + 1,
+      newKp: nk || null,
+      weak9: w9 ? [w9.s, w9.k] : null,
+      weak95: w95 ? [w95.s, w95.k] : null
+    };
+    save();
+  }
+  return pl.assign[k];
+}
+
+function todayTasks() {
+  const done = doneToday();
+  const A = dayAssign();
+  const d = A.d;
+  const wrongs = wrongList().length;
+  const ph = currentPhase().id;
+  const t = [];
+
+  /* 每天都做：口诀 3 分钟 */
+  t.push({ id: "drill", icon: "⚡", min: 3,
+    zh: "乘法口诀抢答 3 分钟", en: "Times tables sprint · 3 minutes",
+    zhWhy: "数学不许用计算器，口诀不熟会拖慢所有题", enWhy: "No calculator in the maths test — slow tables slow everything down",
+    go: { drill: "2,3,5,10" } });
+
+  if (ph === "learn") {
+    const nk = A.newKp;
+    if (nk) {
+      const g = BANK[nk[0]].groups.find(x => x.kp === nk[1]);
+      t.push({ id: "kp:" + nk[0] + ":" + nk[1], icon: "📘", min: 10,
+        zh: "新知识点：" + nk[1] + "（" + g.qs.length + " 题）",
+        en: "New topic: " + g.en + " (" + g.qs.length + " questions)",
+        zhWhy: "29 个知识点里的第 " + (learnedCount() + 1) + " 个",
+        enWhy: "Topic " + (learnedCount() + 1) + " of 29",
+        go: { quiz: nk[0], kp: nk[1] } });
+    } else if (A.weak9) {
+      const w = { s: A.weak9[0], k: A.weak9[1] };
+      {
+        const g = BANK[w.s].groups.find(x => x.kp === w.k);
+        t.push({ id: "kp:" + w.s + ":" + w.k, icon: "🔁", min: 10,
+          zh: "第二遍：" + w.k, en: "Second pass: " + g.en,
+          zhWhy: "29 个都学过了，现在从最弱的开始过第二遍", enWhy: "All 29 covered — now the second pass, weakest first",
+          go: { quiz: w.s, kp: w.k } });
+      }
+    }
+  }
+
+  if (ph === "revise") {
+    const w = A.weak95 ? { s: A.weak95[0], k: A.weak95[1] } : null;
+    if (w) {
+      const g = BANK[w.s].groups.find(x => x.kp === w.k);
+      t.push({ id: "kp:" + w.s + ":" + w.k, icon: "🔁", min: 10,
+        zh: "补弱项：" + w.k, en: "Top up: " + g.en,
+        zhWhy: "复习期的重点：把正确率没到 95% 的知识点逐个清掉", enWhy: "Revision focus: clear every topic still under 95%",
+        go: { quiz: w.s, kp: w.k } });
+    }
+    if (d % 5 === 0) t.push({ id: "exam", icon: "⏱️", min: 15,
+      zh: "限时测验一次（数学 20 题 / 15 分钟）", en: "One timed test (Maths, 20 questions in 15 min)",
+      zhWhy: "复习期每周一次，练的是考试节奏不是知识", enWhy: "Once a week in revision — this trains test pace, not knowledge",
+      go: { exam: "numeracy,20,15" } });
+  }
+
+  if (ph === "final") {
+    t.push({ id: "review", icon: "🔧", min: 10,
+      zh: "只做错题本（" + wrongs + " 道待攻克）", en: "Mistakes only (" + wrongs + " to fix)",
+      zhWhy: "考前最后阶段不学新内容，只清错题", enWhy: "Nothing new this close to the test — just clear what you got wrong",
+      go: { review: 1 } });
+    if (d % 4 === 0) t.push({ id: "exam", icon: "⏱️", min: 12,
+      zh: "限时测验（语言规范 20 题 / 12 分钟）", en: "Timed test (Language, 20 questions in 12 min)",
+      zhWhy: "保持手感，别让节奏生疏", enWhy: "Keep the rhythm sharp",
+      go: { exam: "conventions,20,12" } });
+  }
+
+  if (ph !== "final" && wrongs >= 5) t.push({ id: "review", icon: "🔧", min: 6,
+    zh: "重做错题（" + wrongs + " 道待攻克）", en: "Redo mistakes (" + wrongs + " to fix)",
+    zhWhy: "连续答对两次才移出错题本", enWhy: "Right twice in a row to clear it",
+    go: { review: 1 } });
+
+  /* 听写：学习期每 3 天一次，复习期起每 2 天一次并升级难度 */
+  const every = ph === "learn" ? 3 : 2;
+  if (d % every === 0) {
+    const lv = ph === "learn" ? Math.min(1, Math.floor(d / 20)) : ph === "revise" ? 2 : 3;
+    t.push({ id: "dict", icon: "🐝", min: 5,
+      zh: "拼写听写 10 个词（" + SPELL[lv].lv + "）", en: "Spelling dictation · 10 words (" + SPELL[lv].lvEn + ")",
+      zhWhy: "拼写占语言规范 15/40 题", enWhy: "Spelling is 15 of the 40 Language questions",
+      go: { dict: lv } });
+  }
+
+  if (d % 10 === 0) t.push({ id: "write", icon: "✏️", min: 40,
+    zh: "整篇作文一次（严格 40 分钟）", en: "One full piece of writing (strict 40 minutes)",
+    zhWhy: "写作是唯一的纸笔科目，要在真的作文纸上手写", enWhy: "Writing is the only pen-and-paper paper — do it on real lined paper",
+    go: { tab: "writing" } });
+
+  return t;
 }
 
 /* ============================================================
@@ -2963,6 +3194,96 @@ function renderGraph() {
       wrap.scrollLeft = NODE_BY_ID[graphSel].x * scale - wrap.clientWidth / 2;
     } else if (svg) wrap.scrollLeft = 0;
   }
+}
+
+/* ---------- 今天做什么 ---------- */
+const EXAM_DATE = new Date("2027-03-10");
+
+function renderToday() {
+  const tasks = todayTasks(), done = doneToday(), ph = currentPhase();
+  const learned = learnedCount(), total = CURRICULUM.length;
+  const left = total - learned;
+  const daysToExam = Math.max(0, Math.round((EXAM_DATE - new Date()) / 864e5));
+  const weeksLeft = Math.ceil(left / 5);
+  const finish = new Date(Date.now() + Math.ceil(left / 5) * 7 * 864e5);
+  const fin = finish.toISOString().slice(0, 10);
+  const allDone = tasks.every(t => done.includes(t.id));
+  const mins = tasks.filter(t => !done.includes(t.id)).reduce((a, t) => a + t.min, 0);
+
+  view.innerHTML = `
+    <h2>${T("今天做什么", "Today")}<span class="en">${ZH("Today") || "Your plan for today"}</span></h2>
+    <p class="lede">${TB("每天照着做这几件事就行 —— 做完一项自动打勾，新知识点会自动推进到下一个。全部做完不超过 25 分钟。",
+      "Just work through this list. Each one ticks itself off when you finish, and the next new topic comes up automatically. The whole lot takes under 25 minutes.")}</p>
+
+    <div class="today-head">
+      <div class="th-l">
+        <div class="th-k">${T("学习进度", "Topics learnt")}</div>
+        <div class="th-v">${learned}<small> / ${total}</small></div>
+        <div class="bar" style="margin-top:8px"><i style="width:${Math.round(learned / total * 100)}%"></i></div>
+        <div class="th-s">${left ? Tp("每周 5 天，约 " + weeksLeft + " 周学完", "5 days a week — about " + weeksLeft + " weeks to go") : Tp("第一遍已学完", "First pass complete")}</div>
+      </div>
+      <div class="th-l">
+        <div class="th-k">${T("当前阶段", "Current phase")}</div>
+        <div class="th-v sm">${T(ph.zh, ph.en)}</div>
+        <div class="th-s">${Tp(ph.from + " → " + ph.to, ph.from + " → " + ph.to)}</div>
+      </div>
+      <div class="th-l">
+        <div class="th-k">${T("距离考试", "Until the test")}</div>
+        <div class="th-v sm">${daysToExam} ${T("天", "days")}</div>
+        <div class="th-s">${Tp("2027 年 3 月中旬", "mid-March 2027")}</div>
+      </div>
+    </div>
+
+    <div class="phases">
+      ${PHASES.map(x => {
+        const st = x.id === ph.id ? "now" : (todayKey() > x.to ? "past" : "future");
+        return `<div class="phase ${st}">
+          <div class="ph-h">${T(x.zh, x.en)}${st === "now" ? `<em>${Tp("现在","now")}</em>` : ""}</div>
+          <div class="ph-d">${TB(esc(x.zhD), esc(x.enD))}</div>
+          <div class="ph-t">${x.from.slice(5)} → ${x.to.slice(5)}</div>
+        </div>`;
+      }).join("")}
+    </div>
+
+    ${allDone ? `<div class="done-banner">🎉 ${T("今天的任务全部完成了！明天见。", "All done for today. See you tomorrow!")}</div>` : ""}
+
+    <p class="eyebrow">${T("今天的任务", "Today's tasks")} ${mins ? `· ${Tp("约 " + mins + " 分钟", "about " + mins + " min")}` : ""}</p>
+    <div class="tasks">
+      ${tasks.map(t => {
+        const ok = done.includes(t.id);
+        const go = JSON.stringify(t.go).replace(/"/g, "&quot;");
+        return `<button class="task ${ok ? "ok" : ""}" data-go="${go}" ${ok ? 'data-redo="1"' : ""}>
+          <span class="t-ic">${ok ? "✓" : t.icon}</span>
+          <span class="t-body">
+            <b>${T(esc(t.zh), esc(t.en))}</b>
+            <span>${TB(esc(t.zhWhy), esc(t.enWhy))}</span>
+          </span>
+          <span class="t-min">${ok ? T("已完成", "done") : t.min + " min"}</span>
+        </button>`;
+      }).join("")}
+    </div>
+
+    <p class="eyebrow">${T("这套安排的道理", "Why this plan")}</p>
+    <div class="panel">
+      <ol class="m-steps">
+        <li><b>${T("每天一个新知识点，不贪多", "One new topic a day — no more")}</b><span>${TB("29 个知识点，每周 5 天，六周就能全部过一遍。一天塞两三个，当天记得住，一周后全忘。",
+          "29 topics at 5 days a week means one full pass in six weeks. Cram two or three a day and she will remember them tonight and forget them by next week.")}</span></li>
+        <li><b>${T("三科交替，不一科刷到底", "Rotate subjects instead of blocking")}</b><span>${TB("数学 → 语言 → 阅读 轮着来。交替练习（interleaving）当下感觉更吃力，但长期保持率明显更高。",
+          "Maths → Language → Reading, in rotation. Interleaving feels harder at the time but holds up far better months later — which is exactly what matters here.")}</span></li>
+        <li><b>${T("口诀每天 3 分钟，雷打不动", "Three minutes of tables, every single day")}</b><span>${TB("这是唯一需要「熟练度」而非「理解」的部分，只能靠天天见。口诀不熟会拖慢整张数学卷。",
+          "This is the one part that needs fluency rather than understanding, and fluency only comes from daily contact. Slow tables drag down the whole maths paper.")}</span></li>
+        <li><b>${T("错题攒到 5 道就插进当天", "Mistakes get worked in once 5 pile up")}</b><span>${TB("不用专门安排复习日 —— 错题本满了就自动出现在今天的清单里，连续答对两次才消失。",
+          "No separate revision day needed: once the notebook fills up, redoing them appears in today's list automatically. Each one needs two correct answers in a row to clear.")}</span></li>
+        <li><b>${T("三个月学完，三个月复习", "Three months to learn, three months to revise")}</b><span>${TB("29 个知识点其实六周就能过一遍，所以学习期的三个月安排的是「学两遍」：第一遍建立概念，第二遍从最弱的开始补。之后三个月复习期不再学新东西，只清错题、升级听写、每周一次限时测验。最后一个多月只做模拟卷和错题本。",
+          "One pass through the 29 topics only takes about six weeks, so the three-month learning phase covers everything twice: once to build the idea, then again starting from the weakest. The three revision months add nothing new — they clear mistakes, step up the dictation levels and add a weekly timed test. The last few weeks are mock papers and the mistakes notebook only.")}</span></li>
+      </ol>
+    </div>
+
+    <p class="eyebrow">${T("每周额外加两件", "Two more things each week")}</p>
+    <div class="panel">
+      <p class="sub" style="margin:0">${TB("<strong>① 每天 10 分钟英文朗读</strong>（睡前读给你听，读完用一句话说这段讲了什么）—— 这一件事同时提升阅读理解和拼写，性价比高于任何刷题。<br><strong>② 每两周一篇完整作文</strong>，在真的作文纸上手写、严格 40 分钟。写作是唯一的纸笔科目，屏幕上打字练不出手写速度。",
+        "<strong>1. Ten minutes of reading aloud every day</strong> — she reads to you, then says in one sentence what the passage was about. This single habit lifts both comprehension and spelling, and beats any amount of question practice.<br><strong>2. One full piece of writing a fortnight</strong>, handwritten on real lined paper, strictly 40 minutes. Writing is the only pen-and-paper paper, and typing on a screen never builds handwriting speed.")}</p>
+    </div>`;
 }
 
 /* ---------- 知识框架图（大纲） ---------- */
@@ -3364,7 +3685,8 @@ function renderMap() {
 function render() {
   renderTabs();
   updateRing();
-  if (current === "graph") renderGraph();
+  if (current === "today") renderToday();
+  else if (current === "graph") renderGraph();
   else if (current === "map") renderMap();
   else if (current === "writing") renderWriting();
   else if (current === "train") renderTrain();
@@ -3392,7 +3714,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -3401,6 +3723,18 @@ document.addEventListener("click", e => {
     const isDark = root.getAttribute("data-theme") === "dark" ||
       (!root.hasAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
     root.setAttribute("data-theme", isDark ? "light" : "dark");
+    return;
+  }
+  if (t.dataset.go) {
+    const g = JSON.parse(t.dataset.go);
+    leave();
+    if (g.drill) { current = "train"; renderTabs(); startDrill(g.drill.split(",").map(Number)); }
+    else if (g.quiz) { current = g.quiz; renderTabs(); startQuiz(g.quiz, g.kp); }
+    else if (g.review) { current = "wrong"; renderTabs(); startReview(); }
+    else if (g.dict !== undefined) { current = "train"; renderTabs(); startDict(g.dict); }
+    else if (g.exam) { current = "train"; renderTabs(); const a = g.exam.split(","); startExam(a[0], +a[1], +a[2]); }
+    else if (g.tab) { current = g.tab; render(); }
+    window.scrollTo({ top: 0 });
     return;
   }
   if (t.dataset.tab) { leave(); current = t.dataset.tab; render(); return; }
