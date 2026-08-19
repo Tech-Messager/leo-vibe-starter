@@ -295,7 +295,7 @@
   .verdict p { margin: 0; font-size: .88rem; line-height: 1.6; }
   .verdict .src { display: block; margin-top: 8px; font-family: var(--data); font-size: .7rem; color: var(--slate); }
 
-  .q-nav { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  .q-nav { display: flex; gap: 10px; margin-top: 18px; align-items: center; flex-wrap: wrap; }
   .btn {
     border: none; border-radius: 100px; padding: 11px 22px; font-size: .93rem; font-weight: 700;
     cursor: pointer; background: var(--eucalypt); color: var(--on-accent);
@@ -768,6 +768,35 @@ function buyOrWear(cat, id, price) {
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+  /* ---------- 配速与计时 ---------- */
+  .pace { background: var(--card-sunk); border-radius: var(--r-md); padding: 15px 17px; margin-top: 18px; text-align: left; }
+  .pace-h { font-size: .84rem; font-weight: 700; margin-bottom: 9px; }
+  .pace-row { display: flex; justify-content: space-between; gap: 12px; font-size: .88rem;
+    color: var(--slate); padding: 5px 0; border-bottom: 1px dashed var(--hairline); }
+  .pace-row:last-of-type { border-bottom: none; }
+  .pace-row b { font-family: var(--data); color: var(--ink); font-variant-numeric: tabular-nums; }
+  .pace-row b.good { color: var(--eucalypt); }
+  .pace-row b.mid { color: var(--wattle); }
+  .pace-row b.slow { color: var(--coral); }
+  .pace-m { font-size: .87rem; color: var(--slate); margin: 11px 0 0; line-height: 1.55; }
+  .pace-warn {
+    margin-top: 12px; padding: 11px 14px; border-radius: var(--r-sm);
+    background: var(--wattle-soft); font-size: .87rem; line-height: 1.55;
+  }
+
+  .wt-panel .wt-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .wt-ph b { display: block; font-size: 1.2rem; font-weight: 750; }
+  .wt-ph span { display: block; color: var(--slate); font-size: .86rem; margin-top: 2px; }
+  .wt-bar { height: 8px; border-radius: 99px; background: var(--card-sunk); margin: 14px 0 10px; overflow: hidden; }
+  .wt-bar i { display: block; height: 100%; background: var(--eucalypt); border-radius: 99px; transition: width 1s linear; }
+  .wt-steps { display: flex; gap: 8px; flex-wrap: wrap; }
+  .wt-steps span {
+    font-size: .78rem; font-family: var(--data); color: var(--slate);
+    background: var(--card-sunk); border-radius: 99px; padding: 4px 11px;
+  }
+  .wt-steps span.on { background: var(--eucalypt); color: var(--on-accent); font-weight: 700; }
+  .wt-steps span.done { color: var(--eucalypt); }
+
   /* ---------- 奖励：故事 · 花园 · 回放 · 小老师 ---------- */
   .story-meter { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
     padding: 15px 18px; margin-bottom: 18px; }
@@ -844,6 +873,9 @@ function buyOrWear(cat, id, price) {
 
   @media (max-width: 620px) {
     .ch-body { padding: 0 16px 16px 16px; }
+    .wt-top { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .wt-steps span { font-size: .72rem; padding: 3px 8px; }
+    .pace-row { font-size: .82rem; }
     .gc-name { font-size: 1.15rem; }
     .tc-s, .gm-s { display: none; }
   }
@@ -1343,20 +1375,29 @@ function load() {
   return p;
 }
 
-/* ---- 错题本：答错入册，连续答对两次自动消除 ---- */
+/* ---- 错题本 · 间隔复习：答对后隔 1→3→7→21 天再考，全部熬过才算真记住 ---- */
+const INTERVALS = [1, 3, 7, 21];
 function wrongKey(subj, kp, i) { return subj + "::" + kp + "::" + i; }
 function markWrong(subj, kp, i) {
   const k = wrongKey(subj, kp, i);
-  const w = progress.wrong[k] || { times: 0, streak: 0 };
-  w.times++; w.streak = 0; w.at = Date.now();
+  const w = progress.wrong[k] || { times: 0, box: 0 };
+  w.times++; w.box = 0; w.due = Date.now(); w.at = Date.now();
   progress.wrong[k] = w; save();
 }
 function markRight(subj, kp, i) {
   const k = wrongKey(subj, kp, i), w = progress.wrong[k];
-  if (!w) return;
-  w.streak = (w.streak || 0) + 1;
-  if (w.streak >= 2) delete progress.wrong[k]; else progress.wrong[k] = w;
-  save();
+  if (!w) return false;
+  w.box = (w.box || 0) + 1;
+  if (w.box >= INTERVALS.length) { delete progress.wrong[k]; save(); return true; }
+  w.due = Date.now() + INTERVALS[w.box - 1] * 864e5;
+  progress.wrong[k] = w; save();
+  return false;
+}
+/* 今天到期该复习的 */
+function dueList() { return wrongList().filter(w => (w.meta.due || 0) <= Date.now()); }
+function nextDueIn(w) {
+  const d = Math.ceil(((w.meta.due || 0) - Date.now()) / 864e5);
+  return d <= 0 ? 0 : d;
 }
 function wrongList() {
   return Object.keys(progress.wrong).map(k => {
@@ -1364,7 +1405,7 @@ function wrongList() {
     const g = BANK[subj] && BANK[subj].groups.find(x => x.kp === kp);
     if (!g || !g.qs[+i]) return null;
     return { subj, kp, i: +i, q: g.qs[+i], meta: progress.wrong[k] };
-  }).filter(Boolean).sort((a, b) => b.meta.times - a.meta.times);
+  }).filter(Boolean).sort((a, b) => (a.meta.due || 0) - (b.meta.due || 0) || b.meta.times - a.meta.times);
 }
 function save() {
   try { localStorage.setItem(STORE, JSON.stringify(progress)); } catch (e) {}
@@ -2314,9 +2355,12 @@ function renderSubject(id) {
 /* ---------- quiz ---------- */
 let quiz = null;
 
+/* 真实考试的平均配速：数学 75 秒/题，阅读 69，语言 67 */
+const PACE = { numeracy: 75, reading: 69, conventions: 67, challenge: 90 };
+
 function startQuiz(subj, kpName) {
   const g = BANK[subj].groups.find(x => x.kp === kpName);
-  quiz = { subj, kp: kpName, group: g, i: 0, results: [], answered: false };
+  quiz = { subj, kp: kpName, group: g, i: 0, results: [], answered: false, times: [], qStart: Date.now() };
   renderQuiz();
 }
 
@@ -2364,6 +2408,7 @@ function pick(n) {
   const q = quiz.group.qs[quiz.i];
   const ok = n === q.a;
   quiz.results[quiz.i] = ok;
+  quiz.times[quiz.i] = Math.max(1, Date.now() - quiz.qStart);
   if (ok) markRight(quiz.subj, quiz.kp, quiz.i); else markWrong(quiz.subj, quiz.kp, quiz.i);
 
 
@@ -2381,6 +2426,12 @@ function pick(n) {
       <span class="src">${SRC(q.s)}</span>
     </div>`;
 
+  const tgt = PACE[quiz.subj] || 70, spent = Math.round(quiz.times[quiz.i] / 1000);
+  if (spent > tgt * 2) {
+    document.getElementById("verdict").insertAdjacentHTML("beforeend",
+      `<div class="pace-warn">⏱️ ${TB("这题花了 " + spent + " 秒，比考试节奏（约 " + tgt + " 秒）慢不少。考试时遇到卡住的题，<strong>先跳过，最后回来做</strong> —— 别把时间耗在一道题上。",
+        "That took " + spent + "s — well over the test pace of about " + tgt + "s. In the real test, <strong>skip a sticky question and come back at the end</strong>. Never sink your time into one question.")}</div>`);
+  }
   const last = quiz.i === quiz.group.qs.length - 1;
   document.getElementById("qnav").innerHTML =
     `<button class="btn" data-next="1">${last ? Tp("看成绩","See score") : Tp("下一题 →","Next →")}</button>`;
@@ -2392,6 +2443,7 @@ function next() {
   if (quiz.i === quiz.group.qs.length - 1) return finish();
   quiz.i++;
   quiz.answered = false;
+  quiz.qStart = Date.now();
   renderQuiz();
 }
 
@@ -2425,11 +2477,77 @@ function finish() {
         <button class="btn" data-retry="1">${Tp("再做一次","Try again")}</button>
         <button class="btn ghost" data-back="${quiz.subj}">${Tp("回到 " + BANK[quiz.subj].label, "Back to " + BANK[quiz.subj].en)}</button>
       </div>
+      ${paceReport()}
       ${wrongIdx.length ? `<div class="wrongs">
         <h5>${T("要复习的题（" + wrongIdx.length + " 题）", "Questions to review (" + wrongIdx.length + ")")}</h5>
         <ul>${wrongIdx.map(n => `<li>${quiz.group.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${SRC(quiz.group.qs[n].s)}</span></li>`).join("")}</ul>
       </div>` : ""}
     </div>`;
+}
+
+function paceReport() {
+  const ms = quiz.times.filter(x => x > 0);
+  if (!ms.length) return "";
+  const t = ms.map(x => Math.max(1, Math.round(x / 1000)));
+  const total = t.reduce((a, b) => a + b, 0);
+  const avg = Math.round(total / t.length);
+  const tgt = PACE[quiz.subj] || 70;
+  const slow = t.indexOf(Math.max(...t));
+  const cls = avg <= tgt ? "good" : avg <= tgt * 1.4 ? "mid" : "slow";
+  const msg = avg <= tgt
+    ? Tp("比考试节奏还快 —— 很好。", "Faster than test pace — excellent.")
+    : avg <= tgt * 1.4
+      ? Tp("接近考试节奏了，再练几组就稳了。", "Close to test pace. A few more sets and it will be comfortable.")
+      : Tp("目前比考试节奏慢。先别追速度 —— 先把方法练熟，快是自然的结果。", "Slower than test pace for now. Do not chase speed yet — get the method solid and speed follows.");
+  return `<div class="pace">
+    <div class="pace-h">⏱️ ${T("你的配速", "Your pace")}</div>
+    <div class="pace-row"><span>${T("这一组用时", "Time for this set")}</span><b>${Math.floor(total / 60)}:${String(total % 60).padStart(2, "0")}</b></div>
+    <div class="pace-row"><span>${T("平均每题", "Average per question")}</span><b class="${cls}">${avg}s</b></div>
+    <div class="pace-row"><span>${T("考试节奏", "Test pace")}</span><b>${tgt}s</b></div>
+    <div class="pace-row"><span>${T("最慢的一题", "Slowest question")}</span><b>${T("第 " + (slow + 1) + " 题", "Q" + (slow + 1))} · ${t[slow]}s</b></div>
+    <p class="pace-m">${msg}</p></div>`;
+}
+
+/* ---------- 写作 40 分钟分段计时器 ---------- */
+let wtimer = null;
+const WPHASES = [
+  { s: 300,  zh: "构思", en: "Plan",  zhD: "写提纲：谁·在哪·发生什么问题·怎么解决", enD: "Sketch a plan: who, where, what goes wrong, how it ends" },
+  { s: 1800, zh: "写作", en: "Write", zhD: "一直写，别停下来改字", enD: "Keep writing — do not stop to fix words" },
+  { s: 300,  zh: "检查", en: "Check", zhD: "专查：大写、句号、漏字、拼写", enD: "Check for: capitals, full stops, missing words, spelling" }
+];
+function startWTimer() {
+  stopWTimer();
+  wtimer = { phase: 0, left: WPHASES[0].s, t: null };
+  wtimer.t = setInterval(() => {
+    wtimer.left--;
+    if (wtimer.left <= 0) {
+      if (wtimer.phase < WPHASES.length - 1) { wtimer.phase++; wtimer.left = WPHASES[wtimer.phase].s; beep(); }
+      else { stopWTimer(); renderWriting(); return; }
+    }
+    paintWTimer();
+  }, 1000);
+  renderWriting();
+}
+function stopWTimer() { if (wtimer && wtimer.t) clearInterval(wtimer.t); wtimer = null; }
+function paintWTimer() {
+  const el = document.getElementById("wtClock"), ph = document.getElementById("wtPhase");
+  if (!el || !wtimer) return;
+  el.textContent = fmtTime(wtimer.left);
+  el.classList.toggle("low", wtimer.left <= 30);
+  const P = WPHASES[wtimer.phase];
+  if (ph) ph.innerHTML = `<b>${Tp(P.zh, P.en)}</b><span>${TB(esc(P.zhD), esc(P.enD))}</span>`;
+  const bar = document.getElementById("wtBar");
+  if (bar) bar.style.width = Math.round((1 - wtimer.left / WPHASES[wtimer.phase].s) * 100) + "%";
+}
+function beep() {
+  try {
+    const a = new (window.AudioContext || window.webkitAudioContext)();
+    const o = a.createOscillator(), g = a.createGain();
+    o.connect(g); g.connect(a.destination); o.frequency.value = 660;
+    g.gain.setValueAtTime(.12, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + .5);
+    o.start(); o.stop(a.currentTime + .5);
+  } catch (e) {}
 }
 
 /* ---------- writing ---------- */
@@ -2475,6 +2593,23 @@ function renderWriting() {
   view.innerHTML = `
     <h2>${T("写作","Writing")}<span class="en">${Tp("40 分钟 · 1 篇 · 纸笔","40 min · 1 piece · pen and paper")}</span></h2>
     <p class="lede">${TB("写作是四科里唯一的纸笔考试，所以练习一定要在真的作文纸上手写、并严格计时：<strong>5 分钟构思 → 30 分钟写 → 5 分钟检查</strong>。考试当天才知道考记叙文还是议论文，两种都要会。","Writing is the only paper done with pen and paper, so practise on real lined paper and keep to the clock: <strong>5 minutes planning → 30 minutes writing → 5 minutes checking</strong>. You only find out on the day whether it is a narrative or a persuasive piece, so you need both.")}</p>
+
+    <p class="eyebrow">${T("40 分钟计时器","The 40-minute timer")}</p>
+    <div class="panel wt-panel">
+      ${wtimer ? `
+        <div class="wt-top">
+          <div class="wt-ph" id="wtPhase"><b>${Tp(WPHASES[wtimer.phase].zh, WPHASES[wtimer.phase].en)}</b>
+            <span>${TB(esc(WPHASES[wtimer.phase].zhD), esc(WPHASES[wtimer.phase].enD))}</span></div>
+          <div class="clock" id="wtClock">${fmtTime(wtimer.left)}</div>
+        </div>
+        <div class="wt-bar"><i id="wtBar" style="width:0%"></i></div>
+        <div class="wt-steps">${WPHASES.map((P, n) => `<span class="${n === wtimer.phase ? "on" : n < wtimer.phase ? "done" : ""}">${Tp(P.zh, P.en)} ${Math.round(P.s / 60)}min</span>`).join("")}</div>
+        <div class="q-nav"><button class="btn ghost" id="wtStop">${Tp("停止","Stop")}</button></div>
+      ` : `
+        <p class="sub">${TB("考试是 40 分钟：<strong>5 分钟构思 → 30 分钟写 → 5 分钟检查</strong>。每段结束会响一声。在真的作文纸上手写。",
+          "The test is 40 minutes: <strong>5 planning → 30 writing → 5 checking</strong>. It chimes at each change. Write by hand on real lined paper.")}</p>
+        <div class="q-nav"><button class="btn" id="wtStart">${Tp("开始 40 分钟","Start 40 minutes")}</button></div>`}
+    </div>
 
     <p class="eyebrow">${T("抽一个题目（模拟「当天才知道体裁」）","Draw a prompt (you only find out the type on the day)")}</p>
     <div class="panel">
@@ -2992,7 +3127,7 @@ function finishExam() {
    ============================================================ */
 let review = null;
 function startReview() {
-  const list = wrongList();
+  const list = dueList().length ? dueList() : wrongList();
   if (!list.length) return renderWrong();
   review = { list: list.slice(0, 15), i: 0, results: [], answered: false };
   renderReview();
@@ -3015,7 +3150,9 @@ function renderReview() {
       <span class="dots">${dots}</span>
     </div>
     <div class="panel" style="border-left:3px solid var(--coral)">
-      <p class="sub" style="margin:0"><strong>规则 ·</strong> 一道题<strong>连续答对两次</strong>才会从错题本消失。这道题你之前错过 ${item.meta.times} 次${item.meta.streak ? `，已连对 ${item.meta.streak} 次` : ""}。</p>
+      <p class="sub" style="margin:0"><strong>${T("规则", "Rule")} ·</strong> ${TB(
+        `答对后会隔 <strong>1 天 → 3 天 → 7 天 → 21 天</strong>各再考你一次，四关全过才算真记住。这道题错过 ${item.meta.times} 次，现在在第 ${(item.meta.box || 0) + 1} 关。`,
+        `Once you get it right it comes back after <strong>1 day, then 3, then 7, then 21</strong>. Survive all four and it is really learnt. You have missed this one ${item.meta.times} time(s) — you are on stage ${(item.meta.box || 0) + 1}.`)}</p>
     </div>
     ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
@@ -3057,14 +3194,15 @@ function reviewPick(n) {
     else b.classList.add("dim");
   });
   const cleared = ok && (progress.wrong[wrongKey(item.subj, item.kp, item.i)] === undefined);
+  const wNow = progress.wrong[wrongKey(item.subj, item.kp, item.i)];
   document.getElementById("verdict").innerHTML = `
     <div class="verdict ${ok ? "good" : "bad"}">
       <b>${ok ? "✓ " + cheer() : Tp("✗ 正确答案是 " + "ABCD"[q.a], "✗ The answer is " + "ABCD"[q.a])}</b>
       <p>${TB(q.e, EN_EXP[q.s])}</p>
       <span class="src">${cleared
-        ? T("🎉 连对两次，这道题从错题本移除了", "🎉 Right twice in a row — removed from your mistakes")
-        : ok ? T("再答对一次就能移出错题本", "Get it right once more to clear it")
-             : T("别急，讲解再读一遍，下次一定行", "Read the explanation again — you'll get it next time")} · ${SRC(q.s)}</span>
+        ? Tp("🎉 四关全过，这道题真正学会了", "🎉 All four stages passed — this one is really learnt")
+        : ok ? Tp("很好 —— " + INTERVALS[(wNow.box || 1) - 1] + " 天后会再考你一次", "Nice — it will come back in " + INTERVALS[(wNow.box || 1) - 1] + " day(s)")
+             : Tp("别急，讲解再读一遍，下次一定行", "Read the explanation again — you'll get it next time")} · ${SRC(q.s)}</span>
     </div>`;
   const last = review.i === review.list.length - 1;
   document.getElementById("qnav").innerHTML =
@@ -3084,24 +3222,25 @@ function reviewNext() {
 }
 
 function renderWrong() {
-  const list = wrongList();
+  const list = wrongList(), due = dueList();
   const bySubj = {};
   list.forEach(w => { (bySubj[w.subj] = bySubj[w.subj] || []).push(w); });
   const spellWrong = Object.entries(progress.spell || {}).sort((a, b) => b[1] - a[1]);
 
   view.innerHTML = `
     <h2>${T("错题本","My Mistakes")}<span class="en">${ZH("错题本") || "Wrong-answer notebook"}</span></h2>
-    <p class="lede">${TB("做错的题会自动收进这里。规则：<strong>连续答对两次</strong>才移出去 —— 一次可能是蒙对的。考前最后一周，只做这里的题就够了。",
-      "Every question you get wrong lands here. The rule: you must get it right <strong>twice in a row</strong> before it leaves — once could be a lucky guess. In the last week before the test, this page is all you need.")}</p>
+    <p class="lede">${TB("做错的题会自动收进这里，并按<strong>1 天 → 3 天 → 7 天 → 21 天</strong>的间隔重新考你。间隔越拉越长，是记忆最牢的复习方式 —— 答对就往后推，答错就回到第一关。",
+      "Mistakes land here and come back at growing intervals: <strong>1 day, then 3, then 7, then 21</strong>. Stretching the gaps like this is the most durable way to revise — get it right and it moves further out; get it wrong and it goes back to the start.")}</p>
 
     ${list.length ? `
       <div class="stat-row">
-        <div class="stat"><div class="k">${T("待攻克","To fix")}</div><div class="v">${list.length}<small> ${Tp("题","Q")}</small></div></div>
+        <div class="stat"><div class="k">${T("今天该复习","Due today")}</div><div class="v">${due.length}<small> ${Tp("题","Q")}</small></div></div>
+        <div class="stat"><div class="k">${T("等待间隔中","Resting")}</div><div class="v">${list.length - due.length}<small> ${Tp("题","Q")}</small></div></div>
         <div class="stat"><div class="k">${T("已清除","Cleared")}</div><div class="v">${progress.cleared || 0}<small> ${Tp("题","Q")}</small></div></div>
         <div class="stat"><div class="k">${T("错词","Tricky words")}</div><div class="v">${spellWrong.length}<small> 个</small></div></div>
       </div>
       <div class="q-nav" style="margin:0 0 22px">
-        <button class="btn" data-review="1">${Tp("开始重做（最多 15 题）","Redo them (up to 15)")}</button>
+        <button class="btn" data-review="1">${Tp(due.length ? "复习今天到期的 " + Math.min(15, due.length) + " 题" : "提前练一练", due.length ? "Review " + Math.min(15, due.length) + " due today" : "Practise ahead")}</button>
       </div>
       ${Object.entries(bySubj).map(([subj, ws]) => `
         <p class="eyebrow">${esc(BANK[subj].label)}（${ws.length} 题）</p>
@@ -3111,7 +3250,9 @@ function renderWrong() {
               <div class="wr-q">${w.q.q.replace(/<[^>]+>/g, "")}</div>
               <div class="wr-meta">${esc(lang === "zh" ? w.kp : (BANK[w.subj].groups.find(g => g.kp === w.kp) || {}).en || w.kp)} · ${SRC(w.q.s)}</div>
             </div>
-            <span class="pill ${w.meta.streak ? "mid" : "weak"}">${w.meta.streak ? T("已连对 " + w.meta.streak + " 次", w.meta.streak + " right in a row") : T("错 " + w.meta.times + " 次", "wrong " + w.meta.times + "×")}</span>
+            <span class="pill ${nextDueIn(w) ? "mid" : "weak"}">${nextDueIn(w)
+              ? Tp(nextDueIn(w) + " 天后再考", "in " + nextDueIn(w) + "d")
+              : Tp("今天该做 · 第 " + ((w.meta.box || 0) + 1) + " 关", "due · stage " + ((w.meta.box || 0) + 1))}</span>
           </div>`).join("")}
         </div>`).join("")}
     ` : `<div class="panel"><p class="sub" style="margin:0">${T("错题本是空的。去练习或做限时测验，做错的题会自动收进来。","Nothing here yet. Do some practice or a timed test — anything you get wrong lands here automatically.")}</p></div>`}
@@ -3287,7 +3428,7 @@ function todayTasks() {
   const done = doneToday();
   const A = dayAssign();
   const d = A.d;
-  const wrongs = wrongList().length;
+  const wrongs = dueList().length;
   const ph = currentPhase().id;
   const t = [];
 
@@ -3347,7 +3488,7 @@ function todayTasks() {
 
   if (ph !== "final" && wrongs >= 5) t.push({ id: "review", icon: "🔧", min: 6,
     zh: "重做错题（" + wrongs + " 道待攻克）", en: "Redo mistakes (" + wrongs + " to fix)",
-    zhWhy: "连续答对两次才移出错题本", enWhy: "Right twice in a row to clear it",
+    zhWhy: "按 1/3/7/21 天的间隔重考，这样记得最牢", enWhy: "They come back at 1, 3, 7 and 21 day gaps — the way memory sticks best",
     go: { review: 1 } });
 
   /* 听写：学习期每 3 天一次，复习期起每 2 天一次并升级难度 */
@@ -3828,7 +3969,7 @@ function rewardReplay() {
         <div class="rp-q">${b.q.q}</div>
         <div class="rp-a">✓ ${b.q.o[b.q.a]}</div>
       </div>`).join("")
-    : `<div class="panel"><p class="sub" style="margin:0">${T("还没有记录。做错的题连续答对两次之后就会出现在这里。", "Nothing here yet. Once you get a mistake right twice in a row, it lands here.")}</p></div>`}`;
+    : `<div class="panel"><p class="sub" style="margin:0">${T("还没有记录。做错的题熬过全部四个间隔之后就会出现在这里。", "Nothing here yet. Once a mistake survives all four spaced reviews, it lands here.")}</p></div>`}`;
 }
 
 function rewardTeach() {
@@ -4058,8 +4199,8 @@ function renderToday() {
           "Maths → Language → Reading, in rotation. Interleaving feels harder at the time but holds up far better months later — which is exactly what matters here.")}</span></li>
         <li><b>${T("口诀每天 3 分钟，雷打不动", "Three minutes of tables, every single day")}</b><span>${TB("这是唯一需要「熟练度」而非「理解」的部分，只能靠天天见。口诀不熟会拖慢整张数学卷。",
           "This is the one part that needs fluency rather than understanding, and fluency only comes from daily contact. Slow tables drag down the whole maths paper.")}</span></li>
-        <li><b>${T("错题攒到 5 道就插进当天", "Mistakes get worked in once 5 pile up")}</b><span>${TB("不用专门安排复习日 —— 错题本满了就自动出现在今天的清单里，连续答对两次才消失。",
-          "No separate revision day needed: once the notebook fills up, redoing them appears in today's list automatically. Each one needs two correct answers in a row to clear.")}</span></li>
+        <li><b>${T("错题攒到 5 道就插进当天", "Mistakes get worked in once 5 pile up")}</b><span>${TB("不用专门安排复习日 —— 到期的错题会自动出现在今天的清单里，按 1/3/7/21 天的间隔重考。",
+          "No separate revision day needed: mistakes that are due show up in today's list on their own, coming back at 1, 3, 7 and 21 day gaps.")}</span></li>
         <li><b>${T("三个月学完，三个月复习", "Three months to learn, three months to revise")}</b><span>${TB("29 个知识点其实六周就能过一遍，所以学习期的三个月安排的是「学两遍」：第一遍建立概念，第二遍从最弱的开始补。之后三个月复习期不再学新东西，只清错题、升级听写、每周一次限时测验。最后一个多月只做模拟卷和错题本。",
           "One pass through the 29 topics only takes about six weeks, so the three-month learning phase covers everything twice: once to build the idea, then again starting from the weakest. The three revision months add nothing new — they clear mistakes, step up the dictation levels and add a weekly timed test. The last few weeks are mock papers and the mistakes notebook only.")}</span></li>
       </ol>
@@ -4496,6 +4637,7 @@ function updateRing() {
 }
 
 function leave() {
+  stopWTimer();
   if (drill) { clearInterval(drill.tId); drill = null; }
   if (exam) { clearInterval(exam.tId); exam = null; }
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -4503,7 +4645,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-rtab],[data-teach],#saveGoal,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -4516,6 +4658,8 @@ document.addEventListener("click", e => {
   }
   if (t.dataset.rtab) { rewardTab = t.dataset.rtab; renderRewards(); return; }
   if (t.dataset.teach) { const [a, b2] = t.dataset.teach.split("::"); markTaught(a, b2); return; }
+  if (t.id === "wtStart") { startWTimer(); return; }
+  if (t.id === "wtStop") { stopWTimer(); renderWriting(); return; }
   if (t.id === "saveGoal") { saveGoal(); return; }
   if (t.dataset.buy) { const [c, i, pr] = t.dataset.buy.split(":"); buyOrWear(c, i, +pr); return; }
   if (t.dataset.go) {
