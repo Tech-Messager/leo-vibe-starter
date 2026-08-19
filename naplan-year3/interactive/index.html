@@ -882,6 +882,26 @@ function buyOrWear(cat, id, price) {
   .tc-s { flex-shrink: 0; font-size: .76rem; color: var(--slate); white-space: nowrap; }
   .teach.ok .tc-s { color: var(--eucalypt); font-weight: 700; }
 
+  /* ---------- 备份与恢复 ---------- */
+  .bk-warn { background: var(--wattle-soft); color: var(--wattle); border-radius: var(--r-md);
+    padding: 13px 16px; margin-bottom: 18px; font-size: .92rem; font-weight: 600; line-height: 1.55; }
+  .bk-card { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-md);
+    padding: 16px 18px; margin-bottom: 20px; }
+  .bk-h { font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; color: var(--slate);
+    font-weight: 700; margin-bottom: 12px; }
+  .bk-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); text-align: center; }
+  .bk-grid div b { display: block; font-family: var(--data); font-size: 1.5rem; font-weight: 700; color: var(--eucalypt); }
+  .bk-grid div span { font-size: .76rem; color: var(--slate); }
+  .bk-box {
+    width: 100%; margin-top: 12px; padding: 11px 13px; font-family: var(--data); font-size: .74rem;
+    line-height: 1.5; border: 1.5px solid var(--hairline); border-radius: var(--r-sm);
+    background: var(--card-sunk); color: var(--slate); resize: vertical; word-break: break-all;
+  }
+  .bk-box:focus { border-color: var(--eucalypt); outline: none; }
+  #bkNote .ok, #rsNote .ok { color: var(--eucalypt); font-weight: 700; }
+  #bkNote .bad, #rsNote .bad { color: var(--coral); font-weight: 700; }
+  .file-btn { cursor: pointer; display: inline-flex; align-items: center; }
+
   /* ---------- 大目标 ---------- */
   .goal-card { background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-lg);
     padding: 20px 22px; margin-bottom: 22px; box-shadow: var(--shadow); }
@@ -2344,6 +2364,8 @@ function checkAllDone() {
   const done = doneToday();
   if (todayTasks().every(t => done.includes(t.id))) {
     pl.bonus[k] = 1; save();
+    const lb = progress.lastBackup ? Date.now() - new Date(progress.lastBackup) : Infinity;
+    if (lb > 7 * 864e5) progress.needBackup = 1;
     const ch = unlockChapter();
     if (ch) toast({ icon: "📖", n: "解锁第 " + ch + " 章", en: "Chapter " + ch + " unlocked",
                     d: "去「我的收获」读", de: "Read it in My Rewards" });
@@ -2404,6 +2426,7 @@ const TABS = [
   { id: "shop",        label: "我的形象",  en: "Character" },
   { id: "rewards",     label: "我的收获",  en: "Rewards" },
   { id: "goal",        label: "大目标",    en: "Big goal" },
+  { id: "backup",      label: "备份",      en: "Backup" },
   { id: "coach",       label: "名师锦囊",  en: "Teaching tips" },
   { id: "progress",    label: "我的进度",  en: "Progress" }
 ];
@@ -4142,6 +4165,105 @@ function rewardTeach() {
     : `<div class="panel"><p class="sub" style="margin:0">${T("先把一个知识点练到 85% 以上，就会出现在这里。", "Get a topic above 85% and it will appear here to teach.")}</p></div>`}`;
 }
 
+/* ============================================================
+   备份与恢复：进度存在本地浏览器，换设备／换浏览器需要手动搬
+   ============================================================ */
+const BACKUP_TAG = "chloe-naplan-backup-v1";
+function makeBackup() {
+  return JSON.stringify({ tag: BACKUP_TAG, at: new Date().toISOString(), lang, data: progress });
+}
+function backupSummary(o) {
+  const d = o.data || {};
+  const kps = Object.values(d.kp || {}).filter(x => x.total).length;
+  const days = Object.keys((d.plan || {}).done || {}).length;
+  return { kps, days, coins: d.coins || 0, wrong: Object.keys(d.wrong || {}).length,
+           items: (d.owned || []).length, chapters: d.chapters || 0, at: (o.at || "").slice(0, 10) };
+}
+function applyBackup(txt) {
+  const note = document.getElementById("rsNote");
+  let o;
+  try { o = JSON.parse(txt); } catch (e) {
+    if (note) note.innerHTML = `<span class="bad">✗ ${Tp("这段内容不是有效的备份码", "That is not a valid backup code")}</span>`;
+    return;
+  }
+  if (!o || o.tag !== BACKUP_TAG || !o.data) {
+    if (note) note.innerHTML = `<span class="bad">✗ ${Tp("这不是本练习本的备份", "That backup is not from this practice book")}</span>`;
+    return;
+  }
+  const cur = backupSummary({ data: progress }), inc = backupSummary(o);
+  if (cur.kps + cur.days > 0 && !confirm(
+      Tp("当前设备已有记录（" + cur.kps + " 个知识点 / " + cur.days + " 天）。\n恢复后会被备份里的记录（" + inc.kps + " 个知识点 / " + inc.days + " 天）覆盖。\n确定继续吗？",
+         "This device already has progress (" + cur.kps + " topics / " + cur.days + " days).\nRestoring will replace it with the backup (" + inc.kps + " topics / " + inc.days + " days).\nContinue?"))) return;
+  progress = o.data;
+  for (const k in BLANK) if (progress[k] === undefined) progress[k] = JSON.parse(JSON.stringify(BLANK[k]));
+  save();
+  if (o.lang) setLang(o.lang);
+  location.reload();
+}
+
+function renderBackup() {
+  const sum = backupSummary({ data: progress, at: new Date().toISOString() });
+  const last = progress.lastBackup ? progress.lastBackup.slice(0, 10) : null;
+  const stale = !last || (Date.now() - new Date(last)) > 7 * 864e5;
+  view.innerHTML = `
+    <h2>${T("备份与恢复", "Backup & Restore")}<span class="en">${Tp("换设备前先备份", "Back up before switching device")}</span></h2>
+    <p class="lede">${TB("学习进度存在<strong>这一台设备的这一个浏览器</strong>里，不会自动上云。换设备、换浏览器、或清理浏览器数据之后就会看不到 —— 记录没有丢，只是在原来那台设备上。用下面的备份码可以把进度搬过去。",
+      "Progress is stored in <strong>this browser on this device</strong> and is never uploaded. Switch device or browser, or clear browsing data, and it will look empty — nothing is lost, it is just still on the original device. Use the backup code below to move it across.")}</p>
+
+    ${stale ? `<div class="bk-warn">⚠️ ${TB(last ? "上次备份是 " + last + "，建议每周备份一次。" : "还没有备份过。建议现在就备份一次，之后每周一次。",
+      last ? "Last backup was " + last + ". Once a week is a good habit." : "No backup yet. Make one now, then once a week.")}</div>` : ""}
+
+    <div class="bk-card">
+      <div class="bk-h">${T("这台设备上的记录", "What is on this device")}</div>
+      <div class="bk-grid">
+        <div><b>${sum.kps}</b><span>${T("知识点", "topics")}</span></div>
+        <div><b>${sum.days}</b><span>${T("学习日", "days")}</span></div>
+        <div><b>${sum.coins}</b><span>${T("金币", "coins")}</span></div>
+        <div><b>${sum.wrong}</b><span>${T("错题", "mistakes")}</span></div>
+        <div><b>${sum.items}</b><span>${T("装扮", "items")}</span></div>
+        <div><b>${sum.chapters}</b><span>${T("故事章节", "chapters")}</span></div>
+      </div>
+    </div>
+
+    <p class="eyebrow">${T("① 备份（在有记录的那台设备上做）", "1. Back up — on the device that has the progress")}</p>
+    <div class="panel">
+      <div class="q-nav" style="margin-top:0">
+        <button class="btn" id="bkCopy">${Tp("复制备份码","Copy the code")}</button>
+      </div>
+      <p class="sub" id="bkNote" style="margin:12px 0 0"></p>
+      <textarea class="bk-box" id="bkText" readonly rows="4">${esc(makeBackup())}</textarea>
+      <p class="sub" style="margin:8px 0 0">${TB("把这段码发给自己（微信／邮件／备忘录都行），或保存成文件。",
+        "Send this code to yourself — messaging app, email, notes, anything — or save it as a file.")}</p>
+    </div>
+
+    <p class="eyebrow">${T("② 恢复（在新设备上做）", "2. Restore — on the new device")}</p>
+    <div class="panel">
+      <textarea class="bk-box" id="rsText" rows="4" placeholder="${Tp("把备份码粘贴到这里","Paste the backup code here")}"></textarea>
+      <div class="q-nav">
+        <button class="btn" id="rsGo">${Tp("恢复","Restore")}</button>
+        <label class="btn ghost file-btn">${Tp("从文件恢复","From a file")}
+          <input type="file" id="rsFile" accept=".json,application/json" hidden></label>
+      </div>
+      <p class="sub" id="rsNote" style="margin:12px 0 0"></p>
+    </div>
+
+    <p class="eyebrow">${T("怎样才不会再丢", "How to stop this happening again")}</p>
+    <div class="panel">
+      <ol class="m-steps">
+        <li><b>${T("固定用一台设备", "Stick to one device")}</b><span>${TB("选她自己的 iPad 或电脑，以后都在这一台上练。进度不会在设备之间自动同步。",
+          "Pick her iPad or laptop and always practise on that one. Progress does not sync between devices on its own.")}</span></li>
+        <li><b>${T("固定用同一个浏览器", "And one browser")}</b><span>${TB("Safari 和 Chrome 各自存各自的。别在这一台上换来换去。",
+          "Safari and Chrome keep separate stores. Do not switch between them on the same device.")}</span></li>
+        <li><b>${T("加到主屏幕", "Add it to the home screen")}</b><span>${TB("iPad：Safari 里点分享 → 加入主画面。以后从图标进，就永远是同一个浏览器环境。",
+          "On iPad: Safari → Share → Add to Home Screen. Opening it from that icon always lands in the same browser context.")}</span></li>
+        <li><b>${T("不要用无痕模式", "Never use private browsing")}</b><span>${TB("无痕窗口一关，记录就没了。",
+          "A private window throws everything away the moment it closes.")}</span></li>
+        <li><b>${T("每周备份一次", "Back up once a week")}</b><span>${TB("周末做完最后一次练习后来这一页，复制备份码存起来。一分钟的事。",
+          "After the last session each weekend, come here and copy the code somewhere safe. It takes a minute.")}</span></li>
+      </ol>
+    </div>`;
+}
+
 /* ---------- 大目标：家长设定的真实世界奖励 ---------- */
 function goal() {
   if (!progress.goal) progress.goal = { name: "", target: 120, milestones: ["", "", "", ""] };
@@ -4368,7 +4490,17 @@ function renderToday() {
       }).join("")}
     </div>
 
+    ${(learned === 0 && activeDays() === 0 && !progress.coins) ? `<div class="bk-warn" style="margin-bottom:20px">
+      ${TB("这台设备上还没有任何记录。如果她<strong>在别的设备上练过</strong>，进度还在那台设备里 —— 去那台设备的「备份」页复制备份码，再到这里的「备份」页粘贴恢复。",
+        "There is no progress on this device yet. If she has <strong>practised on another device</strong>, it is still there — open Backup on that device, copy the code, then paste it into Backup here.")}
+      <div class="q-nav" style="margin-top:10px"><button class="btn" data-tab="backup">${Tp("去备份页","Open Backup")}</button></div>
+    </div>` : ""}
     ${allDone ? `<div class="done-banner">🎉 ${T("今天的任务全部完成了！明天见。", "All done for today. See you tomorrow!")}</div>` : ""}
+    ${(allDone && progress.needBackup) ? `<div class="bk-warn" style="margin-bottom:20px">
+      💾 ${TB("这周还没备份过。花一分钟把备份码存起来 —— 万一换设备或清了浏览器数据，记录还能找回来。",
+        "No backup this week. Take a minute to save the code — if you switch device or clear browser data, this is what gets it back.")}
+      <div class="q-nav" style="margin-top:10px"><button class="btn" data-tab="backup">${Tp("现在备份","Back up now")}</button></div>
+    </div>` : ""}
 
     <p class="eyebrow">${T("今天的任务", "Today's tasks")} ${mins ? `· ${Tp("约 " + mins + " 分钟", "about " + mins + " min")}` : ""}</p>
     <div class="tasks">
@@ -4816,6 +4948,7 @@ function render() {
   else if (current === "wrong") renderWrong();
   else if (current === "shop") renderShop();
   else if (current === "goal") renderGoal();
+  else if (current === "backup") renderBackup();
   else if (current === "rewards") renderRewards();
   else if (current === "coach") renderCoach();
   else if (current === "progress") renderProgress();
@@ -4841,7 +4974,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#bkCopy,#rsGo,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -4854,6 +4987,19 @@ document.addEventListener("click", e => {
   }
   if (t.dataset.rtab) { rewardTab = t.dataset.rtab; renderRewards(); return; }
   if (t.dataset.teach) { const [a, b2] = t.dataset.teach.split("::"); markTaught(a, b2); return; }
+  if (t.id === "bkCopy") {
+    const ta = document.getElementById("bkText");
+    ta.select(); ta.setSelectionRange(0, 999999);
+    let done = false;
+    try { done = document.execCommand("copy"); } catch (e) {}
+    if (navigator.clipboard) { try { navigator.clipboard.writeText(ta.value); done = true; } catch (e) {} }
+    document.getElementById("bkNote").innerHTML = done
+      ? `<span class="ok">✓ ${Tp("备份码已复制，发给自己保存好","Code copied — send it to yourself and keep it safe")}</span>`
+      : Tp("请手动全选下面的文字复制。", "Select the text below and copy it manually.");
+    progress.lastBackup = new Date().toISOString(); progress.needBackup = 0; save();
+    return;
+  }
+  if (t.id === "rsGo") { applyBackup(document.getElementById("rsText").value.trim()); return; }
   if (t.id === "wtStart") { startWTimer(); return; }
   if (t.id === "wtStop") { stopWTimer(); renderWriting(); return; }
   if (t.id === "saveGoal") { saveGoal(); return; }
@@ -4946,6 +5092,13 @@ document.addEventListener("click", e => {
 });
 
 document.addEventListener("change", e => {
+  const f = e.target.closest("#rsFile");
+  if (f && f.files && f.files[0]) {
+    const r = new FileReader();
+    r.onload = () => applyBackup(String(r.result || "").trim());
+    r.readAsText(f.files[0]);
+    return;
+  }
   const cb = e.target.closest("[data-check]");
   if (!cb) return;
   progress.checks[cb.dataset.check] = cb.checked;
