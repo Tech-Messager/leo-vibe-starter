@@ -394,14 +394,15 @@ function renderShop() {
   const L = look(), own = owned();
   view.innerHTML = `
     <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
-    <p class="lede">${TB("每做对一题、每完成一项任务都能赚金币，用金币给自己换发型、衣服、宠物和背景。金币只能靠练习赚，不能跳过。",
-      "Every correct answer and every finished task earns coins. Spend them on hair, outfits, pets and backgrounds. Coins can only be earned by practising — there is no shortcut.")}</p>
+    <p class="lede">${TB("金币来自<strong>乘法口诀抢答</strong>：答对一题 +3，3 分钟答对 25 题以上再 +40。用它换发型、衣服、围巾、帽子、宠物和背景 —— 共 54 件，还有 5 套整买更便宜的主题套装。",
+      "Coins come from the <strong>times tables sprint</strong>: +3 for each correct answer, and +40 for 25 or more in three minutes. Spend them on hair, outfits, scarves, hats, pets and scenes — 54 items in all, plus 5 themed sets that cost less bought together.")}</p>
 
     <div class="av-stage">
       <div class="av-big">${avatarSvg(200)}</div>
       <div class="av-side">
         <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
-        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
+        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币 · 已拥有 " + owned().length + " / " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " 件",
+          "Earned " + (progress.earned || 0) + " coins in total · " + owned().length + " of " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " items unlocked")}</div>
         <div class="av-rate">
           <div>${T("口诀答对一题", "Each tables answer")}<b>+${COIN.perAnswer}</b></div>
           <div>${T("3 分钟答对 25 题以上", "25+ in 3 minutes")}<b>+${COIN.sprint25}</b></div>
@@ -411,8 +412,27 @@ function renderShop() {
       </div>
     </div>
 
+    <p class="eyebrow">${T("主题套装 · 整套买更便宜", "Themed sets · cheaper together")}</p>
+    <div class="set-grid">
+      ${SETS.map(st => {
+        const own = owned(), pr = setPrice(st);
+        const all = Object.values(st.pick).every(i => own.includes(i));
+        const wearing = Object.entries(st.pick).every(([c, i]) => look()[c] === i);
+        return `<button class="set-card ${wearing ? "on" : ""} ${all ? "has" : coins() >= pr ? "" : "cant"}"
+            data-set="${st.id}">
+          <div class="sc-prev">${setPreview(st)}</div>
+          <div class="sc-b">
+            <b>${T(esc(st.zh), esc(st.en))}</b>
+            <span>${Object.keys(st.pick).map(c => T(SHOP[c].zh, SHOP[c].en)).join(" · ")}</span>
+          </div>
+          <div class="sc-p">${wearing ? T("正在穿", "Wearing") : all ? T("全部拥有 · 一键换上", "Owned · wear it") : `🪙 ${pr}`}</div>
+        </button>`;
+      }).join("")}
+    </div>
+
     ${Object.entries(SHOP).map(([cat, c]) => `
-      <p class="eyebrow">${T(c.zh, c.en)}</p>
+      <p class="eyebrow">${c.ic} ${T(c.zh, c.en)} <span class="own-n">${
+        c.items.filter(i => owned().includes(i[0])).length}/${c.items.length}</span></p>
       <div class="shop-grid">
         ${c.items.map(([id, zh, en, price]) => {
           const has = own.includes(id), on = L[cat] === id, can = coins() >= price;
@@ -424,6 +444,29 @@ function renderShop() {
           </button>`;
         }).join("")}
       </div>`).join("")}`;
+}
+
+function setPreview(st) {
+  const real = progress.look;
+  progress.look = Object.assign({}, look(), st.pick);
+  const svg = avatarSvg(72);
+  progress.look = real;
+  return svg;
+}
+function buySet(id) {
+  const st = SETS.find(x => x.id === id); if (!st) return;
+  const own = owned(), pr = setPrice(st);
+  const all = Object.values(st.pick).every(i => own.includes(i));
+  if (!all) {
+    if (!spendCoins(pr)) {
+      const el = document.querySelector(`[data-set="${id}"]`);
+      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
+      return;
+    }
+    Object.values(st.pick).forEach(i => { if (!own.includes(i)) own.push(i); });
+  }
+  Object.entries(st.pick).forEach(([c, i]) => { look()[c] = i; });
+  save(); updateCoinUI(); renderShop();
 }
 
 /* 商店缩略图：临时套用该项后渲染小图 */
@@ -2034,118 +2077,228 @@ function coinPop(n, why) {
   setTimeout(() => e.remove(), 1400);
 }
 
-/* ---- 装饰品目录：全部用内联 SVG 绘制，无外部资源 ---- */
+/* ---- 装饰品目录：全部内联 SVG 绘制，无外部资源 ---- */
 const SHOP = {
-  hair:  { zh: "发型", en: "Hair", items: [
-    ["h1", "短发", "Short", 0], ["h2", "双马尾", "Pigtails", 80], ["h3", "长发", "Long hair", 80],
-    ["h4", "丸子头", "Bun", 120], ["h5", "卷发", "Curly", 150] ] },
-  eyes:  { zh: "眼睛", en: "Eyes", items: [
-    ["e1", "圆眼", "Round", 0], ["e2", "笑眼", "Happy", 60], ["e3", "闪亮", "Sparkly", 120], ["e4", "认真", "Focused", 90] ] },
-  outfit:{ zh: "衣服", en: "Outfit", items: [
-    ["o1", "校服", "School uniform", 0], ["o2", "连衣裙", "Dress", 100], ["o3", "运动服", "Sports kit", 120],
-    ["o4", "太空服", "Space suit", 260], ["o5", "斗篷", "Cape", 220] ] },
-  hat:   { zh: "头饰", en: "Head", items: [
-    ["x0", "无", "None", 0], ["x1", "蝴蝶结", "Bow", 70], ["x2", "王冠", "Crown", 240],
-    ["x3", "太阳帽", "Sun hat", 130], ["x4", "耳机", "Headphones", 180], ["x5", "花环", "Flower crown", 200] ] },
-  pet:   { zh: "宠物", en: "Pet", items: [
-    ["p0", "无", "None", 0], ["p1", "小猫", "Cat", 160], ["p2", "小狗", "Dog", 160],
-    ["p3", "袋熊", "Wombat", 300], ["p4", "小鸟", "Bird", 140] ] },
-  bg:    { zh: "背景", en: "Background", items: [
-    ["b1", "薄荷", "Mint", 0], ["b2", "天空", "Sky", 60], ["b3", "日落", "Sunset", 90],
-    ["b4", "星空", "Night sky", 180], ["b5", "彩虹", "Rainbow", 220] ] }
+  hair:  { zh: "发型", en: "Hair", ic: "💇", items: [
+    ["h1","短发","Short bob",0], ["h2","双马尾","Pigtails",70], ["h3","长发","Long hair",70],
+    ["h4","丸子头","Top bun",110], ["h5","卷发","Curly",140], ["h6","麻花辫","Plaits",160],
+    ["h7","高马尾","Ponytail",120] ] },
+  eyes:  { zh: "眼睛", en: "Eyes", ic: "👀", items: [
+    ["e1","圆眼","Round",0], ["e2","笑眼","Smiley",50], ["e3","闪亮","Sparkly",110],
+    ["e4","认真","Focused",80], ["e5","眨眼","Winking",130] ] },
+  outfit:{ zh: "衣服", en: "Outfit", ic: "👗", items: [
+    ["o1","校服","School uniform",0], ["o2","连衣裙","Dress",90], ["o3","运动服","Sports kit",110],
+    ["o4","太空服","Space suit",240], ["o5","披风","Cape",210], ["o6","雨衣","Raincoat",130],
+    ["o7","厨师服","Chef's jacket",170], ["o8","画画围裙","Art smock",150],
+    ["o9","冬装外套","Winter coat",190] ] },
+  hat:   { zh: "帽子头饰", en: "Hats", ic: "🎩", items: [
+    ["x0","不戴","None",0], ["x1","蝴蝶结","Bow",60], ["x2","王冠","Crown",230],
+    ["x3","太阳帽","Sun hat",120], ["x4","耳机","Headphones",160], ["x5","花环","Flower crown",180],
+    ["x6","毛线帽","Beanie",100], ["x7","巫师帽","Wizard hat",250], ["x8","鸭舌帽","Cap",90],
+    ["x9","头巾","Headscarf",110] ] },
+  scarf: { zh: "围巾配饰", en: "Neck", ic: "🧣", items: [
+    ["s0","不戴","None",0], ["s1","红围巾","Red scarf",80], ["s2","彩虹围巾","Rainbow scarf",150],
+    ["s3","波点围巾","Spotty scarf",120], ["s4","小领结","Bow tie",70],
+    ["s5","珍珠项链","Pearls",190], ["s6","金牌","Medal",220] ] },
+  pet:   { zh: "宠物", en: "Pet", ic: "🐾", items: [
+    ["p0","没有","None",0], ["p1","小猫","Cat",150], ["p2","小狗","Dog",150],
+    ["p3","袋熊","Wombat",280], ["p4","小鸟","Bird",130], ["p5","考拉","Koala",260],
+    ["p6","小乌龟","Turtle",170] ] },
+  bg:    { zh: "背景", en: "Scene", ic: "🖼️", items: [
+    ["b1","薄荷绿","Mint",0], ["b2","蓝天白云","Blue sky",50], ["b3","日落","Sunset",80],
+    ["b4","星空","Night sky",160], ["b5","彩虹","Rainbow",200], ["b6","海滩","Beach",180],
+    ["b7","教室","Classroom",140], ["b8","花园","Garden",170], ["b9","太空","Outer space",300] ] }
 };
-const DEFAULT_LOOK = { hair: "h1", eyes: "e1", outfit: "o1", hat: "x0", pet: "p0", bg: "b1" };
-function look() {
-  progress.look = Object.assign({}, DEFAULT_LOOK, progress.look || {});
-  return progress.look;
-}
+
+/* 主题套装：整套买便宜 */
+const SETS = [
+  { id: "beach", zh: "海滩日", en: "Beach Day", pick: { hat: "x3", outfit: "o2", bg: "b6", pet: "p6" }, off: .7 },
+  { id: "winter", zh: "冬天", en: "Winter", pick: { hat: "x6", outfit: "o9", scarf: "s1", bg: "b2" }, off: .7 },
+  { id: "space", zh: "太空探险", en: "Space Explorer", pick: { outfit: "o4", bg: "b9", eyes: "e3" }, off: .7 },
+  { id: "artist", zh: "小画家", en: "Little Artist", pick: { outfit: "o8", hat: "x9", bg: "b8", pet: "p4" }, off: .7 },
+  { id: "magic", zh: "小魔法师", en: "Magician", pick: { hat: "x7", outfit: "o5", bg: "b4", pet: "p1" }, off: .7 }
+];
+
+const DEFAULT_LOOK = { hair: "h1", eyes: "e1", outfit: "o1", hat: "x0", scarf: "s0", pet: "p0", bg: "b1" };
+function look() { progress.look = Object.assign({}, DEFAULT_LOOK, progress.look || {}); return progress.look; }
+function freeItems() { return Object.values(SHOP).flatMap(c => c.items.filter(i => i[3] === 0).map(i => i[0])); }
 function owned() {
-  if (!progress.owned) progress.owned = Object.values(SHOP)
-    .flatMap(c => c.items.filter(i => i[3] === 0).map(i => i[0]));
+  progress.owned = progress.owned || [];
+  freeItems().forEach(i => { if (!progress.owned.includes(i)) progress.owned.push(i); });
   return progress.owned;
 }
+function priceOf(cat, id) { const it = SHOP[cat].items.find(x => x[0] === id); return it ? it[3] : 0; }
+function setPrice(st) {
+  const own = owned();
+  const raw = Object.entries(st.pick).reduce((a, [c, i]) => a + (own.includes(i) ? 0 : priceOf(c, i)), 0);
+  return Math.round(raw * st.off);
+}
 
-const BG_FILL = {
-  b1: ["#DCEFE4", "#BFE0CE"], b2: ["#D6E9F5", "#AFD3ED"], b3: ["#FBE0C8", "#F7BE93"],
-  b4: ["#2B3358", "#141A33"], b5: ["#F9D9E4", "#D8E4FA"]
-};
+/* ================= 形象绘制 ================= */
+const HAIR_COL = { h1: "#4A2C2A", h2: "#6B3F2A", h3: "#2E1F1B", h4: "#8B5E3C", h5: "#3D2620", h6: "#5A3421", h7: "#7A4A2F" };
+
+function scene(id) {
+  const g = (a, b) => `<defs><linearGradient id="bgg" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
+    <rect width="100" height="100" fill="url(#bgg)"/>`;
+  const cloud = (x, y, s2) => `<g transform="translate(${x} ${y}) scale(${s2})" fill="#FFF" opacity=".9">
+    <circle cx="0" cy="0" r="6"/><circle cx="7" cy="1" r="5"/><circle cx="-7" cy="1" r="4.5"/></g>`;
+  const star = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFF"/>`;
+  switch (id) {
+    case "b2": return g("#BFE0F5", "#E8F4FB") + cloud(22, 20, 1) + cloud(74, 30, .8);
+    case "b3": return g("#FDD9A8", "#F9A97C") + `<circle cx="50" cy="66" r="18" fill="#FFF0C9" opacity=".85"/>` + cloud(20, 22, .9);
+    case "b4": return g("#2A3357", "#151B36") + star(18, 16, 1.5) + star(78, 13, 1.2) + star(86, 33, 1.6) +
+      star(12, 40, 1.1) + star(64, 9, 1.3) + star(30, 28, 1) +
+      `<path d="M84 20a9 9 0 1 1-9-9 7 7 0 0 0 9 9z" fill="#F6E7A8"/>`;
+    case "b5": return g("#FDF3F6", "#EAF2FD") + `<g fill="none" stroke-width="5" opacity=".6">
+      <path d="M-4 100a54 54 0 0 1 108 0" stroke="#F49CB0"/><path d="M6 100a44 44 0 0 1 88 0" stroke="#FBC26B"/>
+      <path d="M16 100a34 34 0 0 1 68 0" stroke="#9BD3A6"/><path d="M26 100a24 24 0 0 1 48 0" stroke="#8FB8EC"/></g>`;
+    case "b6": return g("#A9DCF3", "#CFEAF7") + `<circle cx="80" cy="20" r="10" fill="#FFE9A8"/>` +
+      `<path d="M0 66q25 8 50 0t50 0v34H0z" fill="#5FB6DE"/><path d="M0 78q25 7 50 0t50 0v22H0z" fill="#F4DFB4"/>` + cloud(24, 22, .8);
+    case "b7": return g("#EFEAE0", "#E3DCCE") + `<rect x="8" y="12" width="52" height="34" rx="3" fill="#3E5B4C"/>
+      <path d="M14 22h30M14 30h22M14 38h34" stroke="#FFF" stroke-width="1.6" opacity=".7"/>
+      <rect x="70" y="14" width="24" height="26" rx="3" fill="#BFE0F5" stroke="#C6BCA8" stroke-width="2"/>`;
+    case "b8": return g("#CFEAF3", "#E6F5E4") + `<path d="M0 70q25 6 50 0t50 0v30H0z" fill="#8FCB9B"/>` +
+      `<g><circle cx="16" cy="72" r="4" fill="#F4A0B8"/><circle cx="30" cy="76" r="3.4" fill="#FBD46D"/>
+       <circle cx="82" cy="73" r="4" fill="#C79BE0"/><circle cx="70" cy="78" r="3" fill="#F4A0B8"/></g>` + cloud(72, 18, .7);
+    case "b9": return g("#241C46", "#0F0B22") + star(14, 18, 1.4) + star(84, 22, 1.2) + star(70, 12, 1.6) +
+      star(24, 40, 1) + star(90, 48, 1.3) +
+      `<g transform="translate(20 76)"><circle r="11" fill="#E08A5B"/><ellipse rx="17" ry="4" fill="none" stroke="#F3C98B" stroke-width="2" transform="rotate(-18)"/></g>`;
+    default: return g("#DCEFE4", "#F0F8F2") + `<path d="M0 76q25 6 50 0t50 0v24H0z" fill="#BFE0CE"/>`;
+  }
+}
+
 function avatarSvg(size) {
-  const L = look(), bg = BG_FILL[L.bg] || BG_FILL.b1;
-  const dark = L.bg === "b4";
-  const hair = { h1: "#5A3B2E", h2: "#7A4A2F", h3: "#3E2A22", h4: "#8B5E3C", h5: "#4A2F26" }[L.hair] || "#5A3B2E";
-  const parts = [];
-  parts.push(`<defs><linearGradient id="bgg" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient></defs>`);
-  parts.push(`<rect width="100" height="100" rx="18" fill="url(#bgg)"/>`);
-  if (L.bg === "b4") parts.push(`<g fill="#FFF" opacity=".85">
-    <circle cx="20" cy="18" r="1.4"/><circle cx="76" cy="14" r="1.1"/><circle cx="86" cy="34" r="1.5"/>
-    <circle cx="14" cy="42" r="1"/><circle cx="62" cy="9" r="1.2"/></g>`);
-  if (L.bg === "b5") parts.push(`<g fill="none" stroke-width="4" opacity=".55">
-    <path d="M4 96a46 46 0 0 1 92 0" stroke="#F6A6B2"/><path d="M12 96a38 38 0 0 1 76 0" stroke="#F8CE8E"/>
-    <path d="M20 96a30 30 0 0 1 60 0" stroke="#A8D8B0"/></g>`);
+  const L = look(), P = [];
+  const hair = HAIR_COL[L.hair] || "#4A2C2A";
+  P.push(`<svg viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="avatar">`);
+  P.push(`<defs><clipPath id="rc"><rect width="100" height="100" rx="16"/></clipPath></defs><g clip-path="url(#rc)">`);
+  P.push(scene(L.bg));
 
-  /* 长发／卷发在头后 */
-  if (L.hair === "h3") parts.push(`<path d="M24 44c0-16 8-24 26-24s26 8 26 24v30c0 4-6 5-9 2V46H33v30c-3 3-9 2-9-2z" fill="${hair}"/>`);
-  if (L.hair === "h5") parts.push(`<g fill="${hair}"><circle cx="26" cy="46" r="10"/><circle cx="74" cy="46" r="10"/><circle cx="30" cy="60" r="8"/><circle cx="70" cy="60" r="8"/></g>`);
-  if (L.hair === "h2") parts.push(`<g fill="${hair}"><circle cx="22" cy="50" r="9"/><circle cx="78" cy="50" r="9"/></g>`);
+  /* --- 后层头发 --- */
+  if (L.hair === "h3") P.push(`<path d="M24 46c0-17 10-26 26-26s26 9 26 26v34c0 4-7 5-10 2V50H34v32c-3 3-10 2-10-2z" fill="${hair}"/>`);
+  if (L.hair === "h5") P.push(`<g fill="${hair}"><circle cx="25" cy="46" r="11"/><circle cx="75" cy="46" r="11"/>
+    <circle cx="28" cy="60" r="9"/><circle cx="72" cy="60" r="9"/><circle cx="33" cy="70" r="7"/><circle cx="67" cy="70" r="7"/></g>`);
+  if (L.hair === "h2") P.push(`<g fill="${hair}"><circle cx="21" cy="50" r="10"/><circle cx="79" cy="50" r="10"/>
+    <circle cx="19" cy="60" r="7"/><circle cx="81" cy="60" r="7"/></g>`);
+  if (L.hair === "h6") P.push(`<g fill="${hair}"><path d="M24 46c-3 12-2 22 2 30l7-3c-3-8-4-17-2-26z"/>
+    <path d="M76 46c3 12 2 22-2 30l-7-3c3-8 4-17 2-26z"/>
+    <circle cx="28" cy="78" r="4"/><circle cx="72" cy="78" r="4"/></g>`);
+  if (L.hair === "h7") P.push(`<path d="M70 30c14 2 20 14 17 28-2 10-8 16-14 18l-5-8c5-2 9-7 10-13 2-9-2-16-11-18z" fill="${hair}"/>`);
 
-  /* 身体 */
-  const body = { o1: "#3E6C93", o2: "#C4739B", o3: "#4C9E72", o4: "#8E93B8", o5: "#7A4FA3" }[L.outfit] || "#3E6C93";
-  parts.push(`<path d="M28 100V84c0-9 9-14 22-14s22 5 22 14v16z" fill="${body}"/>`);
-  if (L.outfit === "o1") parts.push(`<path d="M50 70l-6 8 6 6 6-6z" fill="#F2F4F1"/><rect x="47" y="84" width="6" height="16" fill="#C0392B" opacity=".8"/>`);
-  if (L.outfit === "o3") parts.push(`<path d="M36 88h28" stroke="#FFF" stroke-width="3" opacity=".7"/>`);
-  if (L.outfit === "o4") parts.push(`<circle cx="50" cy="86" r="6" fill="#CFE6F5" stroke="#6E7BA8" stroke-width="2"/>`);
-  if (L.outfit === "o5") parts.push(`<path d="M28 84c-6 4-8 10-8 16h60c0-6-2-12-8-16z" fill="#5B3A86"/>`);
-
-  /* 脸 */
-  parts.push(`<circle cx="50" cy="44" r="21" fill="#F3D3B6"/>`);
-  /* 刘海 */
-  if (L.hair === "h4") parts.push(`<circle cx="50" cy="18" r="8" fill="${hair}"/>`);
-  parts.push(`<path d="M29 42c0-14 9-22 21-22s21 8 21 22c0-6-8-9-21-9s-21 3-21 9z" fill="${hair}"/>`);
-
-  /* 眼睛 */
-  const eye = {
-    e1: `<circle cx="42" cy="45" r="3.2" fill="#2B2B2B"/><circle cx="58" cy="45" r="3.2" fill="#2B2B2B"/>`,
-    e2: `<path d="M38 46q4-5 8 0M54 46q4-5 8 0" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/>`,
-    e3: `<circle cx="42" cy="45" r="3.6" fill="#2B2B2B"/><circle cx="58" cy="45" r="3.6" fill="#2B2B2B"/>
-         <circle cx="43.4" cy="43.6" r="1.3" fill="#FFF"/><circle cx="59.4" cy="43.6" r="1.3" fill="#FFF"/>`,
-    e4: `<rect x="38.5" y="43.5" width="7" height="3.2" rx="1.6" fill="#2B2B2B"/><rect x="54.5" y="43.5" width="7" height="3.2" rx="1.6" fill="#2B2B2B"/>`
-  }[L.eyes] || "";
-  parts.push(eye);
-  parts.push(`<path d="M45 54q5 4 10 0" stroke="#B5705A" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
-
-  /* 头饰 */
-  const hat = {
-    x1: `<g fill="#E0577E"><circle cx="34" cy="26" r="5"/><circle cx="44" cy="26" r="5"/><circle cx="39" cy="26" r="2.6" fill="#B23A5E"/></g>`,
-    x2: `<path d="M34 24l4 8h24l4-8-7 4-4-8-4 8-4-8-4 8z" fill="#EFC050" stroke="#C79B28" stroke-width="1.4"/>`,
-    x3: `<ellipse cx="50" cy="26" rx="28" ry="6" fill="#E8C79A"/><path d="M36 26a14 10 0 0 1 28 0z" fill="#D9B383"/>`,
-    x4: `<path d="M28 44V38a22 22 0 0 1 44 0v6" stroke="#3A4A5C" stroke-width="4" fill="none"/>
-         <rect x="22" y="40" width="9" height="14" rx="4" fill="#3A4A5C"/><rect x="69" y="40" width="9" height="14" rx="4" fill="#3A4A5C"/>`,
-    x5: `<g><circle cx="32" cy="27" r="4" fill="#F4A0B8"/><circle cx="42" cy="23" r="4" fill="#FBD46D"/>
-         <circle cx="52" cy="22" r="4" fill="#A8D8B0"/><circle cx="62" cy="24" r="4" fill="#F4A0B8"/><circle cx="70" cy="28" r="4" fill="#FBD46D"/></g>`
-  }[L.hat] || "";
-  parts.push(hat);
-
-  /* 宠物 */
+  /* --- 宠物（身体之后画，避免被遮） --- */
   const pet = {
-    p1: `<g transform="translate(74 74)"><ellipse cx="0" cy="6" rx="11" ry="9" fill="#8C8C8C"/>
-         <circle cx="0" cy="-4" r="8" fill="#9C9C9C"/><path d="M-7-9l-1-6 6 3zM7-9l1-6-6 3z" fill="#9C9C9C"/>
-         <circle cx="-3" cy="-5" r="1.4" fill="#222"/><circle cx="3" cy="-5" r="1.4" fill="#222"/></g>`,
-    p2: `<g transform="translate(74 74)"><ellipse cx="0" cy="6" rx="11" ry="9" fill="#C69C6D"/>
-         <circle cx="0" cy="-4" r="8" fill="#D6AC7D"/><ellipse cx="-8" cy="-4" rx="3" ry="6" fill="#A87F51"/>
-         <ellipse cx="8" cy="-4" rx="3" ry="6" fill="#A87F51"/><circle cx="-3" cy="-5" r="1.4" fill="#222"/>
-         <circle cx="3" cy="-5" r="1.4" fill="#222"/><ellipse cx="0" cy="-1" rx="2.4" ry="1.8" fill="#5A3B2E"/></g>`,
-    p3: `<g transform="translate(74 74)"><ellipse cx="0" cy="5" rx="13" ry="10" fill="#9B7B5E"/>
-         <circle cx="0" cy="-4" r="8" fill="#AB8B6E"/><circle cx="-7" cy="-9" r="3.4" fill="#8B6B4E"/>
-         <circle cx="7" cy="-9" r="3.4" fill="#8B6B4E"/><circle cx="-3" cy="-4" r="1.4" fill="#222"/>
-         <circle cx="3" cy="-4" r="1.4" fill="#222"/><ellipse cx="0" cy="0" rx="2.6" ry="2" fill="#5A3B2E"/></g>`,
-    p4: `<g transform="translate(76 72)"><ellipse cx="0" cy="2" rx="8" ry="9" fill="#F0B04A"/>
-         <circle cx="0" cy="-6" r="6" fill="#F5C168"/><path d="M5-6l6 2-6 2z" fill="#E07B39"/>
-         <circle cx="-2" cy="-7" r="1.3" fill="#222"/><path d="M-6 4q-6 2-8 8" stroke="#E07B39" stroke-width="3" fill="none" stroke-linecap="round"/></g>`
+    p1: `<g transform="translate(73 79)"><ellipse cy="7" rx="11" ry="9" fill="#9AA0A6"/><circle cy="-4" r="8" fill="#ADB3B9"/>
+      <path d="M-7-9l-1-6 6 3zM7-9l1-6-6 3z" fill="#ADB3B9"/><circle cx="-3" cy="-5" r="1.5" fill="#2B2B2B"/>
+      <circle cx="3" cy="-5" r="1.5" fill="#2B2B2B"/><path d="M-2-1h4" stroke="#7A7F84" stroke-width="1.4"/></g>`,
+    p2: `<g transform="translate(73 79)"><ellipse cy="7" rx="11" ry="9" fill="#D2A469"/><circle cy="-4" r="8" fill="#E0B67E"/>
+      <ellipse cx="-8" cy="-4" rx="3.2" ry="6" fill="#B0854D"/><ellipse cx="8" cy="-4" rx="3.2" ry="6" fill="#B0854D"/>
+      <circle cx="-3" cy="-5" r="1.5" fill="#2B2B2B"/><circle cx="3" cy="-5" r="1.5" fill="#2B2B2B"/>
+      <ellipse cy="-1" rx="2.6" ry="2" fill="#5A3B2E"/></g>`,
+    p3: `<g transform="translate(73 79)"><ellipse cy="6" rx="13" ry="10" fill="#A08461"/><circle cy="-4" r="8.5" fill="#B29372"/>
+      <circle cx="-7" cy="-10" r="3.6" fill="#8E7454"/><circle cx="7" cy="-10" r="3.6" fill="#8E7454"/>
+      <circle cx="-3" cy="-4" r="1.5" fill="#2B2B2B"/><circle cx="3" cy="-4" r="1.5" fill="#2B2B2B"/>
+      <ellipse cy="1" rx="2.8" ry="2.1" fill="#5A3B2E"/></g>`,
+    p4: `<g transform="translate(75 77)"><ellipse cy="2" rx="8" ry="9" fill="#F2B44D"/><circle cy="-6" r="6" fill="#F7C86E"/>
+      <path d="M5-6l6 2-6 2z" fill="#E07B39"/><circle cx="-2" cy="-7" r="1.3" fill="#222"/>
+      <path d="M-6 4q-6 2-9 8" stroke="#E07B39" stroke-width="3" fill="none" stroke-linecap="round"/></g>`,
+    p5: `<g transform="translate(73 79)"><ellipse cy="6" rx="12" ry="10" fill="#9CA5AB"/><circle cy="-5" r="9" fill="#AEB7BD"/>
+      <circle cx="-9" cy="-9" r="5" fill="#8C959B"/><circle cx="9" cy="-9" r="5" fill="#8C959B"/>
+      <circle cx="-3.4" cy="-5" r="1.5" fill="#2B2B2B"/><circle cx="3.4" cy="-5" r="1.5" fill="#2B2B2B"/>
+      <ellipse cy="-1" rx="3.4" ry="2.6" fill="#3F3F3F"/></g>`,
+    p6: `<g transform="translate(74 83)"><ellipse cy="2" rx="12" ry="7" fill="#7FB77E"/>
+      <path d="M-11 2a11 7 0 0 1 22 0z" fill="#5E9A5E"/><path d="M-8 2h16M0 -3v10" stroke="#4C7F4C" stroke-width="1.2"/>
+      <circle cx="12" cy="0" r="4" fill="#8FC48E"/><circle cx="13.5" cy="-1" r="1" fill="#222"/></g>`
   }[L.pet] || "";
-  parts.push(pet);
 
-  return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" role="img" aria-label="avatar">${parts.join("")}</svg>`;
+  /* --- 身体 --- */
+  const bodyCol = { o1: "#3C6E9A", o2: "#CE7BA4", o3: "#4FA679", o4: "#9BA1C6", o5: "#7C51A8",
+                    o6: "#E9B24B", o7: "#F2F0EA", o8: "#6FA8C4", o9: "#B2564E" }[L.outfit] || "#3C6E9A";
+  P.push(`<path d="M22 100V83c0-11 12-17 28-17s28 6 28 17v17z" fill="${bodyCol}"/>`);
+  /* 衣服细节 */
+  const detail = {
+    o1: `<path d="M50 68l-7 9 7 7 7-7z" fill="#F4F6F3"/><rect x="47" y="84" width="6" height="16" fill="#C0392B" opacity=".85"/>`,
+    o2: `<path d="M22 100V88h56v12z" fill="#E39BBE"/><circle cx="50" cy="80" r="3" fill="#FFF" opacity=".8"/>`,
+    o3: `<path d="M34 88h32" stroke="#FFF" stroke-width="3" opacity=".8"/><circle cx="50" cy="80" r="4" fill="#FFF" opacity=".55"/>`,
+    o4: `<circle cx="50" cy="84" r="7" fill="#D6EAF7" stroke="#7A81AC" stroke-width="2"/>
+         <rect x="30" y="78" width="6" height="10" rx="2" fill="#C9CEE4"/><rect x="64" y="78" width="6" height="10" rx="2" fill="#C9CEE4"/>`,
+    o5: `<path d="M22 84c-8 5-10 11-10 16h76c0-5-2-11-10-16z" fill="#5E3B85"/>`,
+    o6: `<path d="M50 68v32M38 80h24" stroke="#C4922F" stroke-width="2" opacity=".7"/><circle cx="42" cy="90" r="2" fill="#C4922F"/>`,
+    o7: `<path d="M50 68v32" stroke="#D8D5CC" stroke-width="2"/><circle cx="44" cy="82" r="1.8" fill="#C9C6BC"/>
+         <circle cx="44" cy="90" r="1.8" fill="#C9C6BC"/>`,
+    o8: `<path d="M36 76h28v10H36z" fill="#F4F6F3" opacity=".55"/><circle cx="42" cy="92" r="2.4" fill="#E9736A"/>
+         <circle cx="50" cy="94" r="2.4" fill="#F2C14E"/><circle cx="58" cy="92" r="2.4" fill="#6FBF95"/>`,
+    o9: `<path d="M50 68v32" stroke="#8E3E38" stroke-width="2.5"/><path d="M30 82q20 6 40 0" stroke="#8E3E38" stroke-width="2" fill="none"/>`
+  }[L.outfit] || "";
+  P.push(detail);
+  P.push(pet);
+
+  /* --- 围巾 / 颈饰 --- */
+  const neck = {
+    s1: `<path d="M34 72q16 8 32 0v7q-16 8-32 0z" fill="#D6524A"/><path d="M62 78l5 16-7-2-2-13z" fill="#BE443D"/>`,
+    s2: `<g><path d="M34 72q16 8 32 0v3q-16 8-32 0z" fill="#E9736A"/><path d="M34 75q16 8 32 0v3q-16 8-32 0z" fill="#F2C14E"/>
+         <path d="M34 78q16 8 32 0v3q-16 8-32 0z" fill="#6FBF95"/><path d="M62 82l5 13-7-2z" fill="#8FB8EC"/></g>`,
+    s3: `<path d="M34 72q16 8 32 0v7q-16 8-32 0z" fill="#7FA8D4"/>
+         <g fill="#FFF" opacity=".9"><circle cx="40" cy="76" r="1.6"/><circle cx="50" cy="79" r="1.6"/><circle cx="60" cy="76" r="1.6"/></g>`,
+    s4: `<path d="M50 74l-9-5v10zM50 74l9-5v10z" fill="#C0392B"/><circle cx="50" cy="74" r="2.6" fill="#8E2A20"/>`,
+    s5: `<g fill="#F6F1E4" stroke="#D8CFB8" stroke-width=".6"><circle cx="38" cy="73" r="2.2"/><circle cx="44" cy="76" r="2.2"/>
+         <circle cx="50" cy="77" r="2.2"/><circle cx="56" cy="76" r="2.2"/><circle cx="62" cy="73" r="2.2"/></g>`,
+    s6: `<path d="M44 70l4 12M56 70l-4 12" stroke="#5A79B8" stroke-width="3"/>
+         <circle cx="50" cy="87" r="7" fill="#EFC050" stroke="#C79B28" stroke-width="1.6"/>
+         <path d="M50 83l1.4 2.8 3 .4-2.2 2.1.5 3-2.7-1.4-2.7 1.4.5-3-2.2-2.1 3-.4z" fill="#FFF3CC"/>`
+  }[L.scarf] || "";
+
+  /* --- 头 --- */
+  P.push(`<circle cx="29" cy="46" r="4.5" fill="#F0C7A6"/><circle cx="71" cy="46" r="4.5" fill="#F0C7A6"/>`);
+  P.push(`<ellipse cx="50" cy="43" rx="22" ry="22.5" fill="#F6D5BC"/>`);
+
+  /* --- 刘海 / 前层头发 --- */
+  if (L.hair === "h4") P.push(`<circle cx="50" cy="17" r="9" fill="${hair}"/><ellipse cx="50" cy="24" rx="5" ry="3" fill="${hair}"/>`);
+  P.push(`<path d="M28 42c0-15 10-23 22-23s22 8 22 23c0-7-9-10-22-10s-22 3-22 10z" fill="${hair}"/>`);
+  P.push(`<path d="M36 27q9-5 20-2" stroke="#FFF" stroke-width="2" fill="none" opacity=".22" stroke-linecap="round"/>`);
+
+  /* --- 五官 --- */
+  const eye = {
+    e1: `<circle cx="41" cy="45" r="3.4" fill="#3A2A22"/><circle cx="59" cy="45" r="3.4" fill="#3A2A22"/>
+         <circle cx="42.2" cy="43.8" r="1.2" fill="#FFF"/><circle cx="60.2" cy="43.8" r="1.2" fill="#FFF"/>`,
+    e2: `<path d="M37 46q4-5 8 0M55 46q4-5 8 0" stroke="#3A2A22" stroke-width="2.8" fill="none" stroke-linecap="round"/>`,
+    e3: `<circle cx="41" cy="45" r="4" fill="#3A2A22"/><circle cx="59" cy="45" r="4" fill="#3A2A22"/>
+         <circle cx="42.4" cy="43.4" r="1.6" fill="#FFF"/><circle cx="60.4" cy="43.4" r="1.6" fill="#FFF"/>
+         <circle cx="39.6" cy="46.6" r=".9" fill="#FFF" opacity=".8"/><circle cx="57.6" cy="46.6" r=".9" fill="#FFF" opacity=".8"/>`,
+    e4: `<rect x="37.5" y="43.6" width="7" height="3.2" rx="1.6" fill="#3A2A22"/>
+         <rect x="55.5" y="43.6" width="7" height="3.2" rx="1.6" fill="#3A2A22"/>`,
+    e5: `<circle cx="41" cy="45" r="3.4" fill="#3A2A22"/><circle cx="42.2" cy="43.8" r="1.2" fill="#FFF"/>
+         <path d="M55 46q4-5 8 0" stroke="#3A2A22" stroke-width="2.8" fill="none" stroke-linecap="round"/>`
+  }[L.eyes] || "";
+  P.push(`<g fill="#F09A9A" opacity=".45"><ellipse cx="34" cy="52" rx="4.5" ry="3"/><ellipse cx="66" cy="52" rx="4.5" ry="3"/></g>`);
+  P.push(eye);
+  P.push(`<path d="M45 55q5 4.5 10 0" stroke="#C07A62" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+  P.push(neck);
+
+  /* --- 帽子 --- */
+  const hat = {
+    x1: `<g fill="#E0577E"><circle cx="33" cy="24" r="5.5"/><circle cx="44" cy="24" r="5.5"/>
+         <circle cx="38.5" cy="24" r="2.8" fill="#B23A5E"/></g>`,
+    x2: `<path d="M32 24l4 9h28l4-9-8 4-6-9-6 9-8-4z" fill="#EFC050" stroke="#C79B28" stroke-width="1.4"/>
+         <circle cx="50" cy="21" r="2.2" fill="#E9736A"/>`,
+    x3: `<ellipse cx="50" cy="26" rx="30" ry="6.5" fill="#EAC99B"/><path d="M35 26a15 11 0 0 1 30 0z" fill="#DBB584"/>
+         <path d="M35 26q15 4 30 0" stroke="#C79B28" stroke-width="2.4" fill="none"/>`,
+    x4: `<path d="M27 44V38a23 23 0 0 1 46 0v6" stroke="#3A4A5C" stroke-width="4.5" fill="none"/>
+         <rect x="21" y="39" width="10" height="15" rx="5" fill="#3A4A5C"/><rect x="69" y="39" width="10" height="15" rx="5" fill="#3A4A5C"/>`,
+    x5: `<g><circle cx="31" cy="27" r="4.4" fill="#F4A0B8"/><circle cx="41" cy="22" r="4.4" fill="#FBD46D"/>
+         <circle cx="51" cy="20.5" r="4.4" fill="#A8D8B0"/><circle cx="61" cy="22" r="4.4" fill="#C7A6E8"/>
+         <circle cx="70" cy="27" r="4.4" fill="#F4A0B8"/></g>`,
+    x6: `<path d="M28 34a22 16 0 0 1 44 0z" fill="#5A79B8"/><rect x="27" y="32" width="46" height="7" rx="3.5" fill="#4A6499"/>
+         <circle cx="50" cy="17" r="4.5" fill="#8FB8EC"/>`,
+    x7: `<path d="M50 2l16 30H34z" fill="#4B3A85"/><ellipse cx="50" cy="32" rx="26" ry="6" fill="#5B47A0"/>
+         <path d="M50 12l1.6 3.4 3.6.5-2.6 2.6.6 3.6-3.2-1.7-3.2 1.7.6-3.6-2.6-2.6 3.6-.5z" fill="#F6E7A8"/>`,
+    x8: `<path d="M28 32a22 15 0 0 1 44 0z" fill="#4FA679"/><path d="M50 32h28a8 5 0 0 1-8 5H50z" fill="#3E8862"/>`,
+    x9: `<path d="M28 34a22 15 0 0 1 44 0z" fill="#E9736A"/><path d="M72 34l10 8-12 1z" fill="#D2574F"/>
+         <g fill="#FFF" opacity=".75"><circle cx="40" cy="27" r="1.8"/><circle cx="52" cy="24" r="1.8"/><circle cx="62" cy="28" r="1.8"/></g>`
+  }[L.hat] || "";
+  P.push(hat);
+  P.push(`</g></svg>`);
+  return P.join("");
 }
 
 /* ============================================================
@@ -4068,14 +4221,15 @@ function renderShop() {
   const L = look(), own = owned();
   view.innerHTML = `
     <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
-    <p class="lede">${TB("每做对一题、每完成一项任务都能赚金币，用金币给自己换发型、衣服、宠物和背景。金币只能靠练习赚，不能跳过。",
-      "Every correct answer and every finished task earns coins. Spend them on hair, outfits, pets and backgrounds. Coins can only be earned by practising — there is no shortcut.")}</p>
+    <p class="lede">${TB("金币来自<strong>乘法口诀抢答</strong>：答对一题 +3，3 分钟答对 25 题以上再 +40。用它换发型、衣服、围巾、帽子、宠物和背景 —— 共 54 件，还有 5 套整买更便宜的主题套装。",
+      "Coins come from the <strong>times tables sprint</strong>: +3 for each correct answer, and +40 for 25 or more in three minutes. Spend them on hair, outfits, scarves, hats, pets and scenes — 54 items in all, plus 5 themed sets that cost less bought together.")}</p>
 
     <div class="av-stage">
       <div class="av-big">${avatarSvg(200)}</div>
       <div class="av-side">
         <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
-        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币", "You have earned " + (progress.earned || 0) + " coins in total")}</div>
+        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币 · 已拥有 " + owned().length + " / " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " 件",
+          "Earned " + (progress.earned || 0) + " coins in total · " + owned().length + " of " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " items unlocked")}</div>
         <div class="av-rate">
           <div>${T("口诀答对一题", "Each tables answer")}<b>+${COIN.perAnswer}</b></div>
           <div>${T("3 分钟答对 25 题以上", "25+ in 3 minutes")}<b>+${COIN.sprint25}</b></div>
@@ -4085,8 +4239,27 @@ function renderShop() {
       </div>
     </div>
 
+    <p class="eyebrow">${T("主题套装 · 整套买更便宜", "Themed sets · cheaper together")}</p>
+    <div class="set-grid">
+      ${SETS.map(st => {
+        const own = owned(), pr = setPrice(st);
+        const all = Object.values(st.pick).every(i => own.includes(i));
+        const wearing = Object.entries(st.pick).every(([c, i]) => look()[c] === i);
+        return `<button class="set-card ${wearing ? "on" : ""} ${all ? "has" : coins() >= pr ? "" : "cant"}"
+            data-set="${st.id}">
+          <div class="sc-prev">${setPreview(st)}</div>
+          <div class="sc-b">
+            <b>${T(esc(st.zh), esc(st.en))}</b>
+            <span>${Object.keys(st.pick).map(c => T(SHOP[c].zh, SHOP[c].en)).join(" · ")}</span>
+          </div>
+          <div class="sc-p">${wearing ? T("正在穿", "Wearing") : all ? T("全部拥有 · 一键换上", "Owned · wear it") : `🪙 ${pr}`}</div>
+        </button>`;
+      }).join("")}
+    </div>
+
     ${Object.entries(SHOP).map(([cat, c]) => `
-      <p class="eyebrow">${T(c.zh, c.en)}</p>
+      <p class="eyebrow">${c.ic} ${T(c.zh, c.en)} <span class="own-n">${
+        c.items.filter(i => owned().includes(i[0])).length}/${c.items.length}</span></p>
       <div class="shop-grid">
         ${c.items.map(([id, zh, en, price]) => {
           const has = own.includes(id), on = L[cat] === id, can = coins() >= price;
@@ -4098,6 +4271,29 @@ function renderShop() {
           </button>`;
         }).join("")}
       </div>`).join("")}`;
+}
+
+function setPreview(st) {
+  const real = progress.look;
+  progress.look = Object.assign({}, look(), st.pick);
+  const svg = avatarSvg(72);
+  progress.look = real;
+  return svg;
+}
+function buySet(id) {
+  const st = SETS.find(x => x.id === id); if (!st) return;
+  const own = owned(), pr = setPrice(st);
+  const all = Object.values(st.pick).every(i => own.includes(i));
+  if (!all) {
+    if (!spendCoins(pr)) {
+      const el = document.querySelector(`[data-set="${id}"]`);
+      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
+      return;
+    }
+    Object.values(st.pick).forEach(i => { if (!own.includes(i)) own.push(i); });
+  }
+  Object.entries(st.pick).forEach(([c, i]) => { look()[c] = i; });
+  save(); updateCoinUI(); renderShop();
 }
 
 /* 商店缩略图：临时套用该项后渲染小图 */
@@ -4645,7 +4841,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -4661,6 +4857,7 @@ document.addEventListener("click", e => {
   if (t.id === "wtStart") { startWTimer(); return; }
   if (t.id === "wtStop") { stopWTimer(); renderWriting(); return; }
   if (t.id === "saveGoal") { saveGoal(); return; }
+  if (t.dataset.set) { buySet(t.dataset.set); return; }
   if (t.dataset.buy) { const [c, i, pr] = t.dataset.buy.split(":"); buyOrWear(c, i, +pr); return; }
   if (t.dataset.go) {
     const g = JSON.parse(t.dataset.go);
