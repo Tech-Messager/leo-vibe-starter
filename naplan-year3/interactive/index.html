@@ -390,108 +390,6 @@
 
   
 
-function renderShop() {
-  const L = look(), own = owned();
-  view.innerHTML = `
-    <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
-    <p class="lede">${TB("金币来自<strong>乘法口诀抢答</strong>：答对一题 +3，3 分钟答对 25 题以上再 +40。用它换发型、衣服、围巾、帽子、宠物和背景 —— 共 54 件，还有 5 套整买更便宜的主题套装。",
-      "Coins come from the <strong>times tables sprint</strong>: +3 for each correct answer, and +40 for 25 or more in three minutes. Spend them on hair, outfits, scarves, hats, pets and scenes — 54 items in all, plus 5 themed sets that cost less bought together.")}</p>
-
-    <div class="av-stage">
-      <div class="av-big">${avatarSvg(200)}</div>
-      <div class="av-side">
-        <div class="av-coins"><span class="c-ic">🪙</span><b>${coins()}</b></div>
-        <div class="av-note">${TB("累计赚到 " + (progress.earned || 0) + " 枚金币 · 已拥有 " + owned().length + " / " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " 件",
-          "Earned " + (progress.earned || 0) + " coins in total · " + owned().length + " of " + Object.values(SHOP).reduce((a, c) => a + c.items.length, 0) + " items unlocked")}</div>
-        <div class="av-rate">
-          <div>${T("口诀答对一题", "Each tables answer")}<b>+${COIN.perAnswer}</b></div>
-          <div>${T("3 分钟答对 25 题以上", "25+ in 3 minutes")}<b>+${COIN.sprint25}</b></div>
-        </div>
-        <p class="av-hint">${TB("金币只从<strong>乘法口诀抢答</strong>赚 —— 口诀是唯一靠反复练熟的东西，用金币推它正合适。别的学习不发金币，因为那些本身应该有意思。",
-          "Coins come only from the <strong>times tables sprint</strong>. Tables are the one thing that just needs drilling, so a reward fits there. Nothing else pays coins — the rest should be worth doing for its own sake.")}</p>
-      </div>
-    </div>
-
-    <p class="eyebrow">${T("主题套装 · 整套买更便宜", "Themed sets · cheaper together")}</p>
-    <div class="set-grid">
-      ${SETS.map(st => {
-        const own = owned(), pr = setPrice(st);
-        const all = Object.values(st.pick).every(i => own.includes(i));
-        const wearing = Object.entries(st.pick).every(([c, i]) => look()[c] === i);
-        return `<button class="set-card ${wearing ? "on" : ""} ${all ? "has" : coins() >= pr ? "" : "cant"}"
-            data-set="${st.id}">
-          <div class="sc-prev">${setPreview(st)}</div>
-          <div class="sc-b">
-            <b>${T(esc(st.zh), esc(st.en))}</b>
-            <span>${Object.keys(st.pick).map(c => T(SHOP[c].zh, SHOP[c].en)).join(" · ")}</span>
-          </div>
-          <div class="sc-p">${wearing ? T("正在穿", "Wearing") : all ? T("全部拥有 · 一键换上", "Owned · wear it") : `🪙 ${pr}`}</div>
-        </button>`;
-      }).join("")}
-    </div>
-
-    ${Object.entries(SHOP).map(([cat, c]) => `
-      <p class="eyebrow">${c.ic} ${T(c.zh, c.en)} <span class="own-n">${
-        c.items.filter(i => owned().includes(i[0])).length}/${c.items.length}</span></p>
-      <div class="shop-grid">
-        ${c.items.map(([id, zh, en, price]) => {
-          const has = own.includes(id), on = L[cat] === id, can = coins() >= price;
-          return `<button class="shop-item ${on ? "on" : ""} ${has ? "has" : can ? "" : "cant"}"
-              data-buy="${cat}:${id}:${price}">
-            <div class="si-prev">${previewSvg(cat, id)}</div>
-            <div class="si-n">${T(esc(zh), esc(en))}</div>
-            <div class="si-p">${on ? T("使用中", "Wearing") : has ? T("已拥有", "Owned") : `🪙 ${price}`}</div>
-          </button>`;
-        }).join("")}
-      </div>`).join("")}`;
-}
-
-function setPreview(st) {
-  const real = progress.look;
-  progress.look = Object.assign({}, look(), st.pick);
-  const svg = avatarSvg(72);
-  progress.look = real;
-  return svg;
-}
-function buySet(id) {
-  const st = SETS.find(x => x.id === id); if (!st) return;
-  const own = owned(), pr = setPrice(st);
-  const all = Object.values(st.pick).every(i => own.includes(i));
-  if (!all) {
-    if (!spendCoins(pr)) {
-      const el = document.querySelector(`[data-set="${id}"]`);
-      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
-      return;
-    }
-    Object.values(st.pick).forEach(i => { if (!own.includes(i)) own.push(i); });
-  }
-  Object.entries(st.pick).forEach(([c, i]) => { look()[c] = i; });
-  save(); updateCoinUI(); renderShop();
-}
-
-/* 商店缩略图：临时套用该项后渲染小图 */
-function previewSvg(cat, id) {
-  const real = progress.look;
-  progress.look = Object.assign({}, look(), { [cat]: id });
-  const svg = avatarSvg(64);
-  progress.look = real;
-  return svg;
-}
-
-function buyOrWear(cat, id, price) {
-  const own = owned();
-  if (!own.includes(id)) {
-    if (!spendCoins(price)) {
-      const el = document.querySelector(`[data-buy="${cat}:${id}:${price}"]`);
-      if (el) { el.classList.add("shake"); setTimeout(() => el.classList.remove("shake"), 450); }
-      return;
-    }
-    own.push(id);
-  }
-  look()[cat] = id;
-  save(); updateCoinUI(); renderShop();
-}
-
 /* ---------- 今天做什么 ---------- */
   .today-head {
     display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -811,6 +709,11 @@ function buyOrWear(cat, id, price) {
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+  /* ---------- 朗读 ---------- */
+  .rd-clock { font-size: 3rem; line-height: 1; }
+  .rd-big { font-family: var(--data); font-size: 2.6rem; font-weight: 700; margin-top: 8px;
+    font-variant-numeric: tabular-nums; color: var(--eucalypt); }
+
   /* ---------- 配速与计时 ---------- */
   .pace { background: var(--card-sunk); border-radius: var(--r-md); padding: 15px 17px; margin-top: 18px; text-align: left; }
   .pace-h { font-size: .84rem; font-weight: 700; margin-bottom: 9px; }
@@ -2591,9 +2494,16 @@ let quiz = null;
 /* 真实考试的平均配速：数学 75 秒/题，阅读 69，语言 67 */
 const PACE = { numeracy: 75, reading: 69, conventions: 67, challenge: 90 };
 
-function startQuiz(subj, kpName) {
+function startQuiz(subj, kpName, opts) {
   const g = BANK[subj].groups.find(x => x.kp === kpName);
-  quiz = { subj, kp: kpName, group: g, i: 0, results: [], answered: false, times: [], qStart: Date.now() };
+  let qs = g.qs;
+  if (opts && opts.limit && opts.limit < g.qs.length) {
+    const missed = g.qs.filter(q => progress.wrong[wrongKey(subj, kpName, q.s)]);
+    const rest = g.qs.filter(q => !missed.includes(q)).sort(() => Math.random() - .5);
+    qs = missed.concat(rest).slice(0, opts.limit);
+  }
+  quiz = { subj, kp: kpName, group: g, qs, i: 0, results: [], answered: false,
+           times: [], qStart: Date.now(), taskId: opts && opts.taskId, mini: !!(opts && opts.limit) };
   renderQuiz();
 }
 
@@ -2603,7 +2513,7 @@ function renderQuiz() {
   const isReading = quiz.subj === "reading";
   const txt = isReading && q.t ? READING_TEXTS[q.t] : null;
 
-  const dots = group.qs.map((_, n) => {
+  const dots = quiz.qs.map((_, n) => {
     const r = results[n];
     return `<span class="dot ${r === undefined ? "" : r ? "ok" : "no"} ${n === i ? "now" : ""}"></span>`;
   }).join("");
@@ -2622,7 +2532,7 @@ function renderQuiz() {
     </div>
     ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
-      <div class="q-meta">${Tp(`第 ${i + 1} / ${group.qs.length} 题`, `Question ${i + 1} of ${group.qs.length}`)} · ${
+      <div class="q-meta">${Tp(`第 ${i + 1} / ${quiz.qs.length} 题`, `Question ${i + 1} of ${quiz.qs.length}`)} · ${
         lang === "zh" ? esc(quiz.kp) : esc(BANK[quiz.subj].groups.find(g => g.kp === quiz.kp).en)}</div>
       <p class="q-text ${isReading ? "serif" : ""}">${q.q}</p>
       <div class="opts" id="opts">
@@ -2638,7 +2548,7 @@ function renderQuiz() {
 function pick(n) {
   if (quiz.answered) return;
   quiz.answered = true;
-  const q = quiz.group.qs[quiz.i];
+  const q = quiz.qs[quiz.i];
   const ok = n === q.a;
   quiz.results[quiz.i] = ok;
   quiz.times[quiz.i] = Math.max(1, Date.now() - quiz.qStart);
@@ -2666,7 +2576,7 @@ function pick(n) {
       `<div class="pace-warn">⏱️ ${TB("这题花了 " + spent + " 秒，比考试节奏（约 " + tgt + " 秒）慢不少。考试时遇到卡住的题，<strong>先跳过，最后回来做</strong> —— 别把时间耗在一道题上。",
         "That took " + spent + "s — well over the test pace of about " + tgt + "s. In the real test, <strong>skip a sticky question and come back at the end</strong>. Never sink your time into one question.")}</div>`);
   }
-  const last = quiz.i === quiz.group.qs.length - 1;
+  const last = quiz.i === quiz.qs.length - 1;
   document.getElementById("qnav").innerHTML =
     `<button class="btn" data-next="1">${last ? Tp("看成绩","See score") : Tp("下一题 →","Next →")}</button>`;
 
@@ -2674,7 +2584,7 @@ function pick(n) {
 }
 
 function next() {
-  if (quiz.i === quiz.group.qs.length - 1) return finish();
+  if (quiz.i === quiz.qs.length - 1) return finish();
   quiz.i++;
   quiz.answered = false;
   quiz.qStart = Date.now();
@@ -2682,10 +2592,14 @@ function next() {
 }
 
 function finish() {
-  const total = quiz.group.qs.length;
+  const total = quiz.qs.length;
   const right = quiz.results.filter(Boolean).length;
-  recordRun(quiz.subj, quiz.kp, right, total);
-  markTask("kp:" + quiz.subj + ":" + quiz.kp);
+  if (quiz.mini) {
+    const st = kpStat(quiz.subj, quiz.kp);
+    progress.kp[kpKey(quiz.subj, quiz.kp)] = { done: 1, right: st.right, total: st.total, at: Date.now() };
+    save();
+  } else recordRun(quiz.subj, quiz.kp, right, total);
+  markTask(quiz.taskId || ("kp:" + quiz.subj + ":" + quiz.kp));
   checkAllDone();
   touchStreak();
   checkMilestones();
@@ -2714,7 +2628,7 @@ function finish() {
       ${paceReport()}
       ${wrongIdx.length ? `<div class="wrongs">
         <h5>${T("要复习的题（" + wrongIdx.length + " 题）", "Questions to review (" + wrongIdx.length + ")")}</h5>
-        <ul>${wrongIdx.map(n => `<li>${quiz.group.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${SRC(quiz.group.qs[n].s)}</span></li>`).join("")}</ul>
+        <ul>${wrongIdx.map(n => `<li>${quiz.qs[n].q.replace(/<[^>]+>/g, "")} <span style="color:var(--slate)">— ${SRC(quiz.qs[n].s)}</span></li>`).join("")}</ul>
       </div>` : ""}
     </div>`;
 }
@@ -3635,6 +3549,15 @@ function nextNewKp() { return CURRICULUM.find(([s, k]) => kpStat(s, k).total ===
 /* 已完成学习的天数（有任何任务完成即算一天） */
 function activeDays() { return Object.keys(planState().done).filter(d => planState().done[d].length).length; }
 
+/* 最久没复习过的已学知识点（至少 3 天前学的） */
+function recallTarget() {
+  const now = Date.now();
+  const c = CURRICULUM.map(([a, k]) => ({ s: a, k, st: kpStat(a, k) }))
+    .filter(x => x.st.total && now - (x.st.at || 0) > 3 * 864e5)
+    .sort((a, b) => (a.st.at || 0) - (b.st.at || 0));
+  return c[0] || null;
+}
+
 /* 今天该做什么（按阶段分化） */
 function weakestKp(threshold) {
   return CURRICULUM.map(([s, k]) => ({ s, k, st: kpStat(s, k) }))
@@ -3646,12 +3569,13 @@ function dayAssign() {
   const pl = planState(), k = todayKey();
   pl.assign = pl.assign || {};
   if (!pl.assign[k]) {
-    const nk = nextNewKp(), w9 = weakestKp(.9), w95 = weakestKp(.95);
+    const nk = nextNewKp(), w9 = weakestKp(.9), w95 = weakestKp(.95), rc = recallTarget();
     pl.assign[k] = {
       d: activeDays() + 1,
       newKp: nk || null,
       weak9: w9 ? [w9.s, w9.k] : null,
-      weak95: w95 ? [w95.s, w95.k] : null
+      weak95: w95 ? [w95.s, w95.k] : null,
+      recall: rc ? [rc.s, rc.k] : null
     };
     save();
   }
@@ -3735,6 +3659,25 @@ function todayTasks() {
       go: { dict: lv } });
   }
 
+  /* 朗读 10 分钟：整套备考里回报最高的一件事 */
+  t.push({ id: "read", icon: "📖", min: 10,
+    zh: "英文朗读 10 分钟", en: "Read aloud for 10 minutes",
+    zhWhy: "读给爸爸妈妈听，读完用一句话说这段讲了什么 —— 同时练阅读理解和拼写",
+    enWhy: "Read to a parent, then say in one sentence what it was about — comprehension and spelling at once",
+    go: { read: 1 } });
+
+  /* 旧知识点回访：与拓展题隔天交替，屏幕时间不增加 */
+  const rc = A.recall;
+  if (rc && d % 2 === 1) {
+    const g = BANK[rc[0]].groups.find(x => x.kp === rc[1]);
+    const gone = Math.round((Date.now() - (kpStat(rc[0], rc[1]).at || 0)) / 864e5);
+    t.push({ id: "recall:" + rc[0] + ":" + rc[1], icon: "🔄", min: 4,
+      zh: "回访：" + rc[1] + "（3 题）", en: "Come back to: " + g.en + " (3 questions)",
+      zhWhy: gone + " 天前学的，隔一段时间再考一次才记得住",
+      enWhy: "Learnt " + gone + " days ago — coming back after a gap is what makes it stick",
+      go: { quiz: rc[0], kp: rc[1], limit: 3, taskId: "recall:" + rc[0] + ":" + rc[1] } });
+  }
+
   /* 拓展题：已学过的知识点掌握得好时出现 */
   const mastered = CURRICULUM.filter(([a, k]) => { const st = kpStat(a, k); return st.total && st.right / st.total >= .85; }).length;
   if (mastered >= 3 && d % 2 === 0) {
@@ -3746,6 +3689,15 @@ function todayTasks() {
       zhWhy: "仍在 Year 3 范围内，但题型更难 —— 拿 Exceeding 靠的就是这些",
       enWhy: "Still Year 3 content, but the harder question types — this is what Exceeding is built on",
       go: { quiz: "challenge", kp: cg.kp } });
+  }
+
+  if (d % 10 !== 0) {
+    const wd = todayDrill();
+    t.push({ id: "wdrill", icon: "✍️", min: 5,
+      zh: "写作小练：" + wd.t + "（5 分钟）", en: "Writing drill: " + wd.te + " (5 min)",
+      zhWhy: "整篇作文两周一次，技巧天天练 —— 一次只练一个动作，进步最快",
+      enWhy: "A full piece every fortnight, but the moves drilled daily — one at a time is what improves fastest",
+      go: { wdrill: 1 } });
   }
 
   if (d % 10 === 0) t.push({ id: "write", icon: "✏️", min: 40,
@@ -4681,6 +4633,218 @@ function buyOrWear(cat, id, price) {
   save(); updateCoinUI(); renderShop();
 }
 
+
+/* ============================================================
+   写作片段特训：每天 5 分钟只练一个动作
+   整篇作文两周一次，但技巧要天天练 —— 一次只练一步，进步最快
+   ============================================================ */
+const WDRILLS = [
+  { t: "开头", te: "Openings", zh: "给这个故事写一个抓人的第一句：<strong>一场突然来的暴风雨</strong>。用声音、对话或动作开头。",
+    en: "Write one gripping first line for this story: <strong>a storm that arrives suddenly</strong>. Open with a sound, a line of speech or an action.",
+    m: "CRACK! The sky tore open right above our tent." },
+  { t: "开头", te: "Openings", zh: "给<strong>一只走丢的狗</strong>写一个抓人的开头。不许用 One day。",
+    en: "Write a gripping opening about <strong>a lost dog</strong>. You may not use One day.",
+    m: "The lead was still clipped to the fence. Buster was not." },
+  { t: "开头", te: "Openings", zh: "用<strong>一句对话</strong>开头，写一个关于生日惊喜的故事。",
+    en: "Open a birthday-surprise story with <strong>a line of speech</strong>.",
+    m: "\"Whatever you do,\" said Mum, \"do not open the shed.\"" },
+  { t: "改造烂开头", te: "Fix a dull opening", zh: "把这句改得让人想读下去：<em>One day I went to the zoo.</em>",
+    en: "Rewrite this so a reader wants to continue: <em>One day I went to the zoo.</em>",
+    m: "The gorilla was watching me. Not the other way round." },
+  { t: "改造烂开头", te: "Fix a dull opening", zh: "改写：<em>Last holidays we went camping. It was fun.</em>",
+    en: "Rewrite: <em>Last holidays we went camping. It was fun.</em>",
+    m: "Something was breathing outside the tent, and it was not Dad." },
+  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>scared</em>，把「我很害怕」写出来。",
+    en: "Show that you are frightened, without using the word <em>scared</em>.",
+    m: "My hands would not stay still, and my legs had forgotten how to run." },
+  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>angry</em>，写出「哥哥生气了」。",
+    en: "Show that your brother is angry, without using the word <em>angry</em>.",
+    m: "He put the cup down far too carefully and did not look at me once." },
+  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>excited</em>，写出「她很兴奋」。",
+    en: "Show that she is excited, without using the word <em>excited</em>.",
+    m: "She read the letter three times, then ran the whole way home with it above her head." },
+  { t: "五感描写", te: "The five senses", zh: "描写<strong>生日蛋糕端上桌的那一刻</strong>，至少用到三种感官。",
+    en: "Describe <strong>the moment the birthday cake arrives</strong>, using at least three senses.",
+    m: "Ten small flames wobbled towards me. The kitchen smelled of warm chocolate, and everyone's singing was slightly out of time." },
+  { t: "五感描写", te: "The five senses", zh: "描写<strong>下暴雨的操场</strong>，至少三种感官。",
+    en: "Describe <strong>a playground in heavy rain</strong>, using at least three senses.",
+    m: "Rain drummed on the shelter roof, the asphalt smelled like hot dust, and my socks had gone cold and heavy." },
+  { t: "对话", te: "Dialogue", zh: "写 4 句对话：你和好朋友在操场上发现一只受伤的鸟。<strong>说话动词别全用 said</strong>。",
+    en: "Write four lines of dialogue: you and a friend find an injured bird. <strong>Do not use said every time.</strong>",
+    m: "\"Don't touch it,\" whispered Ravi.\n\"It's shaking,\" I said.\n\"Get Mrs Lim. Run!\" he urged.\n\"Stay with it,\" I called back over my shoulder." },
+  { t: "对话", te: "Dialogue", zh: "写 4 句对话：你请求妈妈让你晚睡半小时。注意引号和标点。",
+    en: "Write four lines of dialogue: asking to stay up half an hour later. Watch the speech marks.",
+    m: "\"Just thirty minutes,\" I begged.\n\"You said that yesterday,\" Mum replied.\n\"Yesterday was a school night!\"\n\"So is tonight,\" she said, and switched off the lamp." },
+  { t: "升级词", te: "Upgrade the words", zh: "把这句里的普通词全部升级：<em>The big dog walked to the small boy and said hello.</em>",
+    en: "Upgrade every plain word: <em>The big dog walked to the small boy and said hello.</em>",
+    m: "The enormous dog padded towards the tiny boy and woofed a greeting." },
+  { t: "升级词", te: "Upgrade the words", zh: "升级：<em>I was happy so I walked to the nice park.</em>",
+    en: "Upgrade: <em>I was happy so I walked to the nice park.</em>",
+    m: "I was thrilled, so I dashed to the wonderful park." },
+  { t: "修辞提问", te: "Rhetorical questions", zh: "为「学校午餐应该有冰淇淋」写一个<strong>修辞性提问</strong>开头。",
+    en: "Write a <strong>rhetorical question</strong> to open an argument for ice cream at school lunch.",
+    m: "Who could possibly think through a maths lesson on a forty-degree day without one?" },
+  { t: "三词排比", te: "The rule of three", zh: "为「应该养狗」写一个<strong>三词排比</strong>句。",
+    en: "Write a <strong>rule-of-three</strong> sentence arguing for owning a dog.",
+    m: "Dogs are loyal, patient and endlessly forgiving." },
+  { t: "强观点词", te: "Strong words", zh: "用 <em>must / definitely / never</em> 各写一句，主题：孩子应该多在户外玩。",
+    en: "Write one sentence each using <em>must / definitely / never</em>, on children needing more outdoor time.",
+    m: "Schools must give children more time outside.\nA child who runs at lunchtime will definitely concentrate better after it.\nWe should never treat play as the part of the day that can be cut." },
+  { t: "理由展开", te: "Develop a reason", zh: "把这个理由展开成完整一段：<strong>操场应该建一个大滑梯，因为课间会更好玩。</strong>（理由 → 解释 → 画面）",
+    en: "Develop this into a full paragraph: <strong>the playground should have a big slide, because break time would be more fun.</strong> (reason → explanation → picture)",
+    m: "Firstly, a slide would make break time far more fun. At the moment half the yard stands around because there is nothing to do. Picture thirty children queueing, laughing, racing back up the steps — and then walking into class with all that energy spent instead of bottled up." },
+  { t: "理由展开", te: "Develop a reason", zh: "展开：<strong>每个孩子都该学游泳，因为这能救命。</strong>",
+    en: "Develop: <strong>every child should learn to swim, because it saves lives.</strong>",
+    m: "Most importantly, swimming saves lives. Drowning is one of the biggest dangers for young children in this country. A child who can float and swim twenty-five metres is far safer at a beach, a river or a friend's pool — and that is a skill she keeps for the rest of her life." },
+  { t: "有力结尾", te: "Endings", zh: "给一个关于「找到走失小猫」的故事写一个<strong>有力的结尾句</strong>。不许写「然后我醒了」。",
+    en: "Write a <strong>strong closing line</strong> for a story about finding a lost kitten. Never end with waking up.",
+    m: "Nobody ever came for him, and by then nobody wanted them to." }
+];
+
+let wdrill = null;
+function todayDrill() {
+  const d = (activeDays() + 1) % WDRILLS.length;
+  return WDRILLS[d];
+}
+function startWDrill() {
+  const w = todayDrill();
+  wdrill = { w, left: 300, t: null, show: false, done: false };
+  wdrill.t = setInterval(() => {
+    wdrill.left--;
+    const el = document.getElementById("wdClock");
+    if (el) { el.textContent = fmtTime(wdrill.left); el.classList.toggle("low", wdrill.left <= 30); }
+    if (wdrill.left <= 0) { clearInterval(wdrill.t); wdrill.t = null; wdrill.done = true; beep(); renderWDrill(); }
+  }, 1000);
+  renderWDrill();
+}
+function stopWDrill() { if (wdrill && wdrill.t) clearInterval(wdrill.t); wdrill = null; }
+
+function renderWDrill() {
+  const w = wdrill ? wdrill.w : todayDrill();
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-tab2="today">← ${Tp("今天","Today")}</button>
+      <span class="quiz-title">${Tp("写作小练","Writing drill")} · ${T(esc(w.t), esc(w.te))}</span>
+      ${wdrill ? `<span class="clock" id="wdClock">${fmtTime(wdrill.left)}</span>` : ""}
+    </div>
+
+    <div class="panel" style="border-left:3px solid var(--plum)">
+      <p class="sub" style="margin:0">${TB("整篇作文两周一次就够，但<strong>技巧要天天练</strong>。今天只练一个动作，5 分钟，写在纸上。",
+        "A full piece once a fortnight is plenty, but <strong>the techniques need daily practice</strong>. Today you drill one move only — five minutes, on paper.")}</p>
+    </div>
+
+    <div class="q-card">
+      <div class="q-meta">${Tp("今天的题","Today's drill")} · ${T(esc(w.t), esc(w.te))}</div>
+      <p class="q-text">${lang === "zh" ? w.zh : w.en}</p>
+      ${lang === "both" ? `<p class="sub" style="margin:-8px 0 14px">${w.zh}</p>` : ""}
+
+      ${!wdrill ? `<div class="q-nav"><button class="btn" id="wdStart">${Tp("开始 5 分钟","Start 5 minutes")}</button></div>`
+        : wdrill.show ? `
+          <div class="verdict good">
+            <b>${Tp("参考答案（不是标准答案）","One way to do it — not the only way")}</b>
+            <p style="font-family:var(--read);white-space:pre-line;font-size:1.02rem;line-height:1.7">${esc(w.m)}</p>
+            <span class="src">${TB("跟她一起比一比：哪里比她写的好？哪里她写得更好？只挑一个点讨论就够。",
+              "Compare together: what is better here, and what is better in hers? Pick just one thing to talk about.")}</span>
+          </div>
+          <div class="q-nav"><button class="btn" id="wdDone">${Tp("完成","Done")}</button></div>`
+        : `<div class="q-nav">
+            <button class="btn" id="wdShow">${Tp("写完了，看参考答案","Finished — show me an example")}</button>
+            <button class="btn ghost" id="wdStop">${Tp("停止","Stop")}</button>
+          </div>`}
+    </div>`;
+}
+
+/* ---------- 朗读 10 分钟 ---------- */
+let rtimer = null;
+const READ_TIPS = [
+  ["选一本她能读懂九成的书", "Pick a book where she knows about nine words in ten",
+   "太难会变成认字，太简单没提升。Billie B Brown、Zac Power、Roald Dahl 这个梯度正好。",
+   "Too hard and it becomes decoding; too easy and nothing improves. Billie B Brown → Zac Power → Roald Dahl is about the right ladder."],
+  ["读出声，读给你听", "Out loud, to you",
+   "默读练不到发音和断句，朗读才连着拼写一起练。", "Silent reading skips pronunciation and phrasing — reading aloud trains spelling too."],
+  ["读完问三个问题", "Ask three questions at the end",
+   "① 这段讲了什么（一句话）② 他为什么这么做（推断）③ 你觉得作者想说什么（主旨）",
+   "1. What was it about, in one sentence? 2. Why did they do that? (inference) 3. What do you think the writer wanted to say? (main idea)"],
+  ["不打断她纠错", "Do not stop her to correct",
+   "读错的词等她读完整段再回头说，中途打断会毁掉流畅度。",
+   "Note a misread word and come back to it after the paragraph. Interrupting wrecks fluency."]
+];
+
+function startRead() {
+  stopRead();
+  rtimer = { left: 600, t: null, done: false };
+  rtimer.t = setInterval(() => {
+    rtimer.left--;
+    if (rtimer.left <= 0) { clearInterval(rtimer.t); rtimer.t = null; rtimer.done = true; beep(); renderRead(); return; }
+    const el = document.getElementById("rdClock");
+    if (el) { el.textContent = fmtTime(rtimer.left); el.classList.toggle("low", rtimer.left <= 30); }
+    const bar = document.getElementById("rdBar");
+    if (bar) bar.style.width = Math.round((1 - rtimer.left / 600) * 100) + "%";
+  }, 1000);
+  renderRead();
+}
+function stopRead() { if (rtimer && rtimer.t) clearInterval(rtimer.t); rtimer = null; }
+
+function renderRead() {
+  const days = (progress.readDays || []).length;
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-tab2="today">← ${Tp("今天","Today")}</button>
+      <span class="quiz-title">${Tp("英文朗读","Read aloud")}</span>
+      ${rtimer ? `<span class="clock" id="rdClock">${fmtTime(rtimer.left)}</span>` : ""}
+    </div>
+
+    <div class="q-card" style="text-align:center">
+      ${rtimer ? `
+        <div class="rd-clock">${rtimer.done ? "🎉" : "📖"}</div>
+        <div class="rd-big" id="rdBig">${rtimer.done ? Tp("时间到！","Time's up!") : fmtTime(rtimer.left)}</div>
+        <div class="wt-bar" style="margin:16px 0"><i id="rdBar" style="width:${Math.round((1 - rtimer.left / 600) * 100)}%"></i></div>
+        <p class="sub">${rtimer.done
+          ? TB("读完了 —— 现在问她：<strong>这段讲了什么？用一句话说。</strong>说完点下面的按钮。",
+               "All done — now ask her: <strong>what was that about? In one sentence.</strong> Then tap below.")
+          : TB("读给爸爸妈妈听。读错的词等这一段读完再说，别中途打断。",
+               "Read to a parent. If she misreads a word, wait until the paragraph ends — do not interrupt.")}</p>
+        <div class="q-nav" style="justify-content:center">
+          ${rtimer.done
+            ? `<button class="btn" id="rdDone">${Tp("她说了，完成","She told me — done")}</button>`
+            : `<button class="btn" id="rdDone">${Tp("提前读完了","Finished early")}</button>
+               <button class="btn ghost" id="rdStop">${Tp("停止","Stop")}</button>`}
+        </div>
+      ` : `
+        <div class="rd-clock">📖</div>
+        <div class="rd-big">10:00</div>
+        <p class="sub">${TB("这是整套备考里回报最高的一件事 —— 比任何刷题都管用，同时提升阅读理解、词汇和拼写。",
+          "This is the highest-return activity in the whole plan — better than any amount of question practice, and it lifts comprehension, vocabulary and spelling together.")}</p>
+        <div class="q-nav" style="justify-content:center">
+          <button class="btn" id="rdStart">${Tp("开始 10 分钟","Start 10 minutes")}</button>
+        </div>
+      `}
+    </div>
+
+    ${days ? `<div class="story-meter" style="margin-top:18px">
+      <div class="sm-k">${T("已朗读", "Days read")} <b>${days}</b> ${T("天", "days")}</div>
+    </div>` : ""}
+
+    <p class="eyebrow">${T("怎么读效果最好", "How to get the most from it")}</p>
+    <div class="panel">
+      <ol class="m-steps">
+        ${READ_TIPS.map(x => `<li><b>${T(esc(x[0]), esc(x[1]))}</b><span>${TB(esc(x[2]), esc(x[3]))}</span></li>`).join("")}
+      </ol>
+    </div>`;
+}
+
+function finishRead() {
+  stopRead();
+  const k = todayKey();
+  progress.readDays = progress.readDays || [];
+  if (!progress.readDays.includes(k)) progress.readDays.push(k);
+  save();
+  markTask("read");
+  touchStreak();
+  checkAllDone();
+  current = "today"; render();
+}
+
 /* ---------- 今天做什么 ---------- */
 const EXAM_DATE = new Date("2027-03-10");
 
@@ -5206,7 +5370,7 @@ function updateRing() {
 }
 
 function leave() {
-  stopWTimer();
+  stopWTimer(); stopRead(); stopWDrill();
   if (drill) { clearInterval(drill.tId); drill = null; }
   if (exam) { clearInterval(exam.tId); exam = null; }
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -5214,7 +5378,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wdStart,#wdShow,#wdStop,#wdDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -5260,6 +5424,13 @@ document.addEventListener("click", e => {
   }
   if (t.id === "syOff") { saveSyncCfg(null); syncState.on = false; paintSync(); renderBackup(); return; }
   if (t.id === "rsGo") { applyBackup(document.getElementById("rsText").value.trim()); return; }
+  if (t.id === "wdStart") { startWDrill(); return; }
+  if (t.id === "wdShow") { if (wdrill) { wdrill.show = true; if (wdrill.t) { clearInterval(wdrill.t); wdrill.t = null; } } renderWDrill(); return; }
+  if (t.id === "wdStop") { stopWDrill(); current = "today"; render(); return; }
+  if (t.id === "wdDone") { stopWDrill(); markTask("wdrill"); touchStreak(); checkAllDone(); current = "today"; render(); return; }
+  if (t.id === "rdStart") { startRead(); return; }
+  if (t.id === "rdStop") { stopRead(); current = "today"; render(); return; }
+  if (t.id === "rdDone") { finishRead(); return; }
   if (t.id === "wtStart") { startWTimer(); return; }
   if (t.id === "wtStop") { stopWTimer(); renderWriting(); return; }
   if (t.id === "saveGoal") { saveGoal(); return; }
@@ -5269,7 +5440,9 @@ document.addEventListener("click", e => {
     const g = JSON.parse(t.dataset.go);
     leave();
     if (g.drill) { current = "train"; renderTabs(); startDrill(g.drill.split(",").map(Number)); }
-    else if (g.quiz) { current = g.quiz; renderTabs(); startQuiz(g.quiz, g.kp); }
+    else if (g.quiz) { current = g.quiz; renderTabs(); startQuiz(g.quiz, g.kp, g.limit ? { limit: g.limit, taskId: g.taskId } : null); }
+    else if (g.read) { current = "today"; renderTabs(); stopRead(); renderRead(); }
+    else if (g.wdrill) { current = "today"; renderTabs(); stopWDrill(); renderWDrill(); }
     else if (g.review) { current = "wrong"; renderTabs(); startReview(); }
     else if (g.dict !== undefined) { current = "train"; renderTabs(); startDict(g.dict); }
     else if (g.exam) { current = "train"; renderTabs(); const a = g.exam.split(","); startExam(a[0], +a[1], +a[2]); }
