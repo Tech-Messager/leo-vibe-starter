@@ -19,6 +19,8 @@
     --card: #FFFFFF;
     --card-sunk: #F1F3EF;
     --on-accent: #FFFFFF;
+    --acc: var(--eucalypt);
+    --acc-soft: var(--eucalypt-soft);
 
     --ui: ui-rounded, "SF Pro Rounded", "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
     --read: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -92,6 +94,8 @@
     --card: #FFFFFF;
     --card-sunk: #F1F3EF;
     --on-accent: #FFFFFF;
+    --acc: var(--eucalypt);
+    --acc-soft: var(--eucalypt-soft);
     --shadow: 0 1px 2px rgba(22, 28, 25, .05), 0 6px 18px -8px rgba(22, 28, 25, .14);
   }
 
@@ -387,6 +391,68 @@
   .flow-arrow { color: var(--slate); font-size: .8rem; padding-left: 6px; margin: 2px 0; }
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
+
+  /* ---------- 写作课 ---------- */
+  .wl-bar { display: flex; gap: 6px; margin: 0 0 18px; flex-wrap: wrap; }
+  .wl-step {
+    flex: 1 1 130px; display: flex; align-items: center; gap: 8px; text-align: left;
+    background: var(--card); border: 1px solid var(--hairline); border-radius: var(--r-sm);
+    padding: 9px 12px; cursor: pointer; font: inherit; color: var(--slate); min-width: 0;
+  }
+  .wl-step b {
+    flex: none; width: 21px; height: 21px; border-radius: 50%;
+    background: var(--card-sunk); color: var(--slate);
+    display: grid; place-items: center; font-size: .78rem; font-weight: 700;
+  }
+  .wl-step span { font-size: .84rem; font-weight: 600; line-height: 1.3; min-width: 0; }
+  .wl-step span .zh { display: block; margin-left: 0; font-size: .92em; }
+  .wl-step.done { border-color: var(--eucalypt); color: var(--ink); }
+  .wl-step.done b { background: var(--eucalypt); color: #fff; }
+  .wl-step.on { border-color: var(--plum); background: var(--plum-soft); color: var(--ink); }
+  .wl-step.on b { background: var(--plum); color: #fff; }
+
+  .wl-ex, .wl-block {
+    background: var(--card); border: 1px solid var(--hairline);
+    border-radius: var(--r-md); padding: 18px 20px; margin-bottom: 14px;
+  }
+  .wl-quote {
+    font-family: var(--read); font-size: 1.12rem; line-height: 1.65; margin: 0 0 12px;
+    padding-left: 14px; border-left: 3px solid var(--plum); color: var(--ink);
+  }
+  .wl-quote.sm { font-size: 1rem; margin: 10px 0 0; border-left-color: var(--eucalypt); }
+  .wl-why { margin: 0; color: var(--slate); font-size: .95rem; line-height: 1.65; }
+  .wl-why b { color: var(--plum); font-weight: 700; margin-right: 6px; }
+  .wl-why.zh { margin-top: 5px; font-size: .89rem; }
+
+  .wl-words { width: 100%; border-collapse: collapse; }
+  .wl-words th {
+    text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--slate); font-weight: 700; padding: 0 0 7px;
+  }
+  .wl-words td { padding: 9px 0; border-top: 1px solid var(--hairline); vertical-align: top; }
+  .wl-words td:first-child { width: 34%; padding-right: 12px; }
+  .wl-plain { color: var(--slate); text-decoration: line-through; text-decoration-color: var(--coral); }
+  .wl-words td b { color: var(--eucalypt); font-weight: 650; }
+  .wl-eg { display: block; font-family: var(--read); color: var(--slate); font-size: .89rem; margin-top: 3px; line-height: 1.5; }
+
+  .wl-pat b { display: block; font-size: 1.04rem; margin-bottom: 6px; }
+  .wl-f { margin: 0; line-height: 1.7; }
+  .wl-f.zh { margin-top: 5px; color: var(--slate); font-size: .9rem; }
+  .wl-frame {
+    background: var(--card-sunk); border-radius: var(--r-sm); padding: 12px 15px;
+    font-family: var(--read); font-size: 1rem; line-height: 1.7; margin-bottom: 15px;
+  }
+  .wl-frame span {
+    display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .07em;
+    color: var(--slate); font-weight: 700; margin-bottom: 5px;
+  }
+  .wl-model { font-family: var(--read); white-space: pre-line; font-size: 1.02rem; line-height: 1.72; }
+
+  @media (max-width: 560px) {
+    .wl-step { flex: 1 1 100%; }
+    .wl-words td:first-child { width: 40%; }
+  }
+
 
   
 
@@ -1386,6 +1452,12 @@ function migrate(p) {
     });
     p.wrong = next;
   }
+
+  /* v2 → v3：速算从只有口诀变成六种模式，单一最好成绩归到 tables 名下 */
+  if (from < 3 && p.drill && p.drill.best && !p.drill.bests) {
+    p.drill.bests = { tables: p.drill.best };
+  }
+
   p.schema = SCHEMA;
   return p;
 }
@@ -3048,11 +3120,93 @@ function finishDict() {
 }
 
 /* ============================================================
-   专项训练 2：乘法口诀抢答（3 分钟限时）
+   速算抢答：六种模式按天轮换
+   口诀只是其中一种 —— 三位数进位借位同样要练到不用想
    ============================================================ */
+function rnd(n) { return Math.floor(Math.random() * n); }
+function rint(a, b) { return a + rnd(b - a + 1); }
+
+const SPRINT = {
+  tables: {
+    zh: "乘法口诀", en: "Times tables", goal: 25, len: 3,
+    zhNote: "×2 ×3 ×5 ×10 —— 考纲要求脱口而出，不能靠数手指",
+    enNote: "×2 ×3 ×5 ×10 — these must come out without counting",
+    gen() { const t = [2, 3, 5, 10][rnd(4)], n = rint(1, 12); return { text: t + " × " + n + " =", ans: t * n }; }
+  },
+  add3: {
+    zh: "三位数加法（每题进位）", en: "3-digit addition (every one carries)", goal: 10, len: 4, paper: true,
+    zhNote: "在纸上列竖式，算完再输入。个位一定进位，看她有没有把 1 记上去",
+    enNote: "Set it out in columns on paper, then type the answer. The ones column always carries — watch whether she carries the 1",
+    gen() {
+      const au = rint(1, 9), bu = rint(10 - au, 9);
+      const at = rint(0, 9), bt = rint(0, 9), ah = rint(1, 8), bh = rint(1, 8);
+      const a = ah * 100 + at * 10 + au, b = bh * 100 + bt * 10 + bu;
+      return { text: a + " + " + b + " =", ans: a + b };
+    }
+  },
+  sub3: {
+    zh: "三位数减法（每题借位）", en: "3-digit subtraction (every one borrows)", goal: 10, len: 3, paper: true,
+    zhNote: "个位一定要借位。中间是 0 的时候最容易错 —— 那种题放慢一点",
+    enNote: "The ones column always borrows. A zero in the middle is where mistakes live — slow down on those",
+    gen() {
+      const ah = rint(3, 9), at = rint(0, 9), au = rint(0, 8);
+      const a = ah * 100 + at * 10 + au;
+      const bu = rint(au + 1, 9), bt = rint(0, 9), bh = rint(1, ah - 1);
+      const b = bh * 100 + bt * 10 + bu;
+      return { text: a + " − " + b + " =", ans: a - b };
+    }
+  },
+  mental2: {
+    zh: "两位数心算（凑十、拆分、补差）", en: "2-digit mental maths", goal: 18, len: 3,
+    zhNote: "+19 就是 +20 再退 1，−29 就是 −30 再补 1。这是心算最值钱的一招",
+    enNote: "+19 is +20 then back 1; −29 is −30 then forward 1. This one trick carries most of mental maths",
+    gen() {
+      const k = rnd(4);
+      if (k === 0) { const a = rint(23, 78), b = [9, 19, 29, 39][rnd(4)]; return { text: a + " + " + b + " =", ans: a + b }; }
+      if (k === 1) { const a = rint(48, 98), b = [9, 19, 29, 39][rnd(4)]; return { text: a + " − " + b + " =", ans: a - b }; }
+      if (k === 2) { const a = rint(12, 70), b = rint(12, 99 - a); return { text: a + " + " + b + " =", ans: a + b }; }
+      const a = rint(30, 99), b = rint(11, a - 1); return { text: a + " − " + b + " =", ans: a - b };
+    }
+  },
+  missing: {
+    zh: "逆运算 □", en: "Missing number □", goal: 14, len: 3,
+    zhNote: "□ + 27 = 63 就是 63 − 27。把算式倒过来走 —— 考试里这类题每年都有",
+    enNote: "□ + 27 = 63 is really 63 − 27. Run the sum backwards — this type comes up every year",
+    gen() {
+      const k = rnd(3);
+      if (k === 0) { const b = rint(12, 89), ans = rint(11, 99 - b); return { text: "□ + " + b + " = " + (ans + b), ans: ans }; }
+      if (k === 1) { const a = rint(40, 99), ans = rint(11, a - 12); return { text: a + " − □ = " + (a - ans), ans: ans }; }
+      const t = [2, 3, 5, 10][rnd(4)], ans = rint(2, 12); return { text: t + " × □ = " + t * ans, ans: ans };
+    }
+  },
+  half: {
+    zh: "双倍、一半与 ×10", en: "Doubles, halves & ×10", goal: 20, len: 4,
+    zhNote: "一半和双倍是分数、平均分、找零的地基。×10 是位值 —— 数字整体左移一位",
+    enNote: "Halving and doubling underpin fractions, sharing and change. ×10 is place value — every digit shifts one place left",
+    gen() {
+      const k = rnd(3);
+      if (k === 0) { const n = rint(11, 60) * 2; return { text: n + " ÷ 2 =", ans: n / 2 }; }
+      if (k === 1) { const n = rint(11, 99); return { text: n + " × 2 =", ans: n * 2 }; }
+      const n = rint(3, 99); return { text: n + " × 10 =", ans: n * 10 };
+    }
+  }
+};
+
+const SPRINT_CYCLE = {
+  learn:  ["tables", "add3", "tables", "sub3", "tables", "mental2"],
+  revise: ["tables", "add3", "sub3", "mental2", "missing", "half"],
+  final:  ["tables", "add3", "sub3", "missing", "mental2", "half"]
+};
+function sprintToday() {
+  const c = SPRINT_CYCLE[currentPhase().id] || SPRINT_CYCLE.learn;
+  return c[dayAssign().d % c.length];
+}
+function sprintBest(id) { return (progress.drill.bests && progress.drill.bests[id]) || 0; }
+
 let drill = null;
-function startDrill(tables) {
-  drill = { tables, i: 0, right: 0, wrong: [], input: "", start: Date.now(), left: 180, q: null, tId: null };
+function startDrill(modeId) {
+  const id = SPRINT[modeId] ? modeId : "tables";
+  drill = { id, m: SPRINT[id], i: 0, right: 0, wrong: [], input: "", start: Date.now(), left: 180, q: null, tId: null };
   nextFact();
   drill.tId = setInterval(() => {
     drill.left--;
@@ -3067,9 +3221,7 @@ function startDrill(tables) {
 }
 function fmtTime(s) { const m = Math.floor(s / 60); return m + ":" + String(s % 60).padStart(2, "0"); }
 function nextFact() {
-  const t = drill.tables[Math.floor(Math.random() * drill.tables.length)];
-  const n = 1 + Math.floor(Math.random() * 12);
-  drill.q = { a: t, b: n, ans: t * n };
+  drill.q = drill.m.gen();
   drill.input = "";
   drill.qStart = Date.now();
 }
@@ -3078,12 +3230,16 @@ function renderDrill() {
   view.innerHTML = `
     <div class="quiz-head">
       <button class="back" data-quitdrill="1">← 结束</button>
-      <span class="quiz-title">${T("口诀抢答","Times tables sprint")}</span>
+      <span class="quiz-title">${T(esc(drill.m.zh), esc(drill.m.en))}</span>
       <span class="clock" id="drillClock">${fmtTime(drill.left)}</span>
     </div>
+    ${drill.m.paper ? `<div class="panel" style="border-left:3px solid var(--coral);margin-bottom:14px">
+      <p class="sub" style="margin:0">${TB("这一组用纸笔列竖式，算好再输入答案。<strong>不要心算硬扛</strong> —— 竖式写对才是这一项要练的。",
+        "Work this set in columns on paper, then type the answer. <strong>Do not try to hold it in your head</strong> — setting it out correctly is the point.")}</p>
+    </div>` : ""}
     <div class="drill-card">
-      <div class="drill-score"><b id="drillRight">${drill.right}</b> ${T("题答对","correct")}</div>
-      <div class="drill-q" id="drillQ">${drill.q.a} × ${drill.q.b} =</div>
+      <div class="drill-score"><b id="drillRight">${drill.right}</b> ${T("题答对", "correct")} · ${Tp("目标 " + drill.m.goal, "goal " + drill.m.goal)}</div>
+      <div class="drill-q" id="drillQ">${drill.q.text}</div>
       <div class="drill-in" id="drillIn">${drill.input || "?"}</div>
       <div class="pad">
         ${[1,2,3,4,5,6,7,8,9].map(n => `<button class="key" data-key="${n}">${n}</button>`).join("")}
@@ -3092,14 +3248,15 @@ function renderDrill() {
         <button class="key go" data-key="ok">✓</button>
       </div>
     </div>
-    <p class="map-note" style="margin-top:14px">${T("目标：3 分钟答对 25 题以上。答对自动跳下一题，不用按确定。","Goal: 25+ correct in 3 minutes. It jumps to the next one automatically when you are right.")}</p>`;
+    <p class="map-note" style="margin-top:14px">${TB(esc(drill.m.zhNote) + "。目标：3 分钟答对 " + drill.m.goal + " 题以上，答对自动跳下一题。",
+      esc(drill.m.enNote) + ". Goal: " + drill.m.goal + "+ correct in 3 minutes; it jumps on by itself when you are right.")}</p>`;
 }
 
 function drillKey(k) {
   if (!drill) return;
   if (k === "clr") { drill.input = ""; }
   else if (k === "ok") { return drillSubmit(); }
-  else if (drill.input.length < 3) { drill.input += k; }
+  else if (drill.input.length < drill.m.len) { drill.input += k; }
   document.getElementById("drillIn").textContent = drill.input || "?";
   if (drill.input && +drill.input === drill.q.ans) drillSubmit();
 }
@@ -3116,11 +3273,11 @@ function drillSubmit() {
       if (!drill) return;
       el.classList.remove("hit");
       nextFact();
-      document.getElementById("drillQ").textContent = drill.q.a + " × " + drill.q.b + " =";
+      document.getElementById("drillQ").textContent = drill.q.text;
       document.getElementById("drillIn").textContent = "?";
     }, 180);
   } else {
-    drill.wrong.push(drill.q.a + " × " + drill.q.b + " = " + drill.q.ans);
+    drill.wrong.push(drill.q.text.replace(/=$/, "").trim() + " = " + drill.q.ans);
     el.classList.add("miss");
     setTimeout(() => {
       if (!drill) return;
@@ -3135,35 +3292,37 @@ function finishDrill() {
   if (!drill) return;
   clearInterval(drill.tId);
   const right = drill.right, wrong = drill.wrong.slice(0, 12);
-  const best = Math.max(progress.drill.best || 0, right);
-  const isBest = right > (progress.drill.best || 0);
-  progress.drill.best = best;
-  progress.drill.runs = (progress.drill.runs || []).concat([{ right, at: Date.now() }]).slice(-20);
+  const m = drill.m, id = drill.id, goal = m.goal;
+  progress.drill.bests = progress.drill.bests || {};
+  const prev = progress.drill.bests[id] || 0;
+  const best = Math.max(prev, right);
+  const isBest = right > prev;
+  progress.drill.bests[id] = best;
+  if (id === "tables") progress.drill.best = best;
+  progress.drill.runs = (progress.drill.runs || []).concat([{ right, at: Date.now(), id }]).slice(-30);
   save(); touchStreak(); markTask("drill");
-  addCoins(right * 3 + (right >= 25 ? 40 : 0), "drill");
+  addCoins(Math.round(right * 3 * (25 / goal)) + (right >= goal ? 40 : 0), "drill");
   checkAllDone();
-  if (right >= 25) toast(earn("times"));
+  if (right >= goal) toast(earn("times"));
 
   view.innerHTML = `
     <div class="quiz-head">
       <button class="back" data-tab2="train">← 专项训练</button>
-      <span class="quiz-title">${T("口诀抢答 · 成绩","Sprint score")}</span>
+      <span class="quiz-title">${T(esc(m.zh), esc(m.en))} · ${T("成绩","score")}</span>
     </div>
     <div class="score-card">
       <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)"> 题</span></div>
-      <p>${isBest
-        ? Tp("🎉 新纪录！之前最好成绩是 " + (progress.drill.runs.length > 1 ? Math.max(...progress.drill.runs.slice(0, -1).map(r => r.right)) : 0) + " 题",
-             "🎉 New record! Your best before was " + (progress.drill.runs.length > 1 ? Math.max(...progress.drill.runs.slice(0, -1).map(r => r.right)) : 0))
-        : Tp("个人最好成绩：" + best + " 题", "Personal best: " + best)}<br>
-        ${right >= 25 ? Tp("口诀已经很熟了 ⚡ 保持每天 3 分钟就行。", "Your tables are quick ⚡ Just keep up 3 minutes a day.")
-        : right >= 15 ? Tp("不错。哪一组慢就单独练那一组。", "Good going. Whichever table felt slow, practise that one on its own.")
-        : Tp("先只练 ×2 和 ×10，熟了再加 ×5 和 ×3。", "Start with just ×2 and ×10, then add ×5 and ×3 once those are quick.")}</p>
+      <p>${isBest ? Tp("🎉 这一项的新纪录！之前是 " + prev + " 题", "🎉 A new record for this one! Your best before was " + prev)
+        : Tp("这一项的最好成绩：" + best + " 题", "Your best at this one: " + best)}<br>
+        ${right >= goal ? Tp("达标了 ⚡ 这一项已经够快，明天换别的。", "Target hit ⚡ This one is quick enough — something different tomorrow.")
+        : right >= goal * .6 ? Tp("接近了。下次专挑刚才错的那种题型。", "Nearly there. Next time, look out for the type you just missed.")
+        : Tp("慢一点没关系，先求对。速度是练出来的，不是急出来的。", "Slower is fine — accuracy first. Speed comes from repetition, not from rushing.")}</p>
       <div class="q-nav" style="justify-content:center">
-        <button class="btn" data-drill="${drill.tables.join(",")}">${Tp("再来一次","Go again")}</button>
+        <button class="btn" data-drill="${id}">${Tp("再来一次","Go again")}</button>
         <button class="btn ghost" data-tab2="train">回到专项训练</button>
       </div>
       ${wrong.length ? `<div class="wrongs">
-        <h5>${T("答错的口诀","Facts you missed")}</h5>
+        <h5>${T("答错的题","The ones you missed")}</h5>
         <ul>${wrong.map(w => `<li class="num" style="font-family:var(--data)">${esc(w)}</li>`).join("")}</ul>
       </div>` : ""}
     </div>`;
@@ -3418,7 +3577,6 @@ function renderWrong() {
    专项训练首页
    ============================================================ */
 function renderTrain() {
-  const best = progress.drill.best || 0;
   const lastTest = (progress.tests || []).slice(-1)[0];
   view.innerHTML = `
     <h2>${T("专项训练","Drills")}<span class="en">${ZH("专项训练") || "Drills"}</span></h2>
@@ -3435,13 +3593,20 @@ function renderTrain() {
       </div>
     </div>
 
-    <p class="eyebrow">${T("乘法口诀抢答 · 每天 3 分钟","Times tables sprint · 3 minutes a day")}</p>
+    <p class="eyebrow">${T("速算抢答 · 每天 3 分钟，六种轮换","Number sprint · 3 minutes a day, six kinds in rotation")}</p>
     <div class="panel">
-      <p class="sub">${TB("数学考试不许用计算器，口诀不熟会拖慢所有题。目标：3 分钟答对 25 题以上。","No calculator is allowed in the maths test, so slow tables slow everything down. Goal: 25 or more correct in 3 minutes.")} ${best ? `<strong>${Tp("目前最好：" + best + " 题", "Best so far: " + best)} ⚡</strong>` : ""}</p>
-      <div class="q-nav" style="flex-wrap:wrap">
-        <button class="btn" data-drill="2,3,5,10">×2 ×3 ×5 ×10 ${T("（考纲）","(the ones tested)")}</button>
-        <button class="btn ghost" data-drill="2,10">${T("只练","Just")} ×2 ×10</button>
-        <button class="btn ghost" data-drill="3,4,5">×3 ×4 ×5</button>
+      <p class="sub">${TB("数学考试不许用计算器 —— 慢，本身就是丢分。口诀只是其中一项：<strong>三位数进位加法和借位减法</strong>同样要练到不用想。每天今日任务会自动派一种，这里也可以自己挑。",
+        "No calculator is allowed in the maths test, so being slow costs marks on its own. Tables are only one piece: <strong>3-digit carrying and borrowing</strong> need to be just as automatic. Today's plan picks one for you each day; you can also choose here.")}</p>
+      <div class="kp-grid">
+        ${Object.entries(SPRINT).map(([id, m]) => {
+          const b = sprintBest(id), today = sprintToday() === id;
+          return `<button class="kp" data-drill="${id}">
+            <div><div class="kp-name">${T(esc(m.zh), esc(m.en))}${today ? ` <span class="pill new">${T("今天","today")}</span>` : ""}</div>
+              <div class="kp-en">${TB(esc(m.zhNote), esc(m.enNote))}</div></div>
+            <div class="kp-foot"><span class="kp-count">${Tp("目标 " + m.goal + " 题 / 3 min", "goal " + m.goal + " in 3 min")}</span>
+              <span class="pill ${b >= m.goal ? "good" : b ? "mid" : "new"}">${b ? Tp("最好 " + b, "best " + b) : T("开始","Start")}</span></div>
+          </button>`;
+        }).join("")}
       </div>
     </div>
 
@@ -3590,11 +3755,12 @@ function todayTasks() {
   const ph = currentPhase().id;
   const t = [];
 
-  /* 每天都做：口诀 3 分钟 */
+  /* 每天都做：速算 3 分钟，六种模式轮换 */
+  const sp = sprintToday(), spm = SPRINT[sp];
   t.push({ id: "drill", icon: "⚡", min: 3,
-    zh: "乘法口诀抢答 3 分钟", en: "Times tables sprint · 3 minutes",
-    zhWhy: "数学不许用计算器，口诀不熟会拖慢所有题", enWhy: "No calculator in the maths test — slow tables slow everything down",
-    go: { drill: "2,3,5,10" } });
+    zh: "速算抢答 3 分钟：" + spm.zh, en: "Number sprint · 3 minutes: " + spm.en,
+    zhWhy: spm.zhNote, enWhy: spm.enNote,
+    go: { drill: sp } });
 
   if (ph === "learn") {
     const nk = A.newKp;
@@ -3692,12 +3858,13 @@ function todayTasks() {
   }
 
   if (d % 10 !== 0) {
-    const wd = todayDrill();
-    t.push({ id: "wdrill", icon: "✍️", min: 5,
-      zh: "写作小练：" + wd.t + "（5 分钟）", en: "Writing drill: " + wd.te + " (5 min)",
-      zhWhy: "整篇作文两周一次，技巧天天练 —— 一次只练一个动作，进步最快",
-      enWhy: "A full piece every fortnight, but the moves drilled daily — one at a time is what improves fastest",
-      go: { wdrill: 1 } });
+    const wl = todayLesson();
+    t.push({ id: "wlesson", icon: "✍️", min: 10,
+      zh: "写作课：" + wl.t + "（四步：看范例 → 学词句型 → 仿写 → 自己写）",
+      en: "Writing lesson: " + wl.te + " (read models → tools → copy → write your own)",
+      zhWhy: "先看好的长什么样、好在哪，再模仿，最后自己写 —— 没见过范例是写不出好句子的",
+      enWhy: "See what good looks like and why, imitate it, then write your own — nobody writes a good sentence they have never seen",
+      go: { wlesson: 1 } });
   }
 
   if (d % 10 === 0) t.push({ id: "write", icon: "✏️", min: 40,
@@ -4635,123 +4802,479 @@ function buyOrWear(cat, id, price) {
 
 
 /* ============================================================
-   写作片段特训：每天 5 分钟只练一个动作
-   整篇作文两周一次，但技巧要天天练 —— 一次只练一步，进步最快
+   写作课：每天 10 分钟，四步走
+   看范例（好在哪）→ 学词学句型 → 照框架仿写 → 自己写
+   整篇作文每 10 天一次；中间 9 天每天只练一个动作，但每次都先看过范例
    ============================================================ */
-const WDRILLS = [
-  { t: "开头", te: "Openings", zh: "给这个故事写一个抓人的第一句：<strong>一场突然来的暴风雨</strong>。用声音、对话或动作开头。",
-    en: "Write one gripping first line for this story: <strong>a storm that arrives suddenly</strong>. Open with a sound, a line of speech or an action.",
-    m: "CRACK! The sky tore open right above our tent." },
-  { t: "开头", te: "Openings", zh: "给<strong>一只走丢的狗</strong>写一个抓人的开头。不许用 One day。",
-    en: "Write a gripping opening about <strong>a lost dog</strong>. You may not use One day.",
-    m: "The lead was still clipped to the fence. Buster was not." },
-  { t: "开头", te: "Openings", zh: "用<strong>一句对话</strong>开头，写一个关于生日惊喜的故事。",
-    en: "Open a birthday-surprise story with <strong>a line of speech</strong>.",
-    m: "\"Whatever you do,\" said Mum, \"do not open the shed.\"" },
-  { t: "改造烂开头", te: "Fix a dull opening", zh: "把这句改得让人想读下去：<em>One day I went to the zoo.</em>",
-    en: "Rewrite this so a reader wants to continue: <em>One day I went to the zoo.</em>",
-    m: "The gorilla was watching me. Not the other way round." },
-  { t: "改造烂开头", te: "Fix a dull opening", zh: "改写：<em>Last holidays we went camping. It was fun.</em>",
-    en: "Rewrite: <em>Last holidays we went camping. It was fun.</em>",
-    m: "Something was breathing outside the tent, and it was not Dad." },
-  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>scared</em>，把「我很害怕」写出来。",
-    en: "Show that you are frightened, without using the word <em>scared</em>.",
-    m: "My hands would not stay still, and my legs had forgotten how to run." },
-  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>angry</em>，写出「哥哥生气了」。",
-    en: "Show that your brother is angry, without using the word <em>angry</em>.",
-    m: "He put the cup down far too carefully and did not look at me once." },
-  { t: "用身体写情绪", te: "Show, don't tell", zh: "不许用 <em>excited</em>，写出「她很兴奋」。",
-    en: "Show that she is excited, without using the word <em>excited</em>.",
-    m: "She read the letter three times, then ran the whole way home with it above her head." },
-  { t: "五感描写", te: "The five senses", zh: "描写<strong>生日蛋糕端上桌的那一刻</strong>，至少用到三种感官。",
-    en: "Describe <strong>the moment the birthday cake arrives</strong>, using at least three senses.",
-    m: "Ten small flames wobbled towards me. The kitchen smelled of warm chocolate, and everyone's singing was slightly out of time." },
-  { t: "五感描写", te: "The five senses", zh: "描写<strong>下暴雨的操场</strong>，至少三种感官。",
-    en: "Describe <strong>a playground in heavy rain</strong>, using at least three senses.",
-    m: "Rain drummed on the shelter roof, the asphalt smelled like hot dust, and my socks had gone cold and heavy." },
-  { t: "对话", te: "Dialogue", zh: "写 4 句对话：你和好朋友在操场上发现一只受伤的鸟。<strong>说话动词别全用 said</strong>。",
-    en: "Write four lines of dialogue: you and a friend find an injured bird. <strong>Do not use said every time.</strong>",
-    m: "\"Don't touch it,\" whispered Ravi.\n\"It's shaking,\" I said.\n\"Get Mrs Lim. Run!\" he urged.\n\"Stay with it,\" I called back over my shoulder." },
-  { t: "对话", te: "Dialogue", zh: "写 4 句对话：你请求妈妈让你晚睡半小时。注意引号和标点。",
-    en: "Write four lines of dialogue: asking to stay up half an hour later. Watch the speech marks.",
-    m: "\"Just thirty minutes,\" I begged.\n\"You said that yesterday,\" Mum replied.\n\"Yesterday was a school night!\"\n\"So is tonight,\" she said, and switched off the lamp." },
-  { t: "升级词", te: "Upgrade the words", zh: "把这句里的普通词全部升级：<em>The big dog walked to the small boy and said hello.</em>",
-    en: "Upgrade every plain word: <em>The big dog walked to the small boy and said hello.</em>",
-    m: "The enormous dog padded towards the tiny boy and woofed a greeting." },
-  { t: "升级词", te: "Upgrade the words", zh: "升级：<em>I was happy so I walked to the nice park.</em>",
-    en: "Upgrade: <em>I was happy so I walked to the nice park.</em>",
-    m: "I was thrilled, so I dashed to the wonderful park." },
-  { t: "修辞提问", te: "Rhetorical questions", zh: "为「学校午餐应该有冰淇淋」写一个<strong>修辞性提问</strong>开头。",
-    en: "Write a <strong>rhetorical question</strong> to open an argument for ice cream at school lunch.",
-    m: "Who could possibly think through a maths lesson on a forty-degree day without one?" },
-  { t: "三词排比", te: "The rule of three", zh: "为「应该养狗」写一个<strong>三词排比</strong>句。",
-    en: "Write a <strong>rule-of-three</strong> sentence arguing for owning a dog.",
-    m: "Dogs are loyal, patient and endlessly forgiving." },
-  { t: "强观点词", te: "Strong words", zh: "用 <em>must / definitely / never</em> 各写一句，主题：孩子应该多在户外玩。",
-    en: "Write one sentence each using <em>must / definitely / never</em>, on children needing more outdoor time.",
-    m: "Schools must give children more time outside.\nA child who runs at lunchtime will definitely concentrate better after it.\nWe should never treat play as the part of the day that can be cut." },
-  { t: "理由展开", te: "Develop a reason", zh: "把这个理由展开成完整一段：<strong>操场应该建一个大滑梯，因为课间会更好玩。</strong>（理由 → 解释 → 画面）",
-    en: "Develop this into a full paragraph: <strong>the playground should have a big slide, because break time would be more fun.</strong> (reason → explanation → picture)",
-    m: "Firstly, a slide would make break time far more fun. At the moment half the yard stands around because there is nothing to do. Picture thirty children queueing, laughing, racing back up the steps — and then walking into class with all that energy spent instead of bottled up." },
-  { t: "理由展开", te: "Develop a reason", zh: "展开：<strong>每个孩子都该学游泳，因为这能救命。</strong>",
-    en: "Develop: <strong>every child should learn to swim, because it saves lives.</strong>",
-    m: "Most importantly, swimming saves lives. Drowning is one of the biggest dangers for young children in this country. A child who can float and swim twenty-five metres is far safer at a beach, a river or a friend's pool — and that is a skill she keeps for the rest of her life." },
-  { t: "有力结尾", te: "Endings", zh: "给一个关于「找到走失小猫」的故事写一个<strong>有力的结尾句</strong>。不许写「然后我醒了」。",
-    en: "Write a <strong>strong closing line</strong> for a story about finding a lost kitten. Never end with waking up.",
-    m: "Nobody ever came for him, and by then nobody wanted them to." }
+const WLESSON = [
+  {
+    t: "开头", te: "Openings",
+    ex: [
+      { s: "The lead was still clipped to the fence. Buster was not.", zh: "两句话，第二句只有四个词。它不解释、不铺垫，直接把「狗不见了」砸在你脸上。<strong>长句写正常，短句砸出不对劲</strong>。", en: "Two sentences; the second is four words long. It does not explain or warm up — it drops the problem on you. <strong>A longer sentence for how things were, a short one for what is wrong.</strong>" },
+      { s: "\"Don't look down,\" said Amir. So of course I looked down.", zh: "用一句对话开头，再用一个动作立刻打脸。读者第一秒就知道：有人要出事了。", en: "Open on a line of speech, then undercut it with an action. In one second the reader knows somebody is about to be in trouble." },
+    ],
+    words: [
+      { p: "walked", up: "crept / bolted / trudged", eg: "She crept along the hallway, listening." },
+      { p: "said (quietly)", up: "whispered / murmured / breathed", eg: "\"He's gone,\" she whispered." },
+      { p: "looked", up: "glanced / stared / peered", eg: "He peered into the dark shed." },
+      { p: "scared", up: "frozen / rigid / breathless", eg: "I stood frozen at the top of the ladder." },
+    ],
+    pat: { n: "两句翻转法", ne: "The two-sentence flip", f: "第一句写<strong>本来的样子</strong>（长一点，有细节）。第二句写<strong>不对劲</strong>（越短越好）。", fe: "Sentence one: <strong>how it normally is</strong> (longer, with a detail). Sentence two: <strong>what is wrong</strong> (as short as you can make it).",
+      eg: ["Every morning Buster waited at the gate with his tail going like a windscreen wiper. This morning the gate was open.", "Nan's kitchen always smelled of burnt toast and lemon soap. Today it smelled of nothing at all."],
+      frZh: "____（本来每天的样子，写具体一点）。____（今天不一样了 —— 尽量短）。", frEn: "____ (how it is every normal day — be specific). ____ (today it is different — keep it short)." },
+    im: { zh: "照上面的框架，写「她的书包不见了」的开头。<strong>不要改框架，只换内容。</strong>", en: "Use the frame above for: <strong>her school bag has gone</strong>. Keep the shape, change only the content.", m: "Her bag always hung on the third hook, the one with the chip in the blue paint. The hook was empty." },
+    wr: { zh: "现在自己写：<strong>一场突然来的暴风雨</strong>。用两句翻转法开头，第二句不超过 8 个词。", en: "Now your own: <strong>a storm that arrives out of nowhere</strong>. Use the two-sentence flip; keep sentence two under eight words.", m: "We had spread the towels out on the hot sand and Dad had just fallen asleep with the paper over his face. Then the sky went green." }
+  },
+  {
+    t: "用身体写情绪", te: "Show, don't tell",
+    ex: [
+      { s: "My hands would not stay still, so I pushed them under my legs and sat on them.", zh: "没有一个词是 nervous，但读者完全知道她紧张。<strong>写身体在做什么，情绪自己会出现。</strong>", en: "The word <em>nervous</em> never appears, yet you know exactly how she feels. <strong>Write what the body is doing and the emotion arrives on its own.</strong>" },
+      { s: "He read the note twice, then folded it into a very small square.", zh: "折成很小的方块 —— 这个动作里全是「他不想再看到它」。动作比形容词更有力。", en: "Folding it into a very small square carries all of <em>he does not want to see this again</em>. An action outweighs an adjective." },
+    ],
+    words: [
+      { p: "happy", up: "beaming / bouncing / grinning", eg: "She came out beaming, both thumbs up." },
+      { p: "angry", up: "jaw tight / fists closed / red to the ears", eg: "Dad said nothing, but his jaw was tight." },
+      { p: "sad", up: "eyes stinging / throat aching / shoulders down", eg: "My throat ached and I could not answer." },
+      { p: "excited", up: "could not sit still / talking too fast / heart drumming", eg: "She was talking too fast for anyone to follow." },
+    ],
+    pat: { n: "情绪三件套", ne: "The three-part body sentence", f: "<strong>身体的一个部位</strong> + <strong>它在做什么</strong> + <strong>她因此做的一个动作</strong>。全程不许写情绪词。", fe: "<strong>One part of the body</strong> + <strong>what it is doing</strong> + <strong>what she does because of it</strong>. No emotion words allowed.",
+      eg: ["My knees had gone soft, so I held on to the rail with both hands.", "His ears went hot and he suddenly needed to tie a shoelace that was already tied."],
+      frZh: "____（身体部位）____（在做什么），所以____（她做的动作）。", frEn: "____ (a body part) ____ (what it is doing), so ____ (what she does about it)." },
+    im: { zh: "用三件套写<strong>「她很尴尬」</strong>。不许出现 embarrassed、shy 这类词。", en: "Use the three-part sentence for <strong>she is embarrassed</strong>. The words <em>embarrassed</em> and <em>shy</em> are banned.", m: "Her face went hot right up to her ears, so she bent down and pretended to look for something in her bag." },
+    wr: { zh: "自己写 2–3 句：<strong>她站在全校面前，马上要上台讲话。</strong>只写身体，不写情绪词。", en: "Write 2–3 sentences: <strong>she is about to speak in front of the whole school.</strong> Body only — no emotion words.", m: "The microphone was taller than she expected and she had to stand on her toes. Her paper had gone soft and damp at the corner where she was holding it. She read the first word twice before any sound came out." }
+  },
+  {
+    t: "五感描写", te: "The five senses",
+    ex: [
+      { s: "The shed smelled of petrol and old newspaper, and something underneath that I did not want to name.", zh: "气味最容易被忘掉，也最容易让人相信。最后半句留了个钩子，让读者自己想。", en: "Smell is the sense writers forget and readers believe most. The last half-clause leaves a hook for the reader's imagination." },
+      { s: "Somewhere behind us a screen door banged, then banged again, softer.", zh: "声音写了两次，第二次「轻一点」—— 一个小细节就让场景动了起来。", en: "The sound happens twice, the second time <em>softer</em>. One small detail sets the whole scene moving." },
+    ],
+    words: [
+      { p: "loud", up: "crashing / thundering / shrill", eg: "A shrill whistle cut across the oval." },
+      { p: "smelly", up: "sharp / sour / musty", eg: "The bin smelled sour in the heat." },
+      { p: "bright", up: "blinding / glaring / dazzling", eg: "The glare off the water made me squint." },
+      { p: "cold", up: "biting / raw / numbing", eg: "A raw wind came straight off the bay." },
+    ],
+    pat: { n: "换感官切镜头", ne: "Switch the sense to switch the shot", f: "一句<strong>看到的</strong>，下一句换成<strong>听到的或闻到的</strong>。连着两句都写「看到」，画面就平了。", fe: "One sentence of <strong>what she sees</strong>, then switch to <strong>what she hears or smells</strong>. Two sights in a row and the picture goes flat.",
+      eg: ["The classroom was empty and all the chairs were up on the desks. Down the corridor a floor polisher hummed.", "Grey water slapped against the jetty posts. It smelled of salt and diesel."],
+      frZh: "____（看到的）。____（听到的 或 闻到的）。", frEn: "____ (what she sees). ____ (what she hears or smells)." },
+    im: { zh: "用换感官切镜头，写<strong>「热天里的操场」</strong>两句。", en: "Use the sense switch for <strong>a school yard on a very hot day</strong>. Two sentences.", m: "The asphalt shimmered and the painted lines had gone soft and sticky. Somewhere near the fence a cicada started up and would not stop." },
+    wr: { zh: "自己写 3 句：<strong>晚上一个人在家，听见厨房有声音。</strong>三句里至少用到三种不同的感官。", en: "Write 3 sentences: <strong>alone at home at night, a noise from the kitchen.</strong> Use three different senses across the three sentences.", m: "The hallway light was off and the only glow came from under the kitchen door. A tap dripped, then stopped, then dripped again. The floor was cold enough to make me lift one foot and then the other." }
+  },
+  {
+    t: "对话", te: "Dialogue",
+    ex: [
+      { s: "\"I already told you,\" Nan said, without looking up from the beans. \"He isn't coming.\"", zh: "对话被<strong>一个动作切成两半</strong>。中间那个「没抬头看豆子」比任何形容词都能说明她的态度。", en: "The speech is <strong>split in half by an action</strong>. Not looking up from the beans says more about her mood than any adjective could." },
+      { s: "\"Are you sure?\" \"No.\"", zh: "两句短对话，谁说的都不用标。<strong>紧张的时候，对话要变短。</strong>", en: "Two short lines with no speech tags at all. <strong>When the tension rises, the dialogue gets shorter.</strong>" },
+    ],
+    words: [
+      { p: "said (angry)", up: "snapped / growled / shot back", eg: "\"Leave it,\" he snapped." },
+      { p: "said (unsure)", up: "offered / tried / managed", eg: "\"Maybe tomorrow?\" she offered." },
+      { p: "said (loud)", up: "called / bellowed / yelled", eg: "\"Over here!\" Mum called from the car." },
+      { p: "asked", up: "wondered aloud / pressed / demanded", eg: "\"And where were you?\" she pressed." },
+    ],
+    pat: { n: "对话三明治", ne: "The dialogue sandwich", f: "<strong>半句话</strong> + <strong>一个动作</strong> + <strong>另外半句话</strong>。动作要跟情绪有关，不能随便找个动作。", fe: "<strong>Half the speech</strong> + <strong>an action</strong> + <strong>the other half</strong>. The action has to say something about the mood — not just any action.",
+      eg: ["\"It wasn't me,\" I said, picking at the edge of the table. \"I wasn't even there.\"", "\"Fine,\" Dad said, and put the keys back in his pocket. \"We'll go on Sunday.\""],
+      frZh: "\"____，\" ____说，____（一个能透露情绪的动作）。\"____。\"", frEn: "\"____,\" said ____, ____ (an action that leaks the mood). \"____.\"" },
+    im: { zh: "用对话三明治写：<strong>妈妈发现弟弟打碎了杯子，但弟弟不承认。</strong>", en: "Use the dialogue sandwich: <strong>Mum has found the broken cup, and her brother is not owning up.</strong>", m: "\"So it fell on its own,\" Mum said, turning the biggest piece over in her hand. \"All the way from the shelf.\"" },
+    wr: { zh: "自己写 4 行对话：<strong>两个朋友因为一件小事快要吵起来。</strong>至少一个三明治，最后两行要变短。", en: "Write four lines of dialogue: <strong>two friends on the edge of an argument over something small.</strong> Include one sandwich, and make the last two lines short.", m: "\"You could have waited,\" Ella said, pulling her jumper straight. \"You knew I was coming.\"\n\"I did wait.\"\n\"For how long?\"\n\"Long enough.\"" }
+  },
+  {
+    t: "强动词", te: "Strong verbs",
+    ex: [
+      { s: "The bike wobbled, tipped, and went down hard on the gravel.", zh: "三个动词排成一串，把过程拍成了慢动作。<strong>动词是句子里最贵的词</strong>，别浪费在 went 和 got 上。", en: "Three verbs in a row turn the fall into slow motion. <strong>Verbs are the most expensive words in a sentence</strong> — do not waste them on <em>went</em> and <em>got</em>." },
+      { s: "Rain hammered the tin roof.", zh: "四个词。把 fell heavily on 换成 hammered，句子短了一半，力气大了一倍。", en: "Four words. Swapping <em>fell heavily on</em> for <em>hammered</em> halves the length and doubles the force." },
+    ],
+    words: [
+      { p: "went", up: "darted / staggered / marched", eg: "He staggered up the last few steps." },
+      { p: "got", up: "seized / snatched / earned", eg: "She snatched the letter off the bench." },
+      { p: "ate", up: "devoured / picked at / wolfed down", eg: "He wolfed down two pieces before anyone sat." },
+      { p: "ran", up: "sprinted / scrambled / tore", eg: "We tore across the paddock in the rain." },
+    ],
+    pat: { n: "一个动词顶一串", ne: "One verb instead of three words", f: "凡是写成 <em>动词 + 副词</em>（walked slowly、said loudly）的地方，都换成<strong>一个更准的动词</strong>。", fe: "Anywhere you have written <em>verb + adverb</em> (walked slowly, said loudly), replace it with <strong>one sharper verb</strong>.",
+      eg: ["walked slowly → trudged   ·   said loudly → bellowed   ·   looked quickly → glanced", "held tightly → gripped   ·   ate quickly → wolfed   ·   fell heavily → crashed"],
+      frZh: "把「____ + ly 副词」改成一个动词：____。", frEn: "Replace \"____ + adverb\" with a single verb: ____." },
+    im: { zh: "把这句里的三处都升级：<strong>He walked quickly to the door, took the bag and went out fast.</strong>", en: "Upgrade all three verbs: <strong>He walked quickly to the door, took the bag and went out fast.</strong>", m: "He strode to the door, seized the bag and bolted." },
+    wr: { zh: "自己写 3 句：<strong>一只鸟撞上了窗户。</strong>每句至少一个强动词，全篇不许出现 went、got、was。", en: "Write 3 sentences: <strong>a bird hits the window.</strong> A strong verb in every sentence; <em>went</em>, <em>got</em> and <em>was</em> are banned.", m: "Something thudded against the glass and slid down it. The bird lay on the sill with one wing folded wrong. Then it twitched, righted itself, and launched off into the gum tree." }
+  },
+  {
+    t: "慢镜头", te: "Slow the moment down",
+    ex: [
+      { s: "I put one hand on the rail. Then the other. The step below me was wet.", zh: "三句话只发生了一个动作 —— 但读者的心跳跟着慢下来了。<strong>最重要的一秒，要用最多的句子。</strong>", en: "Three sentences cover a single movement, and the reader's pulse slows with it. <strong>The most important second deserves the most sentences.</strong>" },
+      { s: "The whistle went. Nobody moved. Then everybody moved at once.", zh: "把「比赛开始了」拆成三拍。中间那句 Nobody moved 是全句的心脏。", en: "\"The race started\" becomes three beats. The middle line — <em>nobody moved</em> — is the heart of it." },
+    ],
+    words: [
+      { p: "slowly", up: "one … then the other / a bit at a time / half a step", eg: "She opened it a bit at a time." },
+      { p: "suddenly", up: "all at once / without warning / in one go", eg: "Without warning the light cut out." },
+      { p: "waited", up: "counted / listened / held still", eg: "I counted to five and listened." },
+      { p: "finally", up: "at last / in the end / after all that", eg: "At last the door gave." },
+    ],
+    pat: { n: "一秒拆三拍", ne: "One second, three beats", f: "<strong>动作开始</strong>。<strong>中间的停顿</strong>。<strong>结果</strong>。三个短句，中间那句最重要。", fe: "<strong>The action starts.</strong> <strong>The pause in the middle.</strong> <strong>What happens.</strong> Three short sentences — the middle one matters most.",
+      eg: ["I pulled the handle. Nothing. Then it swung open so fast I fell back a step.", "She lifted the lid. The whole class leaned in. Inside there was nothing but shredded paper."],
+      frZh: "____（动作开始）。____（停顿：没有反应／没人动／一片安静）。____（结果）。", frEn: "____ (the action starts). ____ (the pause: nothing, nobody moves, silence). ____ (what happens)." },
+    im: { zh: "用一秒拆三拍写：<strong>她打开了那封一直没敢拆的信。</strong>", en: "Use the three beats: <strong>she opens the letter she has been avoiding.</strong>", m: "She slid her thumb under the flap. For a moment she just held it there, folded shut. Then she tore it open in one go and read the whole thing standing up." },
+    wr: { zh: "自己写：<strong>足球赛最后一分钟的罚球。</strong>把这一秒拆成 4–5 个短句，其中至少一句只有 2–3 个词。", en: "Your own: <strong>the last-minute penalty kick.</strong> Break that one second into 4–5 short sentences, at least one of them only two or three words long.", m: "She placed the ball and stepped back three paces. The whole ground went quiet. Somebody's little brother coughed. She ran. The keeper went the wrong way." }
+  },
+  {
+    t: "场景", te: "Setting",
+    ex: [
+      { s: "The pool had been drained for winter and a single tennis ball sat in the deep end.", zh: "没有写「这里很荒凉」，只给了<strong>一个具体的东西</strong>。一个网球，比一段描写有用。", en: "It never says the place feels abandoned. It gives you <strong>one specific object</strong>. One tennis ball beats a paragraph of description." },
+      { s: "Our classroom smelled like sunscreen and wet socks all through February.", zh: "用气味和一个月份就定住了时间地点。<strong>场景不用长，要准。</strong>", en: "A smell and a month pin down both place and time. <strong>Setting does not need length — it needs precision.</strong>" },
+    ],
+    words: [
+      { p: "old", up: "peeling / weathered / sagging", eg: "The weathered gate would not latch." },
+      { p: "messy", up: "cluttered / strewn / piled high", eg: "Books were piled high on every chair." },
+      { p: "quiet place", up: "still / deserted / hushed", eg: "The oval was deserted at that hour." },
+      { p: "big", up: "cavernous / towering / endless", eg: "The hall felt cavernous with nobody in it." },
+    ],
+    pat: { n: "一个东西代替一整段", ne: "One object instead of a paragraph", f: "不要列举场景里所有东西。选<strong>一个不该在那里的东西</strong>，写它一句就够。", fe: "Do not list everything in the room. Pick <strong>one thing that should not be there</strong> and give it one sentence.",
+      eg: ["The kitchen was exactly as she had left it, except for the third chair, which had been pulled out.", "Everything in the shed was covered in dust apart from one shelf, wiped clean."],
+      frZh: "____（这地方本来的样子），只有____（那一个不对劲的东西）____。", frEn: "____ (how the place normally is), except for ____ (the one thing that is wrong) ____." },
+    im: { zh: "用「一个东西」写：<strong>一间很久没人住的房子。</strong>只写一句。", en: "Use the one-object rule for <strong>a house nobody has lived in for years</strong>. One sentence only.", m: "Every window was thick with dust except the little one by the back door, which somebody had rubbed a circle in." },
+    wr: { zh: "自己写 2 句：<strong>放学后空无一人的教室。</strong>第一句写整体，第二句只写一个不该在那儿的东西。", en: "Write 2 sentences: <strong>the classroom after everyone has gone.</strong> Sentence one for the whole room, sentence two for the one thing out of place.", m: "All the chairs were up on the desks and the fans had been switched off at the wall. On the back bench somebody's lunchbox was still sitting there, open." }
+  },
+  {
+    t: "从句开头", te: "Subordinate openers",
+    ex: [
+      { s: "Because the rain had not stopped since Tuesday, the carnival was called off.", zh: "先给原因，再给结果。<strong>句子一开头就不是主语，读起来立刻高一级。</strong>注意中间那个逗号，必须有。", en: "Reason first, result second. <strong>Starting with something other than the subject instantly lifts the writing.</strong> Note the comma in the middle — it is compulsory." },
+      { s: "Although she had practised every night for a month, her hands still shook.", zh: "Although 开头制造了「本该……却……」的落差，这是记叙文最好用的一种句子。", en: "<em>Although</em> sets up a should-have-but-didn't gap — one of the most useful sentence shapes in narrative writing." },
+    ],
+    words: [
+      { p: "because", up: "since / as / seeing that", eg: "Since nobody answered, we walked in." },
+      { p: "but", up: "although / even though / while", eg: "Even though it was July, the day was warm." },
+      { p: "when", up: "as soon as / the moment / by the time", eg: "By the time we arrived, it was over." },
+      { p: "if", up: "unless / as long as / provided", eg: "Unless it rains, the game goes ahead." },
+    ],
+    pat: { n: "从句 + 逗号 + 主句", ne: "Clause, comma, main sentence", f: "<strong>Because / Although / When / As soon as</strong> + 一整个小句子 <strong>，</strong> + 主句。逗号不能少。", fe: "<strong>Because / Although / When / As soon as</strong> + a whole small clause <strong>,</strong> + the main sentence. The comma is not optional.",
+      eg: ["As soon as the bell went, the whole class was out the door.", "While Dad hunted for the torch, the storm knocked the power out again."],
+      frZh: "Because/Although/When ____（一件事），____（另一件事）。", frEn: "Because / Although / When ____ (one thing), ____ (the other thing)." },
+    im: { zh: "把这两句合成一句，用从句开头：<strong>The bus was late. We missed the start of the film.</strong>", en: "Join these with a subordinate opener: <strong>The bus was late. We missed the start of the film.</strong>", m: "Because the bus was twenty minutes late, we missed the start of the film." },
+    wr: { zh: "自己写 3 句，<strong>每句都用不同的从句开头</strong>（Because / Although / As soon as），主题：她第一天转学。", en: "Write 3 sentences, <strong>each with a different subordinate opener</strong> (Because / Although / As soon as). Topic: her first day at a new school.", m: "Although she had picked out her uniform the night before, nothing about it felt right in the morning. Because she did not know where the Year 3 rooms were, she followed a group of girls who turned out to be Year 5. As soon as the bell went, she found herself standing in a corridor with no idea which way to go." }
+  },
+  {
+    t: "-ing 开头", te: "-ing openers",
+    ex: [
+      { s: "Clutching the letter, she ran the whole way home.", zh: "用 -ing 开头，一句话同时装下两个动作。<strong>比 She clutched the letter and ran home 快得多。</strong>", en: "An -ing opener packs two actions into one sentence. <strong>Much faster than \"She clutched the letter and ran home.\"</strong>" },
+      { s: "Ducking under the low branch, Dad kept walking as if he had not noticed it.", zh: "-ing 开头还能把一个小动作变成人物性格。逗号同样不能省。", en: "An -ing opener can also turn a small action into character. Again — the comma is compulsory." },
+    ],
+    words: [
+      { p: "holding", up: "clutching / gripping / cradling", eg: "Cradling the kitten, he backed out slowly." },
+      { p: "looking", up: "peering / scanning / squinting", eg: "Squinting into the sun, she raised one hand." },
+      { p: "moving", up: "edging / weaving / creeping", eg: "Edging along the wall, I reached the door." },
+      { p: "trying", up: "struggling / fumbling / straining", eg: "Fumbling with the latch, she dropped the key." },
+    ],
+    pat: { n: "-ing 动作 + 逗号 + 主句", ne: "-ing action, comma, main sentence", f: "<strong>动词 + ing</strong>（小动作）<strong>，</strong> + 主句（大动作）。注意：两个动作必须是<strong>同一个人</strong>做的。", fe: "<strong>Verb + ing</strong> (the small action) <strong>,</strong> + the main sentence (the big one). Warning: both actions must belong to <strong>the same person</strong>.",
+      eg: ["Shoving the last book into her bag, Mia bolted for the gate.", "Laughing too hard to speak, he just pointed at the window."],
+      frZh: "____ing ____（小动作），____（主句：大动作）。", frEn: "____ing ____ (the small action), ____ (the main sentence: the big one)." },
+    im: { zh: "把这句改成 -ing 开头：<strong>She picked up her bag and ran for the bus.</strong>", en: "Rewrite with an -ing opener: <strong>She picked up her bag and ran for the bus.</strong>", m: "Snatching up her bag, she ran for the bus." },
+    wr: { zh: "自己写 2 句 -ing 开头的句子，主题：<strong>在海边找一只跑掉的狗。</strong>再写第 3 句<strong>不要</strong>用 -ing —— 长短要换着来。", en: "Write 2 sentences with -ing openers about <strong>looking for a runaway dog at the beach</strong>. Then a third sentence <strong>without</strong> one — the shapes need to alternate.", m: "Shading her eyes against the glare, Ruby scanned the whole length of the beach. Calling his name until her voice went thin, she worked her way down towards the rocks. Nothing." }
+  },
+  {
+    t: "结尾", te: "Endings",
+    ex: [
+      { s: "Nobody ever came to claim him, and by then nobody wanted them to.", zh: "结尾回答了故事最开始的问题，但答案跟一开始想要的不一样了。<strong>好结尾是变化，不是总结。</strong>", en: "The ending answers the question the story opened with, but the answer has changed along the way. <strong>A good ending shows change, not summary.</strong>" },
+      { s: "The hook by the door stayed empty for a long time after that.", zh: "回到<strong>开头那个物件</strong>（第 1 课的钩子）。首尾用同一样东西，整篇立刻变得完整。", en: "It returns to <strong>the object from the opening</strong>. Using the same object at both ends makes the whole piece feel finished." },
+    ],
+    words: [
+      { p: "in the end", up: "eventually / after that / from then on", eg: "From then on we always checked the gate." },
+      { p: "happy (ending)", up: "lighter / easier / finally quiet", eg: "The house felt lighter that evening." },
+      { p: "changed", up: "never quite the same / different now / not how it was", eg: "Nothing was quite the same after that." },
+      { p: "remembered", up: "kept / never forgot / still think about", eg: "I still think about that afternoon." },
+    ],
+    pat: { n: "回到开头那样东西", ne: "Return to the opening object", f: "找出你开头写过的<strong>那一样东西</strong>（钩子、书包、门），结尾再写它一次 —— 但它已经不一样了。", fe: "Find <strong>the object from your opening</strong> (the hook, the bag, the gate) and write it once more at the end — but different now.",
+      eg: ["开头：The hook by the door was empty.  结尾：It took three weeks, but the hook had something on it again.", "开头：Nan's kitchen smelled of nothing at all.  结尾：By Sunday the whole house smelled of burnt toast, and I have never been so glad."],
+      frZh: "结尾句：____（开头那样东西）现在____（变成什么样了）。", frEn: "Closing line: ____ (the object from the opening) is now ____ (how it has changed)." },
+    im: { zh: "有个故事的开头是：<strong>Her bag always hung on the third hook. The hook was empty.</strong> 给它写一个「回到开头」的结尾句。", en: "A story opened with: <strong>Her bag always hung on the third hook. The hook was empty.</strong> Write a closing line that returns to it.", m: "On Monday the bag was back on the third hook, and there was a note pinned to the strap that she did not open until she got home." },
+    wr: { zh: "拿出你<strong>第 1 课写的暴风雨开头</strong>，给它写一个结尾句：回到开头那样东西。<strong>不许写 I woke up。</strong>", en: "Take <strong>the storm opening you wrote in lesson 1</strong> and give it a closing line that returns to the object you started with. <strong>Waking up is banned.</strong>", m: "The towels were still out there the next morning, stiff with sand and salt, and Dad's newspaper had ended up in the dunes." }
+  },
+  {
+    t: "立场句", te: "Taking a position",
+    ex: [
+      { s: "I strongly believe every classroom should have a class pet, for three simple reasons.", zh: "第一句就把<strong>立场</strong>和<strong>「我有三个理由」</strong>一起说了。阅卷老师第一行就知道这篇是有结构的。", en: "The opening line delivers <strong>the position</strong> and <strong>the promise of three reasons</strong> at once. A marker knows from line one that this piece has a plan." },
+      { s: "Homework in Year 3 is not just unnecessary. It is doing real harm.", zh: "先否定，再升级。<strong>两句式立场句</strong>比一句更有力，第二句必须比第一句更狠。", en: "Deny first, then escalate. <strong>A two-sentence position</strong> hits harder than one — as long as the second is stronger than the first." },
+    ],
+    words: [
+      { p: "I think", up: "I strongly believe / I am convinced / There is no doubt", eg: "There is no doubt that this must change." },
+      { p: "good", up: "essential / vital / worthwhile", eg: "Break time is vital, not a luxury." },
+      { p: "bad", up: "harmful / unfair / pointless", eg: "The rule is simply unfair." },
+      { p: "many people", up: "most families / almost every student / the majority", eg: "Almost every student in Year 3 agrees." },
+    ],
+    pat: { n: "立场 + 三词排比", ne: "Position plus the rule of three", f: "<strong>I strongly believe ____</strong>，然后用<strong>三个并列的词</strong>说明它为什么重要。三个，不是两个，也不是四个。", fe: "<strong>I strongly believe ____</strong>, then <strong>three words in a row</strong> saying why it matters. Three — not two, not four.",
+      eg: ["I strongly believe school should start later, because tired children are slower, grumpier and far less safe.", "I am convinced every child should learn to swim. It is cheap, simple and, one day, life-saving."],
+      frZh: "I strongly believe ____（你的观点），because ____、____ and ____（三个词）。", frEn: "I strongly believe ____ (your view), because ____, ____ and ____ (three words)." },
+    im: { zh: "用这个框架写一个立场句：<strong>学校应该有更长的课间。</strong>", en: "Use the frame for: <strong>schools should have longer break times.</strong>", m: "I strongly believe break time should be longer, because children who move about are calmer, sharper and much easier to teach." },
+    wr: { zh: "自己写立场句：<strong>三年级不应该有家庭作业。</strong>写两个版本 —— 一个一句式，一个两句式，然后自己挑更有力的那个。", en: "Write your own position on <strong>no homework in Year 3</strong>. Do two versions — one sentence and two sentences — then pick the stronger one.", m: "One: I strongly believe Year 3 students should not be set homework, because their evenings should belong to family, sleep and play.\nTwo: Homework in Year 3 is not simply unnecessary. It is taking hours from the very things that actually make children learn." }
+  },
+  {
+    t: "修辞提问", te: "Rhetorical questions",
+    ex: [
+      { s: "Who could concentrate on maths at two o'clock on a forty-degree day?", zh: "修辞提问不是真的在问，是<strong>逼读者在心里替你回答</strong>。答案必须只有一个 —— 你要的那个。", en: "A rhetorical question is not really a question — it <strong>makes the reader answer it in their head</strong>. There must be only one possible answer: yours." },
+      { s: "Would you give up your lunch break? Then why do we ask children to?", zh: "两个连着的问句：第一个把读者拉进来，第二个把他们困住。<strong>第二问才是杀招。</strong>", en: "Two questions back to back: the first pulls the reader in, the second traps them. <strong>The second one does the work.</strong>" },
+    ],
+    words: [
+      { p: "is it fair", up: "how can it be fair / would anyone call it fair", eg: "How can it be fair to punish the whole class?" },
+      { p: "do you want", up: "would you accept / could you put up with", eg: "Could you put up with that every day?" },
+      { p: "think about", up: "imagine / picture / just consider", eg: "Just picture your own child in that queue." },
+      { p: "everyone knows", up: "we all know / nobody would deny / it is obvious", eg: "Nobody would deny that sleep matters." },
+    ],
+    pat: { n: "把读者放进去", ne: "Put the reader inside it", f: "用 <strong>Would you ____ ?</strong> 或 <strong>How would you feel if ____ ?</strong> —— 让读者变成故事里的人，而不是旁观者。", fe: "Use <strong>Would you ____?</strong> or <strong>How would you feel if ____?</strong> — turn the reader into a participant, not a bystander.",
+      eg: ["Would you sit still for six hours with only twenty minutes outside?", "How would you feel if somebody read your diary out loud to the class?"],
+      frZh: "Would you ____ ？／ How would you feel if ____ ？", frEn: "Would you ____? / How would you feel if ____?" },
+    im: { zh: "给「<strong>学校午餐应该更好吃</strong>」写一个把读者放进去的修辞提问。", en: "Write a reader-inside rhetorical question for: <strong>school lunches should be better.</strong>", m: "Would you eat the same cold sandwich every single day for a whole year?" },
+    wr: { zh: "给「<strong>孩子应该有更多户外时间</strong>」写<strong>两个连着的</strong>修辞提问，第二个要比第一个狠。", en: "Write <strong>two consecutive</strong> rhetorical questions for <strong>children need more time outdoors</strong>. The second must hit harder than the first.", m: "When did you last spend a whole afternoon outside? And if you cannot remember, what makes us think our children can?" }
+  },
+  {
+    t: "理由展开成段", te: "Developing a reason",
+    ex: [
+      { s: "Firstly, a slide would make break time far better. At the moment half the yard stands around with nothing to do. Picture thirty children queueing, laughing and racing back up the steps — and then walking into class with all that energy spent instead of bottled up.", zh: "<strong>理由 → 解释 → 画面</strong>。绝大多数三年级孩子只写第一句就跳走了 —— 那一句拿不到分，后面两句才是分。", en: "<strong>Reason → explanation → picture.</strong> Most Year 3 writers stop after the first sentence — but the first sentence earns almost nothing. The marks are in the two that follow." },
+      { s: "Most importantly, swimming saves lives. Drowning is one of the biggest dangers for young children in this country. A child who can float and swim twenty-five metres is far safer at a beach, a river or a friend's pool, and that is a skill she keeps for life.", zh: "同一个三段式，换成议论文里最有分量的理由。<strong>每一段只讲一个理由</strong> —— 不要塞两个。", en: "The same three-part shape carrying the heaviest reason. <strong>One reason per paragraph</strong> — never two." },
+    ],
+    words: [
+      { p: "firstly", up: "to begin with / the first reason is / most obviously", eg: "To begin with, it costs nothing." },
+      { p: "secondly", up: "just as important / on top of that / what is more", eg: "What is more, it is far safer." },
+      { p: "most importantly", up: "above all / the strongest reason / crucially", eg: "Above all, it keeps children safe." },
+      { p: "also", up: "in addition / besides this / not only that", eg: "In addition, families would save money." },
+    ],
+    pat: { n: "理由三段式", ne: "The three-part reason", f: "<strong>① 理由</strong>（一句，直接）→ <strong>② 解释</strong>（为什么会这样）→ <strong>③ 画面</strong>（让读者看到具体的一幕）。", fe: "<strong>1. The reason</strong> (one direct sentence) → <strong>2. The explanation</strong> (why it works that way) → <strong>3. The picture</strong> (one concrete scene the reader can see).",
+      eg: ["Firstly, ____. This is because ____. Imagine ____.", "Above all, ____. The reason is simple: ____. Picture ____."],
+      frZh: "Firstly, ____（理由）。This is because ____（解释）。Imagine ____（画面）。", frEn: "Firstly, ____ (reason). This is because ____ (explanation). Imagine ____ (picture)." },
+    im: { zh: "把这个光秃秃的理由展开成完整一段：<strong>学校应该养一只班级宠物，因为孩子会更有责任心。</strong>", en: "Develop this bare reason into a full paragraph: <strong>classrooms should have a pet, because it teaches responsibility.</strong>", m: "Firstly, a class pet teaches responsibility better than any lesson could. A worksheet about looking after animals can be forgotten by lunchtime, but a rabbit that has not been fed cannot. Picture a rostered pair of Year 3 students arriving early every morning, checking the water bottle before they have even taken their bags off." },
+    wr: { zh: "自己展开：<strong>孩子应该学做饭，因为这是一辈子都用得上的本事。</strong>严格按理由 → 解释 → 画面三句。", en: "Develop your own: <strong>children should learn to cook, because it is a skill for life.</strong> Stick strictly to reason → explanation → picture.", m: "Most importantly, cooking is one of the few things learnt at eight that is still useful at eighty. Reading, writing and adding up are all taught for years, yet nobody is taught how to feed themselves. Picture a Year 3 student who can make one proper meal on her own — and then think about how many adults still cannot." }
+  },
+  {
+    t: "强观点词", te: "Modal words",
+    ex: [
+      { s: "Schools must give children more time outside. This is not a suggestion.", zh: "must 比 should 重，should 比 could 重。<strong>议论文里每一次犹豫都在丢分。</strong>", en: "<em>Must</em> outweighs <em>should</em>, which outweighs <em>could</em>. <strong>Every hesitation costs marks in a persuasive piece.</strong>" },
+      { s: "No child should ever be kept inside for the whole of lunch.", zh: "never / ever / no + 名词 是最强的一档。但一篇里用两三次就够，用多了就变喊叫。", en: "<em>never</em>, <em>ever</em> and <em>no</em> + noun are the strongest setting. Two or three times in a piece is plenty — more and it turns into shouting." },
+    ],
+    words: [
+      { p: "should", up: "must / has to / needs to", eg: "Every school must act on this now." },
+      { p: "maybe", up: "surely / clearly / without question", eg: "Clearly this cannot continue." },
+      { p: "a lot of", up: "far too many / the vast majority / countless", eg: "Far too many children miss out." },
+      { p: "never", up: "not once / under no circumstances / never again", eg: "Under no circumstances should this be allowed." },
+    ],
+    pat: { n: "强弱阶梯", ne: "The strength ladder", f: "<strong>could → might → should → must → will</strong>。写完检查一遍：把所有 could 和 maybe 往上推一格。", fe: "<strong>could → might → should → must → will.</strong> When you have finished, go back and push every <em>could</em> and <em>maybe</em> one step up the ladder.",
+      eg: ["弱：Schools could maybe think about longer breaks.", "强：Schools must extend break times, and they must do it this year."],
+      frZh: "把「____ could ____」改写成「____ must ____」，再加一句更狠的。", frEn: "Rewrite \"____ could ____\" as \"____ must ____\", then add one harder sentence after it." },
+    im: { zh: "把这句往上推两格：<strong>Maybe schools could think about having more sports days.</strong>", en: "Push this two steps up the ladder: <strong>Maybe schools could think about having more sports days.</strong>", m: "Schools must run more sports days, and they should have started years ago." },
+    wr: { zh: "用 must / never / without question 各写一句，主题：<strong>每个孩子都应该学游泳。</strong>三句连起来读，力度要一句比一句强。", en: "Write one sentence each using <em>must</em>, <em>never</em> and <em>without question</em>, on <strong>every child should learn to swim</strong>. Read the three together — each must be stronger than the last.", m: "Every primary school must include swimming in its programme.\nNo child should ever leave Year 6 unable to keep herself afloat.\nWithout question, this is the single most useful thing a school can teach in a country like ours." }
+  },
+  {
+    t: "证据与权威", te: "Evidence and authority",
+    ex: [
+      { s: "Doctors recommend that children under ten get eleven hours of sleep. Most Year 3 students get nine.", zh: "<strong>先给标准，再给现实</strong> —— 两个数字之间的差距自己会说话，不用你评论。", en: "<strong>Give the standard, then the reality.</strong> The gap between the two numbers argues for you — no comment needed." },
+      { s: "Ask any Year 3 teacher what happens after a wet-weather lunch, and you will get the same answer.", zh: "不用编数字。<strong>引用一个读者也相信的人</strong>，效果一样强，而且更安全。", en: "You do not need to invent statistics. <strong>Cite someone the reader already trusts</strong> — it works just as well and it is safer." },
+    ],
+    words: [
+      { p: "people say", up: "experts agree / research shows / doctors recommend", eg: "Research shows that this works." },
+      { p: "a lot", up: "nine out of ten / the vast majority / three times as many", eg: "Nine out of ten families said yes." },
+      { p: "I know someone", up: "ask any teacher / every parent will tell you", eg: "Every parent will tell you the same." },
+      { p: "proof", up: "evidence / the figures / the results", eg: "The figures speak for themselves." },
+    ],
+    pat: { n: "标准 vs 现实", ne: "The standard versus the reality", f: "<strong>专家说应该是 ____。实际上是 ____。</strong>两句都要短，中间不加解释 —— 让落差自己发力。", fe: "<strong>The experts say it should be ____. In fact it is ____.</strong> Keep both short and put nothing between them — let the gap do the work.",
+      eg: ["Health guidelines say children need sixty minutes of active play a day. At our school they get twenty.", "Teachers are told class sizes should not pass twenty-four. Mine has twenty-nine."],
+      frZh: "____（专家／规定）说应该是 ____。实际上 ____。", frEn: "____ (experts / the guidelines) say it should be ____. In fact, ____." },
+    im: { zh: "用「标准 vs 现实」写两句，主题：<strong>孩子每天户外时间太少。</strong>", en: "Use the standard-versus-reality shape for <strong>children get too little time outdoors</strong>. Two sentences.", m: "Doctors recommend at least an hour outside every day. Between the bell and the bus, most Year 3 students manage half that." },
+    wr: { zh: "自己写 2–3 句，主题：<strong>学校午餐应该更健康。</strong>用一次「引用一个读者相信的人」，用一次「标准 vs 现实」。", en: "Write 2–3 sentences on <strong>school lunches should be healthier</strong>. Use one trusted-person citation and one standard-versus-reality pair.", m: "Ask any school nurse what she sees at two o'clock on a hot canteen day, and she will tell you about the queue outside her door. Nutritionists say a lunch should carry a child through the whole afternoon. Ours carries most of us as far as the first maths lesson." }
+  },
+  {
+    t: "反驳", te: "Answering the other side",
+    ex: [
+      { s: "Some people argue that a class pet is too much work. But the work is exactly the point.", zh: "<strong>先老实说出对方的理由，再一句话把它变成你的理由。</strong>敢写反驳的三年级孩子非常少 —— 这一招最容易拉开差距。", en: "<strong>State the other side honestly, then turn it into your own reason in one line.</strong> Very few Year 3 writers attempt this — which is exactly why it separates a piece from the rest." },
+      { s: "Of course longer breaks mean less class time. But a tired class learns nothing in that time anyway.", zh: "Of course ____. But ____. 这是最简单也最有效的反驳句型，两句就够。", en: "<em>Of course ____. But ____.</em> The simplest and most effective counter-argument shape there is — two sentences and you are done." },
+    ],
+    words: [
+      { p: "some people say", up: "critics argue / it is often said / opponents claim", eg: "Critics argue that it costs too much." },
+      { p: "but", up: "however / yet / even so", eg: "However, the figures say otherwise." },
+      { p: "that's wrong", up: "this misses the point / that is simply not the case", eg: "That misses the point entirely." },
+      { p: "actually", up: "in reality / the truth is / what really happens", eg: "In reality, the opposite happens." },
+    ],
+    pat: { n: "承认再翻转", ne: "Concede, then flip", f: "<strong>Of course ____</strong>（承认对方有道理）<strong>. But ____</strong>（把它翻成支持你的理由）。承认那句要真诚，翻转那句要短。", fe: "<strong>Of course ____</strong> (grant them something real) <strong>. But ____</strong> (flip it into support for you). Make the concession genuine and the flip short.",
+      eg: ["Of course a class pet costs money. But so does every worksheet we throw in the bin at the end of term.", "Of course some children would rather stay inside. But nobody is asking them to run a marathon."],
+      frZh: "Of course ____（对方说得对的地方）. But ____（这恰恰说明我是对的）。", frEn: "Of course ____ (what they get right). But ____ (why that proves your point)." },
+    im: { zh: "用「承认再翻转」回应这个反对意见：<strong>更长的课间会减少上课时间。</strong>", en: "Use concede-then-flip on this objection: <strong>longer breaks mean less time for lessons.</strong>", m: "Of course a longer break takes ten minutes out of the day. But ask any teacher how much is actually learnt in the ten minutes after a class has been sitting still for two hours." },
+    wr: { zh: "给你自己的题目「<strong>三年级不应该有家庭作业</strong>」写一段反驳。先写出<strong>最强</strong>的反对意见（不要挑软柿子），再翻转它。", en: "Write a counter-argument paragraph for <strong>no homework in Year 3</strong>. State the <strong>strongest</strong> objection first — do not pick an easy one — then flip it.", m: "Of course parents want to see what their child is learning, and a homework sheet on the kitchen table is the easiest way to show them. But a sheet that takes twenty minutes of arguing to finish tells a parent nothing except that their child is tired. A short conversation at dinner about what happened at school would tell them far more, and cost nobody a single tear." }
+  },
+  {
+    t: "呼吁结尾", te: "The call to action",
+    ex: [
+      { s: "Write to the principal. Sign the list at the office. Do it this week, before another summer goes past.", zh: "三个<strong>祈使句</strong>，一个比一个具体，最后给一个时间。<strong>议论文的结尾要有人去做事。</strong>", en: "Three <strong>imperatives</strong>, each more specific than the last, ending with a deadline. <strong>A persuasive ending must leave someone with something to do.</strong>" },
+      { s: "The question is not whether we can afford a class pet. It is whether we can afford to keep saying no.", zh: "把问题重新定义一遍再结束。<strong>结尾不是重复观点，是把观点抬高一层。</strong>", en: "Redefine the question and then stop. <strong>An ending does not repeat the argument — it lifts it one level.</strong>" },
+    ],
+    words: [
+      { p: "please", up: "act now / do not wait / it is time to", eg: "It is time to change this." },
+      { p: "we should", up: "let us / it falls to us / we owe it to them", eg: "We owe it to them to try." },
+      { p: "think about it", up: "ask yourself / decide today / choose", eg: "Ask yourself which side you are on." },
+      { p: "in conclusion", up: "for all these reasons / so / the choice is simple", eg: "For all these reasons, the answer is clear." },
+    ],
+    pat: { n: "三个祈使句", ne: "Three imperatives", f: "<strong>动词开头</strong>的三个短句，从最容易的做起，最后一句加上<strong>时间</strong>（today、this week、before ____）。", fe: "Three short sentences <strong>starting with a verb</strong>, easiest first, and put a <strong>time</strong> on the last one (today, this week, before ____).",
+      eg: ["Talk to your teacher. Bring it up at assembly. Start on Monday.", "Read the list. Pick one. Change it before the end of term."],
+      frZh: "____（动词开头）。____（动词开头）。____（动词开头）+ 时间。", frEn: "____ (start with a verb). ____ (start with a verb). ____ (start with a verb) + a time." },
+    im: { zh: "给「<strong>学校应该有更长的课间</strong>」写一个三个祈使句的结尾。", en: "Write a three-imperative ending for <strong>schools should have longer breaks.</strong>", m: "Time one lunch break yourself. Count how many children are still queueing when the bell goes. Bring the number to the next assembly." },
+    wr: { zh: "给你自己那篇「没有家庭作业」写结尾：<strong>先写三个祈使句，再加一句把问题抬高一层。</strong>", en: "Write the ending for your own no-homework piece: <strong>three imperatives, then one line that lifts the question.</strong>", m: "Ask your child what she did at school today. Listen to the whole answer. Then look at the worksheet in her bag and decide which of the two taught you more.\nThe question was never whether children should work hard. It is what we want them working hard at." }
+  },
+  {
+    t: "连接词与衔接", te: "Cohesion",
+    ex: [
+      { s: "The rain stopped at last. Even so, nobody moved off the veranda.", zh: "Even so 让第二句挂在第一句上。<strong>没有连接词的段落，读起来像一串互不认识的句子。</strong>", en: "<em>Even so</em> hooks sentence two onto sentence one. <strong>A paragraph without connectives reads like a list of strangers.</strong>" },
+      { s: "We had planned it for weeks. That afternoon, none of it happened.", zh: "That afternoon 既是时间词也是衔接。<strong>时间词是最容易用、最不容易出错的连接方式。</strong>", en: "<em>That afternoon</em> is both a time marker and a link. <strong>Time words are the easiest connectives to use and the hardest to get wrong.</strong>" },
+    ],
+    words: [
+      { p: "and then", up: "after that / soon afterwards / by then", eg: "By then it was too dark to look." },
+      { p: "but", up: "even so / all the same / on the other hand", eg: "All the same, she went in." },
+      { p: "because of that", up: "as a result / which meant / so", eg: " As a result, the whole plan changed." },
+      { p: "also", up: "what is more / on top of that / besides", eg: "What is more, nobody had told us." },
+    ],
+    pat: { n: "每段开头换一种衔接", ne: "Change the link at every paragraph", f: "记叙文用<strong>时间词</strong>开段（Later that day / By the time / The next morning）；议论文用<strong>顺序词</strong>（Firstly / What is more / Above all）。同一个词不许用两次。", fe: "In narrative, open paragraphs with <strong>time</strong> (Later that day / By the time / The next morning). In persuasive, use <strong>order</strong> (Firstly / What is more / Above all). Never use the same one twice.",
+      eg: ["记叙：Later that afternoon … / By the time we got back … / The next morning …", "议论：Firstly … / What is more … / Above all …"],
+      frZh: "第一段：____。第二段：____。第三段：____。（三个都不一样）", frEn: "Paragraph 1: ____. Paragraph 2: ____. Paragraph 3: ____. (all three different)" },
+    im: { zh: "给这三句各加一个不同的衔接词，让它们连起来：<strong>The power went out. We found the torches. Mum made toast on the gas ring.</strong>", en: "Add a different connective to each so they link up: <strong>The power went out. We found the torches. Mum made toast on the gas ring.</strong>", m: "Just after seven, the power went out. It took a while, but eventually we found the torches at the back of the laundry cupboard. In the end Mum made toast on the gas ring and we ate it standing up in the dark." },
+    wr: { zh: "写三段的<strong>开头第一句</strong>就够（每段只写一句），主题：<strong>一次露营。</strong>三个开头必须用三种不同的时间衔接。", en: "Write only <strong>the first sentence of three paragraphs</strong> about <strong>a camping trip</strong>. Each must open with a different time link.", m: "By the time we had the tent half up, the light was already going.\nSome time after midnight, something walked right past the door of the tent.\nThe next morning we found the prints, and none of us said anything for a while." }
+  },
+  {
+    t: "长短句搭配", te: "Sentence variety",
+    ex: [
+      { s: "We had checked the gate twice, walked the whole fence line and called until our voices gave out. He was gone.", zh: "<strong>长、长、短。</strong>短句放在长句后面，力量会被放大好几倍。这是最容易学、见效最快的一招。", en: "<strong>Long, long, short.</strong> A short sentence after long ones lands several times harder. It is the quickest-paying technique on this whole list." },
+      { s: "It rained. It rained for six days without one hour of sun, until the oval turned to soup and the buses stopped running.", zh: "反过来也行：<strong>短、长。</strong>短句先立个靶子，长句再把它撑开。", en: "It works in reverse too: <strong>short, long.</strong> The short sentence plants the idea; the long one opens it out." },
+    ],
+    words: [
+      { p: "very long sentence", up: "拆成两句 / split it in two", eg: "Read it aloud — if you run out of breath, split it." },
+      { p: "all short sentences", up: "合并 / join two with because", eg: "Two short ones joined with <em>because</em> makes one better sentence." },
+      { p: "and … and … and", up: "换成从句 / use although, when, since", eg: "Replace the second <em>and</em> with <em>when</em>." },
+      { p: "every sentence starts with she", up: "换开头 / -ing, Because, 时间词", eg: "Start one with an -ing action instead." },
+    ],
+    pat: { n: "长长短", ne: "Long, long, short", f: "连着两个<strong>长句</strong>（各 12 词以上），紧跟一个<strong>短句</strong>（5 词以内）。短句就是你想让读者记住的那一句。", fe: "Two <strong>long sentences</strong> (12+ words each), then one <strong>short</strong> one (five words or fewer). The short sentence is the one you want remembered.",
+      eg: ["We had packed the car the night before and set three alarms between us. Dad had even written the turn-offs on the back of an envelope. We still missed the ferry.", "She practised every lunchtime for a month, and twice more on weekends with her cousin. On the day, the hall was fuller than she had ever seen it. Her hands shook anyway."],
+      frZh: "____（长句）。____（长句）。____（短句，5 词以内）。", frEn: "____ (long). ____ (long). ____ (short — five words or fewer)." },
+    im: { zh: "把这段改成「长长短」：<strong>We looked everywhere. We asked the neighbours. We could not find the cat. It was getting dark.</strong>", en: "Rewrite as long, long, short: <strong>We looked everywhere. We asked the neighbours. We could not find the cat. It was getting dark.</strong>", m: "We searched every room in the house and then the whole garden twice, including under the deck. We knocked on four doors down the street and asked everybody who was home. The cat was gone." },
+    wr: { zh: "自己写一个「长长短」的段落，主题：<strong>等一个成绩／结果。</strong>写完<strong>读出声</strong>，长句读着不憋气就算对。", en: "Write one long-long-short paragraph about <strong>waiting for a result.</strong> Then <strong>read it aloud</strong> — if the long sentences do not leave you out of breath, they are the right length.", m: "The list was supposed to go up at three and by ten past the whole corridor was full of people pretending not to wait. I read it from the bottom because that seemed easier than reading it from the top. My name was not there." }
+  },
+  {
+    t: "最后五分钟检查", te: "The final five minutes",
+    ex: [
+      { s: "每次考试最后 5 分钟，只做四件事：① 每句有没有大写和句号 ② 有没有分段 ③ 有没有一个词重复太多次 ④ 有没有一句话超长该断开。", zh: "<strong>不要重读一遍找感觉</strong> —— 时间不够，也找不出来。按清单一项一项扫，效率高十倍。", en: "<strong>Do not reread it looking for problems</strong> — there is no time and you will not find them. Sweep the list one item at a time; it is ten times more effective." },
+      { s: "Check spelling only on the words you chose to be clever with.", zh: "简单词一般不会错，错的都是你为了拿分特意用的高级词。<strong>只检查那些词。</strong>", en: "Simple words are rarely misspelt. The errors sit in the ambitious words you chose to impress. <strong>Check only those.</strong>" },
+    ],
+    words: [
+      { p: "nice / good / bad", up: "换掉 —— 这三个词一出现就在丢词汇分", eg: "Replace every one of these before you hand it in." },
+      { p: "said said said", up: "至少换两个 —— whispered / snapped / offered", eg: "Vary at least two of your speech tags." },
+      { p: "then … then … then", up: "换成 After that / By then / Eventually", eg: "Swap two of them for time links." },
+      { p: "a lot of", up: "many / plenty of / countless", eg: "Never leave <em>a lot of</em> in a finished piece." },
+    ],
+    pat: { n: "四扫清单", ne: "The four sweeps", f: "<strong>① 大写和句号 ② 分段（至少 3 段） ③ 重复的词 ④ 太长的句子</strong>。一次只找一样东西，从头扫到尾。", fe: "<strong>1. Capitals and full stops. 2. Paragraphs (at least three). 3. Repeated words. 4. Sentences that ran too long.</strong> Look for one thing at a time, start to finish.",
+      eg: ["扫描 1（大写句号）：不要读意思，只看每句开头和结尾。", "扫描 3（重复词）：数一下 said、then、nice 各出现了几次。"],
+      frZh: "扫描①____ 扫描②____ 扫描③____ 扫描④____（每扫一遍打一个勾）", frEn: "Sweep 1 ____ Sweep 2 ____ Sweep 3 ____ Sweep 4 ____ (tick each one off)" },
+    im: { zh: "下面这段有 4 个问题，各属于一个扫描项，找出来：<strong>we went to the beach then we went for a swim then we had chips it was a very nice day and my sister said it was nice too and mum said it was nice.</strong>", en: "This has four problems, one from each sweep. Find them: <strong>we went to the beach then we went for a swim then we had chips it was a very nice day and my sister said it was nice too and mum said it was nice.</strong>", m: "1. No capitals and no full stops at all.\n2. One block — it needs at least two paragraphs.\n3. \"nice\" three times and \"said\" twice; \"then\" twice.\n4. The whole thing is one run-on sentence held together with <em>and</em>.\n\nFixed: We went to the beach and swam before lunch. Afterwards we bought chips and ate them on the wall. It was the best day of the holidays, and even my sister admitted it." },
+    wr: { zh: "拿出<strong>你这两周写的任何一篇</strong>，按四扫清单扫一遍，把每一项改到的地方数出来告诉爸爸妈妈。<strong>不用重写，只改。</strong>", en: "Take <strong>any piece you have written in the last fortnight</strong> and run the four sweeps on it. Count what each sweep caught and tell a parent the numbers. <strong>Do not rewrite — just fix.</strong>", m: "典型结果 / A typical result: 扫描①抓到 2–3 处漏掉的大写或句号；扫描②发现全篇只有 1 段（应该 3 段）；扫描③发现 said 用了 5 次、nice 用了 2 次；扫描④找到 1 句用 and 串了三件事的长句。\n四扫总共 2 分钟，通常能救回 3–4 分。" }
+  },
 ];
 
-let wdrill = null;
-function todayDrill() {
-  const d = (activeDays() + 1) % WDRILLS.length;
-  return WDRILLS[d];
-}
-function startWDrill() {
-  const w = todayDrill();
-  wdrill = { w, left: 300, t: null, show: false, done: false };
-  wdrill.t = setInterval(() => {
-    wdrill.left--;
-    const el = document.getElementById("wdClock");
-    if (el) { el.textContent = fmtTime(wdrill.left); el.classList.toggle("low", wdrill.left <= 30); }
-    if (wdrill.left <= 0) { clearInterval(wdrill.t); wdrill.t = null; wdrill.done = true; beep(); renderWDrill(); }
-  }, 1000);
-  renderWDrill();
-}
-function stopWDrill() { if (wdrill && wdrill.t) clearInterval(wdrill.t); wdrill = null; }
+let wles = null;
+const WL_STEPS = [
+  ["看范例", "Read the models", "好句子长什么样，好在哪", "What a good one looks like, and why"],
+  ["今天的工具", "Today's tools", "4 个升级词 + 1 个句型", "Four word upgrades and one sentence pattern"],
+  ["照框架仿写", "Copy the shape", "同一个框架，换你的内容", "Same frame, your content"],
+  ["自己写", "Now write your own", "不给框架了", "No frame this time"]
+];
+function todayLesson() { return WLESSON[(activeDays() + 1) % WLESSON.length]; }
 
-function renderWDrill() {
-  const w = wdrill ? wdrill.w : todayDrill();
+function startWLesson(step) {
+  const l = wles ? wles.l : todayLesson();
+  wles = { l, step: step || 0, show: false, left: 0, t: null };
+  renderWLesson();
+}
+function stopWLTimer() { if (wles && wles.t) { clearInterval(wles.t); wles.t = null; } }
+function stopWLesson() { stopWLTimer(); wles = null; }
+function wlTimer(secs) {
+  stopWLTimer();
+  wles.left = secs;
+  wles.t = setInterval(() => {
+    wles.left--;
+    const el = document.getElementById("wlClock");
+    if (el) { el.textContent = fmtTime(wles.left); el.classList.toggle("low", wles.left <= 30); }
+    if (wles.left <= 0) { stopWLTimer(); beep(); }
+  }, 1000);
+  renderWLesson();
+}
+
+function renderWLesson() {
+  const l = wles.l, s = wles.step, S = WL_STEPS[s];
+  const body =
+    s === 0 ? l.ex.map((e, i) => `
+      <div class="wl-ex">
+        <p class="wl-quote">${esc(e.s)}</p>
+        <p class="wl-why"><b>${Tp("好在哪", "Why it works")}</b> ${lang === "zh" ? e.zh : e.en}</p>
+        ${lang === "both" ? `<p class="wl-why zh">${e.zh}</p>` : ""}
+      </div>`).join("")
+
+    : s === 1 ? `
+      <div class="wl-block">
+        <p class="eyebrow">${T("今天的 4 个升级词", "Four word upgrades")}</p>
+        <table class="wl-words">
+          <tr><th>${T("普通词", "Ordinary")}</th><th>${T("换成", "Upgrade to")}</th></tr>
+          ${l.words.map(w => `<tr>
+            <td class="wl-plain">${esc(w.p)}</td>
+            <td><b>${esc(w.up)}</b><span class="wl-eg">${w.eg}</span></td>
+          </tr>`).join("")}
+        </table>
+      </div>
+      <div class="wl-block">
+        <p class="eyebrow">${T("今天的句型", "Today's sentence pattern")}</p>
+        <div class="wl-pat">
+          <b>${T(esc(l.pat.n), esc(l.pat.ne))}</b>
+          <p class="wl-f">${lang === "zh" ? l.pat.f : l.pat.fe}</p>
+          ${lang === "both" ? `<p class="wl-f zh">${l.pat.f}</p>` : ""}
+          ${l.pat.eg.map(e => `<p class="wl-quote sm">${esc(e)}</p>`).join("")}
+        </div>
+      </div>`
+
+    : `<div class="wl-block">
+        ${s === 2 ? `<div class="wl-frame"><span>${T("框架", "The frame")}</span>${esc(lang === "zh" ? l.pat.frZh : l.pat.frEn)}</div>` : ""}
+        <p class="q-text">${lang === "zh" ? (s === 2 ? l.im.zh : l.wr.zh) : (s === 2 ? l.im.en : l.wr.en)}</p>
+        ${lang === "both" ? `<p class="sub" style="margin:-8px 0 14px">${s === 2 ? l.im.zh : l.wr.zh}</p>` : ""}
+        ${wles.show ? `
+          <div class="verdict good">
+            <b>${Tp("一种写法 —— 不是唯一的标准答案", "One way to do it — not the only right answer")}</b>
+            <p class="wl-model">${esc(s === 2 ? l.im.m : l.wr.m)}</p>
+            <span class="src">${TB("跟她写的比一比，<strong>只挑一个点</strong>说：哪里范例更好？哪里她写得更好？两个都要说。",
+              "Compare it with hers and pick <strong>one point only</strong>: what is better here, and what is better in hers? Say both.")}</span>
+          </div>` : ""}
+      </div>`;
+
+  const timed = s >= 2, secs = s === 2 ? 180 : 300;
   view.innerHTML = `
     <div class="quiz-head">
-      <button class="back" data-tab2="today">← ${Tp("今天","Today")}</button>
-      <span class="quiz-title">${Tp("写作小练","Writing drill")} · ${T(esc(w.t), esc(w.te))}</span>
-      ${wdrill ? `<span class="clock" id="wdClock">${fmtTime(wdrill.left)}</span>` : ""}
+      <button class="back" data-tab2="today">← ${Tp("今天", "Today")}</button>
+      <span class="quiz-title">${Tp("写作课", "Writing lesson")} · ${T(esc(l.t), esc(l.te))}</span>
+      ${timed && wles.t ? `<span class="clock" id="wlClock">${fmtTime(wles.left)}</span>` : ""}
     </div>
 
-    <div class="panel" style="border-left:3px solid var(--plum)">
-      <p class="sub" style="margin:0">${TB("整篇作文两周一次就够，但<strong>技巧要天天练</strong>。今天只练一个动作，5 分钟，写在纸上。",
-        "A full piece once a fortnight is plenty, but <strong>the techniques need daily practice</strong>. Today you drill one move only — five minutes, on paper.")}</p>
+    <div class="wl-bar">
+      ${WL_STEPS.map((x, i) => `<button class="wl-step ${i === s ? "on" : i < s ? "done" : ""}" data-wlstep="${i}">
+        <b>${i < s ? "✓" : i + 1}</b><span>${T(esc(x[0]), esc(x[1]))}</span></button>`).join("")}
     </div>
 
-    <div class="q-card">
-      <div class="q-meta">${Tp("今天的题","Today's drill")} · ${T(esc(w.t), esc(w.te))}</div>
-      <p class="q-text">${lang === "zh" ? w.zh : w.en}</p>
-      ${lang === "both" ? `<p class="sub" style="margin:-8px 0 14px">${w.zh}</p>` : ""}
+    <p class="lede" style="margin-bottom:18px">${TB(esc(S[2]), esc(S[3]))}</p>
 
-      ${!wdrill ? `<div class="q-nav"><button class="btn" id="wdStart">${Tp("开始 5 分钟","Start 5 minutes")}</button></div>`
-        : wdrill.show ? `
-          <div class="verdict good">
-            <b>${Tp("参考答案（不是标准答案）","One way to do it — not the only way")}</b>
-            <p style="font-family:var(--read);white-space:pre-line;font-size:1.02rem;line-height:1.7">${esc(w.m)}</p>
-            <span class="src">${TB("跟她一起比一比：哪里比她写的好？哪里她写得更好？只挑一个点讨论就够。",
-              "Compare together: what is better here, and what is better in hers? Pick just one thing to talk about.")}</span>
-          </div>
-          <div class="q-nav"><button class="btn" id="wdDone">${Tp("完成","Done")}</button></div>`
-        : `<div class="q-nav">
-            <button class="btn" id="wdShow">${Tp("写完了，看参考答案","Finished — show me an example")}</button>
-            <button class="btn ghost" id="wdStop">${Tp("停止","Stop")}</button>
-          </div>`}
+    ${body}
+
+    <div class="q-nav" style="margin-top:20px;flex-wrap:wrap">
+      ${s > 0 ? `<button class="btn ghost" data-wlstep="${s - 1}">← ${Tp("上一步", "Back")}</button>` : ""}
+      ${!timed ? `<button class="btn" data-wlstep="${s + 1}">${Tp("下一步", "Next")} →</button>`
+        : !wles.t && !wles.show ? `<button class="btn" id="wlStart">${Tp("开始写 · " + Math.round(secs / 60) + " 分钟", "Start writing · " + Math.round(secs / 60) + " min")}</button>
+             <button class="btn ghost" id="wlShow">${Tp("直接看范例", "Just show me")}</button>`
+        : !wles.show ? `<button class="btn" id="wlShow">${Tp("写完了，看范例", "Finished — show me")}</button>`
+        : s === 2 ? `<button class="btn" data-wlstep="3">${Tp("下一步：自己写", "Next: your own")} →</button>`
+        : `<button class="btn" id="wlDone">${Tp("完成今天的写作课", "Finish today's lesson")}</button>`}
     </div>`;
+}
+
+function finishWLesson() {
+  stopWLTimer();
+  progress.wlDays = (progress.wlDays || 0) + 1;
+  save(); touchStreak(); markTask("wlesson"); checkAllDone();
+  wles = null;
+  current = "today"; render();
 }
 
 /* ---------- 朗读 10 分钟 ---------- */
@@ -5370,7 +5893,7 @@ function updateRing() {
 }
 
 function leave() {
-  stopWTimer(); stopRead(); stopWDrill();
+  stopWTimer(); stopRead(); stopWLesson();
   if (drill) { clearInterval(drill.tId); drill = null; }
   if (exam) { clearInterval(exam.tId); exam = null; }
   if (window.speechSynthesis) speechSynthesis.cancel();
@@ -5378,7 +5901,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wdStart,#wdShow,#wdStop,#wdDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],[data-wlstep],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wlStart,#wlShow,#wlDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -5424,10 +5947,11 @@ document.addEventListener("click", e => {
   }
   if (t.id === "syOff") { saveSyncCfg(null); syncState.on = false; paintSync(); renderBackup(); return; }
   if (t.id === "rsGo") { applyBackup(document.getElementById("rsText").value.trim()); return; }
-  if (t.id === "wdStart") { startWDrill(); return; }
-  if (t.id === "wdShow") { if (wdrill) { wdrill.show = true; if (wdrill.t) { clearInterval(wdrill.t); wdrill.t = null; } } renderWDrill(); return; }
-  if (t.id === "wdStop") { stopWDrill(); current = "today"; render(); return; }
-  if (t.id === "wdDone") { stopWDrill(); markTask("wdrill"); touchStreak(); checkAllDone(); current = "today"; render(); return; }
+  if ("wlstep" in t.dataset) { const n = +t.dataset.wlstep; if (!wles) startWLesson(n);
+    else { stopWLTimer(); wles.step = n; wles.show = false; renderWLesson(); } return; }
+  if (t.id === "wlStart") { wlTimer(wles.step === 2 ? 180 : 300); return; }
+  if (t.id === "wlShow") { stopWLTimer(); wles.show = true; renderWLesson(); return; }
+  if (t.id === "wlDone") { finishWLesson(); return; }
   if (t.id === "rdStart") { startRead(); return; }
   if (t.id === "rdStop") { stopRead(); current = "today"; render(); return; }
   if (t.id === "rdDone") { finishRead(); return; }
@@ -5439,10 +5963,10 @@ document.addEventListener("click", e => {
   if (t.dataset.go) {
     const g = JSON.parse(t.dataset.go);
     leave();
-    if (g.drill) { current = "train"; renderTabs(); startDrill(g.drill.split(",").map(Number)); }
+    if (g.drill) { current = "train"; renderTabs(); startDrill(g.drill); }
     else if (g.quiz) { current = g.quiz; renderTabs(); startQuiz(g.quiz, g.kp, g.limit ? { limit: g.limit, taskId: g.taskId } : null); }
     else if (g.read) { current = "today"; renderTabs(); stopRead(); renderRead(); }
-    else if (g.wdrill) { current = "today"; renderTabs(); stopWDrill(); renderWDrill(); }
+    else if (g.wlesson) { current = "today"; renderTabs(); stopWLesson(); startWLesson(0); }
     else if (g.review) { current = "wrong"; renderTabs(); startReview(); }
     else if (g.dict !== undefined) { current = "train"; renderTabs(); startDict(g.dict); }
     else if (g.exam) { current = "train"; renderTabs(); const a = g.exam.split(","); startExam(a[0], +a[1], +a[2]); }
@@ -5480,7 +6004,7 @@ document.addEventListener("click", e => {
   if (t.dataset.dnext) { nextDict(); return; }
 
   /* 口诀 */
-  if (t.dataset.drill) { leave(); current = "train"; renderTabs(); startDrill(t.dataset.drill.split(",").map(Number)); return; }
+  if (t.dataset.drill) { leave(); current = "train"; renderTabs(); startDrill(t.dataset.drill); return; }
   if (t.dataset.key) { drillKey(t.dataset.key); return; }
   if (t.dataset.quitdrill) { finishDrill(); return; }
 
