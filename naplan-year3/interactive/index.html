@@ -212,6 +212,7 @@
     transition: border-color .15s, transform .12s, box-shadow .15s;
   }
   .kp:hover { border-color: var(--eucalypt); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .kp.on { border-color: var(--eucalypt); background: var(--eucalypt-soft); }
   .kp-name { font-weight: 650; font-size: .95rem; line-height: 1.35; }
   .kp-en { font-size: .74rem; color: var(--slate); font-weight: 500; }
   .kp-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
@@ -2845,6 +2846,13 @@ function renderWriting() {
     ${box("n", T("Narrative 记叙文自查表", "Narrative checklist"), TB("结构：开头（谁·哪·何时）→ 问题 → 解决 + 感受", "Structure: orientation (who, where, when) → problem → solution + feelings"), NARR_CHECK)}
     ${box("p", T("Persuasive 议论文自查表", "Persuasive checklist"), TB("结构：观点 → Firstly → Secondly → Finally → 重申观点", "Structure: opinion → Firstly → Secondly → Finally → restate"), PERS_CHECK)}
 
+    <p class="eyebrow">${T("生活词库 · 写作时最容易卡壳的基础词","Everyday word bank · the basic words that trip writing up")}</p>
+    <div class="panel">
+      <p class="sub">${TB("升级词是把<strong>已经会的词</strong>换得更好；这里是<strong>该会但一时想不起来</strong>的日常小词 —— 情绪、天气、社交、人物、地点等 9 个主题，共 92 个词，配例句可查，也有一个活用小测。",
+        "Word upgrades swap a word she <strong>already has</strong> for a better one. This is different: everyday words she <strong>should have ready but loses in the moment</strong> — feelings, weather, social words, people, places and more, 92 words across 9 themes, each with an example, plus a quick quiz.")}</p>
+      <div class="q-nav"><button class="btn" data-openwb="1">${Tp("打开生活词库","Open the word bank")}</button></div>
+    </div>
+
     <p class="eyebrow">${T("好词升级表","Word upgrades")}</p>
     <div class="panel scroll-x">
       <table>
@@ -4802,6 +4810,246 @@ function buyOrWear(cat, id, price) {
 
 
 /* ============================================================
+   生活常用词库：不是「升级词」，是写作时最容易卡壳的基础词
+   按主题分类，每个词配一个日常例句
+   ============================================================ */
+const WORDBANK = [
+  { id: "feelings", zh: "情绪", en: "Feelings", words: [
+    { w: "excited", zh: "兴奋的", eg: "She was so excited before the school concert." },
+    { w: "nervous", zh: "紧张的", eg: "He felt nervous before his turn to read." },
+    { w: "disappointed", zh: "失望的", eg: "I was disappointed when the trip was cancelled." },
+    { w: "proud", zh: "自豪的", eg: "Mum looked proud when I finished the race." },
+    { w: "curious", zh: "好奇的", eg: "The puppy was curious about the new box." },
+    { w: "bored", zh: "无聊的", eg: "We were bored on the long car trip." },
+    { w: "embarrassed", zh: "尴尬的", eg: "He was embarrassed when he tripped in the hallway." },
+    { w: "confident", zh: "自信的", eg: "She felt confident after all that practice." },
+    { w: "jealous", zh: "嫉妒的", eg: "My brother was jealous of my new bike." },
+    { w: "relieved", zh: "松了一口气的", eg: "We were relieved when the storm finally passed." },
+    { w: "grumpy", zh: "不高兴的", eg: "Dad is grumpy when he misses his coffee." },
+    { w: "lonely", zh: "孤单的", eg: "She felt lonely on her first day at the new school." },
+  ] },
+  { id: "weather", zh: "天气与季节", en: "Weather & seasons", words: [
+    { w: "humid", zh: "潮湿闷热的", eg: "It was too humid to play outside at lunchtime." },
+    { w: "breezy", zh: "微风习习的", eg: "It was a breezy afternoon, perfect for flying kites." },
+    { w: "foggy", zh: "有雾的", eg: "The oval was foggy when we arrived at school." },
+    { w: "drizzle", zh: "毛毛雨", eg: "A light drizzle started just before the bell went." },
+    { w: "thunderstorm", zh: "雷暴", eg: "A thunderstorm rolled in during afternoon recess." },
+    { w: "freezing", zh: "冻人的", eg: "My hands were freezing by the bus stop." },
+    { w: "boiling", zh: "酷热的", eg: "It was boiling by ten o'clock, so we stayed in the shade." },
+    { w: "gusty", zh: "阵风大作的", eg: "A gusty wind blew all the leaves off the tree." },
+    { w: "overcast", zh: "阴天的", eg: "The sky stayed overcast the whole excursion." },
+    { w: "drought", zh: "干旱", eg: "The farm had not seen rain since the drought began." },
+  ] },
+  { id: "time", zh: "时间与顺序", en: "Time & sequence", words: [
+    { w: "suddenly", zh: "突然地", eg: "Suddenly the lights went out in the whole hall." },
+    { w: "eventually", zh: "最终", eg: "Eventually the bus turned up, twenty minutes late." },
+    { w: "meanwhile", zh: "与此同时", eg: "Meanwhile, the rest of the class kept working quietly." },
+    { w: "immediately", zh: "立刻", eg: "She raised her hand immediately when the teacher asked." },
+    { w: "afterwards", zh: "之后", eg: "Afterwards, we all lined up for the bus." },
+    { w: "nowadays", zh: "现在，如今", eg: "Nowadays she rides her bike to school every day." },
+    { w: "occasionally", zh: "偶尔", eg: "We occasionally get a free lesson on Fridays." },
+    { w: "beforehand", zh: "事先", eg: "We packed our bags the night beforehand." },
+    { w: "meantime", zh: "在这期间", eg: "In the meantime, everyone waited quietly in the corridor." },
+    { w: "shortly", zh: "不久后", eg: "Shortly after lunch, the fire drill began." },
+  ] },
+  { id: "actions", zh: "日常动作与社交", en: "Everyday actions & social words", words: [
+    { w: "borrow", zh: "借（进来）", eg: "Can I borrow your ruler for a minute?" },
+    { w: "lend", zh: "借（出去）", eg: "She lent her friend a pencil during the test." },
+    { w: "share", zh: "分享", eg: "We had to share the last few counters." },
+    { w: "argue", zh: "争吵", eg: "The two boys started to argue over the ball." },
+    { w: "apologise", zh: "道歉", eg: "He had to apologise for pushing in the line." },
+    { w: "promise", zh: "承诺", eg: "I promise I will feed the class fish every day." },
+    { w: "complain", zh: "抱怨", eg: "Nobody wanted to complain about the cold classroom." },
+    { w: "interrupt", zh: "打断", eg: "Please do not interrupt while someone is reading." },
+    { w: "volunteer", zh: "自愿", eg: "Three students decided to volunteer for the assembly." },
+    { w: "hesitate", zh: "犹豫", eg: "She did not hesitate before answering the question." },
+  ] },
+  { id: "people", zh: "描写人物", en: "Describing people", words: [
+    { w: "generous", zh: "慷慨的", eg: "He is generous and always shares his lunch." },
+    { w: "honest", zh: "诚实的", eg: "She was honest and told the teacher what really happened." },
+    { w: "stubborn", zh: "固执的", eg: "My little sister is too stubborn to say sorry first." },
+    { w: "shy", zh: "害羞的", eg: "The new boy was shy on his first day." },
+    { w: "clumsy", zh: "笨手笨脚的", eg: "He is a bit clumsy and often drops things." },
+    { w: "patient", zh: "有耐心的", eg: "The teacher was patient while I worked it out." },
+    { w: "careless", zh: "粗心的", eg: "A careless mistake cost her the last two marks." },
+    { w: "cheerful", zh: "开朗的", eg: "She is always cheerful, even on rainy Mondays." },
+    { w: "polite", zh: "有礼貌的", eg: "It is polite to say thank you to the bus driver." },
+    { w: "responsible", zh: "负责任的", eg: "He is responsible for feeding the class pet." },
+  ] },
+  { id: "places", zh: "地点与方位", en: "Places & directions", words: [
+    { w: "nearby", zh: "附近的", eg: "There is a park nearby where we play after school." },
+    { w: "opposite", zh: "对面的", eg: "The library is opposite the canteen." },
+    { w: "beside", zh: "在……旁边", eg: "My bag sits beside my chair every day." },
+    { w: "corridor", zh: "走廊", eg: "We lined up quietly in the corridor." },
+    { w: "entrance", zh: "入口", eg: "Everyone waits at the entrance until the bell goes." },
+    { w: "assembly hall", zh: "礼堂", eg: "The whole school met in the assembly hall." },
+    { w: "staffroom", zh: "教师办公室", eg: "She knocked on the staffroom door to ask a question." },
+    { w: "playground", zh: "操场，游乐场", eg: "We raced across the playground at lunchtime." },
+    { w: "distance", zh: "距离", eg: "It is a short distance from the gate to the office." },
+    { w: "crowded", zh: "拥挤的", eg: "The canteen line was crowded by five past one." },
+  ] },
+  { id: "amount", zh: "数量与程度", en: "Amount & degree", words: [
+    { w: "several", zh: "几个", eg: "Several students forgot their hats today." },
+    { w: "plenty", zh: "很多，足够", eg: "There was plenty of time left for the last question." },
+    { w: "barely", zh: "几乎不", eg: "We barely finished before the bell rang." },
+    { w: "almost", zh: "几乎", eg: "It was almost time to pack up when she finished." },
+    { w: "extra", zh: "额外的", eg: "We got an extra five minutes for the test." },
+    { w: "exactly", zh: "正好", eg: "It took exactly ten minutes to walk there." },
+    { w: "roughly", zh: "大约", eg: "Roughly half the class put their hand up." },
+    { w: "enormous", zh: "巨大的", eg: "There was an enormous queue outside the canteen." },
+    { w: "tiny", zh: "极小的", eg: "Only a tiny gap was left under the door." },
+    { w: "countless", zh: "数不清的", eg: "She had countless questions before the excursion." },
+  ] },
+  { id: "opinion", zh: "观点与态度", en: "Opinion & attitude", words: [
+    { w: "agree", zh: "同意", eg: "Most of the class agreed with the new rule." },
+    { w: "disagree", zh: "不同意", eg: "I disagree, because it does not seem fair." },
+    { w: "prefer", zh: "更喜欢", eg: "She would prefer to work with a partner." },
+    { w: "suggest", zh: "建议", eg: "He suggested we vote on it instead." },
+    { w: "admit", zh: "承认", eg: "She had to admit the mistake was hers." },
+    { w: "refuse", zh: "拒绝", eg: "He refused to give up his seat." },
+    { w: "insist", zh: "坚持", eg: "Mum insisted we wear a hat every recess." },
+    { w: "wonder", zh: "想知道", eg: "I wonder why the incursion was cancelled." },
+    { w: "assume", zh: "假设，以为", eg: "Do not assume the answer is always the biggest number." },
+    { w: "convince", zh: "说服", eg: "It took a while to convince him to try it." },
+  ] },
+  { id: "school", zh: "学校生活", en: "School life", words: [
+    { w: "timetable", zh: "课程表", eg: "Check the timetable before you pack your bag." },
+    { w: "recess", zh: "课间休息", eg: "We eat a snack at recess, before lunch." },
+    { w: "canteen", zh: "小卖部，食堂", eg: "The canteen sells hot food on Fridays." },
+    { w: "excursion", zh: "校外活动", eg: "Our class excursion to the museum is next Tuesday." },
+    { w: "principal", zh: "校长", eg: "The principal spoke at assembly this morning." },
+    { w: "roll call", zh: "点名", eg: "The teacher does roll call first thing every morning." },
+    { w: "uniform", zh: "校服", eg: "Everyone wears full uniform on photo day." },
+    { w: "assignment", zh: "作业，任务", eg: "Our assignment is due at the end of the week." },
+    { w: "classmate", zh: "同班同学", eg: "My classmate sits right next to me." },
+    { w: "incursion", zh: "校内活动", eg: "A wildlife incursion visited our school last term." },
+  ] },
+];
+
+/* ---------- 生活词库：浏览 + 活用小测 ---------- */
+function wbFlat() {
+  const out = [];
+  WORDBANK.forEach(cat => cat.words.forEach(w => out.push({ ...w, cat: cat.id, catZh: cat.zh, catEn: cat.en })));
+  return out;
+}
+function wbBlank(w) {
+  const re = new RegExp(w.w.split(" ")[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  return w.eg.replace(re, "_____");
+}
+function renderWordbank(activeCat) {
+  const cat = WORDBANK.find(c => c.id === activeCat) || WORDBANK[0];
+  view.innerHTML = `
+    <h2>${T("生活词库","Everyday word bank")}<span class="en">${Tp("写作时最容易卡壳的基础词","The basic words that trip writing up")}</span></h2>
+    <p class="lede">${TB("这些不是「升级词」，是<strong>日常该有、但一时想不起来</strong>的小词。按场景分类，写作卡壳时可以来查一查；也可以做旁边的小测练一练。",
+      "These are not fancy upgrades — they are the <strong>ordinary words that should be at hand but slip away</strong> when writing. Browse by theme, or look one up mid-sentence when stuck; there is a quick quiz alongside to practise them too.")}</p>
+
+    <div class="kp-grid" style="margin-bottom:18px">
+      ${WORDBANK.map(c => `<button class="kp ${c.id === cat.id ? "on" : ""}" data-wbcat="${c.id}">
+        <div><div class="kp-name">${T(esc(c.zh), esc(c.en))}</div></div>
+        <div class="kp-foot"><span class="kp-count">${c.words.length} ${T("个词","words")}</span></div>
+      </button>`).join("")}
+    </div>
+
+    <div class="panel scroll-x">
+      <table>
+        <thead><tr><th>${T("英文","Word")}</th><th>${T("意思","Meaning")}</th><th>${T("例句","Example")}</th></tr></thead>
+        <tbody>
+          ${cat.words.map(w => `<tr><td><b>${esc(w.w)}</b></td><td>${esc(ZH(w.zh))}</td><td style="font-family:var(--read)">${esc(w.eg)}</td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="eyebrow">${T("词汇活用小测 · 抽 10 题","Word quiz · 10 questions")}</p>
+    <div class="panel">
+      <p class="sub">${TB("给一句日常场景，选出该填的词。目标不是认出词，是<strong>要用的时候想得起来</strong>。","A sentence, a blank, four choices. The goal is not recognising the word — it is <strong>having it ready when she needs it.</strong>")} ${progress.wordq && progress.wordq.best ? `<strong>${Tp("最好成绩：" + progress.wordq.best + "/10", "Best: " + progress.wordq.best + "/10")}</strong>` : ""}</p>
+      <div class="q-nav"><button class="btn" data-wbquiz="1">${Tp("开始小测","Start the quiz")}</button></div>
+    </div>`;
+}
+
+let wbq = null;
+function startWordQuiz() {
+  const pool = wbFlat(), qs = [];
+  const pick = pool.slice().sort(() => Math.random() - .5).slice(0, 10);
+  pick.forEach(target => {
+    const sameCat = pool.filter(w => w.cat === target.cat && w.w !== target.w);
+    const other = pool.filter(w => w.cat !== target.cat && w.w !== target.w);
+    const distract = sameCat.sort(() => Math.random() - .5).slice(0, 2)
+      .concat(other.sort(() => Math.random() - .5).slice(0, 1));
+    while (distract.length < 3) { const r = pool[Math.floor(Math.random() * pool.length)]; if (r.w !== target.w && !distract.includes(r)) distract.push(r); }
+    const opts = [target, ...distract].sort(() => Math.random() - .5).map(o => o.w);
+    qs.push({ target, opts, blank: wbBlank(target) });
+  });
+  wbq = { qs, i: 0, right: 0, missed: [], answered: false };
+  renderWordQuiz();
+}
+function renderWordQuiz() {
+  const q = wbq.qs[wbq.i];
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-tab2="writing">← ${Tp("写作","Writing")}</button>
+      <span class="quiz-title">${Tp("词汇活用小测","Word quiz")}</span>
+      <span class="q-meta">${Tp("第 " + (wbq.i + 1) + " / " + wbq.qs.length + " 题", "Question " + (wbq.i + 1) + " of " + wbq.qs.length)}</span>
+    </div>
+    <div class="q-card">
+      <p class="q-text" style="font-family:var(--read)">${esc(q.blank)}</p>
+      ${lang === "en" ? "" : `<p class="sub" style="margin:-6px 0 14px">${Tp("意思：", "Meaning: ")}${esc(q.target.zh)}</p>`}
+      <div class="opts">
+        ${q.opts.map((o, i) => `<button class="opt" data-wbpick="${i}">
+          <span class="letter">${"ABCD"[i]}</span><span class="body">${esc(o)}</span>
+        </button>`).join("")}
+      </div>
+      <div id="wbVerdict"></div>
+    </div>`;
+}
+function wbPick(i) {
+  if (wbq.answered) return;
+  wbq.answered = true;
+  const q = wbq.qs[wbq.i], picked = q.opts[i], ok = picked === q.target.w;
+  document.querySelectorAll(".opt").forEach((el, n) => {
+    if (q.opts[n] === q.target.w) el.classList.add("hit");
+    else if (n === i) el.classList.add("miss");
+    el.disabled = true;
+  });
+  if (ok) wbq.right++; else wbq.missed.push(q.target);
+  document.getElementById("wbVerdict").innerHTML = `<div class="verdict ${ok ? "good" : "bad"}" style="margin-top:14px">
+    <b>${ok ? Tp("对！", "Nice!") : Tp("正确答案是 " + esc(q.target.w), "The right one was " + esc(q.target.w))}</b>
+    <p class="src">${esc(q.target.eg)}</p>
+    <div class="q-nav" style="margin-top:10px"><button class="btn" data-wbnext="1">${wbq.i + 1 < wbq.qs.length ? Tp("下一题","Next") : Tp("看成绩","See score")}</button></div>
+  </div>`;
+}
+function wbNext() {
+  wbq.i++; wbq.answered = false;
+  if (wbq.i >= wbq.qs.length) return finishWordQuiz();
+  renderWordQuiz();
+}
+function finishWordQuiz() {
+  const right = wbq.right, missed = wbq.missed;
+  progress.wordq = progress.wordq || { best: 0, runs: [] };
+  const isBest = right > (progress.wordq.best || 0);
+  progress.wordq.best = Math.max(progress.wordq.best || 0, right);
+  progress.wordq.runs = (progress.wordq.runs || []).concat([{ right, at: Date.now() }]).slice(-20);
+  save();
+  view.innerHTML = `
+    <div class="quiz-head">
+      <button class="back" data-tab2="writing">← ${Tp("写作","Writing")}</button>
+      <span class="quiz-title">${Tp("词汇活用小测 · 成绩","Word quiz · score")}</span>
+    </div>
+    <div class="score-card">
+      <div class="score-big">${right}<span style="font-size:1.4rem;color:var(--slate)">/10</span></div>
+      <p>${isBest ? Tp("🎉 新纪录！", "🎉 New record!") : Tp("最好成绩：" + progress.wordq.best + "/10", "Best: " + progress.wordq.best + "/10")}</p>
+      <div class="q-nav" style="justify-content:center">
+        <button class="btn" data-wbquiz="1">${Tp("再来一次","Go again")}</button>
+        <button class="btn ghost" data-tab2="writing">${Tp("回到写作","Back to Writing")}</button>
+      </div>
+      ${missed.length ? `<div class="wrongs">
+        <h5>${T("这几个词再看一眼","Words to look at again")} (${missed.length})</h5>
+        <ul>${missed.map(w => `<li><b>${esc(w.w)}</b>${lang === "en" ? "" : ` — <span style="color:var(--slate)">${esc(w.zh)}</span>`}</li>`).join("")}</ul>
+      </div>` : ""}
+    </div>`;
+  wbq = null;
+}
+
+/* ============================================================
    写作课：每天 10 分钟，四步走
    看范例（好在哪）→ 学词学句型 → 照框架仿写 → 自己写
    整篇作文每 10 天一次；中间 9 天每天只练一个动作，但每次都先看过范例
@@ -5901,7 +6149,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],[data-wlstep],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wlStart,#wlShow,#wlDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],[data-wlstep],[data-wbcat],[data-wbquiz],[data-wbpick],[data-wbnext],[data-openwb],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wlStart,#wlShow,#wlDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -5952,6 +6200,11 @@ document.addEventListener("click", e => {
   if (t.id === "wlStart") { wlTimer(wles.step === 2 ? 180 : 300); return; }
   if (t.id === "wlShow") { stopWLTimer(); wles.show = true; renderWLesson(); return; }
   if (t.id === "wlDone") { finishWLesson(); return; }
+  if ("openwb" in t.dataset) { renderWordbank(); return; }
+  if (t.dataset.wbcat) { renderWordbank(t.dataset.wbcat); return; }
+  if (t.dataset.wbquiz) { startWordQuiz(); return; }
+  if (t.dataset.wbpick !== undefined) { wbPick(+t.dataset.wbpick); return; }
+  if (t.dataset.wbnext) { wbNext(); return; }
   if (t.id === "rdStart") { startRead(); return; }
   if (t.id === "rdStop") { stopRead(); current = "today"; render(); return; }
   if (t.id === "rdDone") { finishRead(); return; }
