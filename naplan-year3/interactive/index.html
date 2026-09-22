@@ -171,6 +171,8 @@
     font-size: .95rem; display: grid; place-items: center; padding: 0;
   }
   .icon-btn:hover { color: var(--ink); border-color: var(--slate); }
+  .icon-btn:disabled { opacity: .35; cursor: default; }
+  .btn:disabled, .btn.sm:disabled { opacity: .45; cursor: default; }
 
   /* ---------- tabs ---------- */
   nav {
@@ -393,6 +395,40 @@
 
   .map-note { color: var(--slate); font-size: .86rem; margin: 0 0 20px; }
 
+  /* ---------- 日历 ---------- */
+  .cal-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 14px; }
+  .cal-head b { font-size: 1.05rem; min-width: 130px; text-align: center; }
+  .cal-dow { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; margin-bottom: 6px; }
+  .cal-dow span { font-size: .74rem; color: var(--slate); font-weight: 700; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-cell {
+    aspect-ratio: 1; border-radius: var(--r-sm); border: 1px solid var(--hairline);
+    background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; font-size: .82rem;
+  }
+  .cal-cell.empty, .cal-cell.before { visibility: hidden; }
+  .cal-cell.future { background: var(--card-sunk); color: var(--slate); opacity: .55; }
+  .cal-cell.today { border: 2px solid var(--plum); font-weight: 700; }
+  .cal-cell.full { background: var(--eucalypt-soft); border-color: var(--eucalypt); }
+  .cal-cell.partial { background: var(--wattle-soft); border-color: var(--wattle); }
+  .cal-cell.made-up { background: var(--sky-soft); border-color: var(--sky); }
+  .cal-cell.missed { border-color: var(--coral); color: var(--coral); }
+  .cal-d { font-family: var(--data); font-variant-numeric: tabular-nums; }
+  .cal-ic { font-size: .7rem; line-height: 1; min-height: .9em; }
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 14px; font-size: .8rem; color: var(--slate); }
+  .cal-lg { display: flex; align-items: center; gap: 6px; }
+  .cal-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; border: 1px solid var(--hairline); }
+  .cal-dot.full { background: var(--eucalypt-soft); border-color: var(--eucalypt); }
+  .cal-dot.partial { background: var(--wattle-soft); border-color: var(--wattle); }
+  .cal-dot.made-up { background: var(--sky-soft); border-color: var(--sky); }
+  .cal-dot.missed { background: var(--card); border-color: var(--coral); }
+  .cal-miss-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .cal-missrow {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 13px; background: var(--card-sunk); border-radius: var(--r-sm); font-size: .92rem;
+  }
+  .btn.sm { padding: 6px 12px; font-size: .82rem; }
+
   /* ---------- 写作课 ---------- */
   .wl-bar { display: flex; gap: 6px; margin: 0 0 18px; flex-wrap: wrap; }
   .wl-step {
@@ -452,6 +488,10 @@
   @media (max-width: 560px) {
     .wl-step { flex: 1 1 100%; }
     .wl-words td:first-child { width: 40%; }
+    .cal-missrow { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .cal-missrow .btn.sm { align-self: stretch; text-align: center; }
+    .cal-head b { min-width: 0; font-size: .96rem; }
+    .cal-ic { font-size: .62rem; }
   }
 
 
@@ -2499,7 +2539,8 @@ const TABS = [
   { id: "goal",        label: "大目标",    en: "Big goal" },
   { id: "backup",      label: "备份",      en: "Backup" },
   { id: "coach",       label: "名师锦囊",  en: "Teaching tips" },
-  { id: "progress",    label: "我的进度",  en: "Progress" }
+  { id: "progress",    label: "我的进度",  en: "Progress" },
+  { id: "calendar",    label: "日历",      en: "Calendar" }
 ];
 let current = "today";
 const view = document.getElementById("view");
@@ -3013,6 +3054,75 @@ function renderProgress() {
 
     <div class="q-nav">
       <button class="btn ghost" id="resetBtn">${Tp("清空所有进度记录","Reset all progress")}</button>
+    </div>`;
+}
+
+/* ============================================================
+   日历：打卡记录 + 补课
+   ============================================================ */
+let calCursor = null; /* { y, mo } —— 当前查看的月份，默认本月 */
+const CAL_ICON = { full: "✅", partial: "🔸", "made-up": "🌱", missed: "", today: "", future: "", before: "" };
+const CAL_LABEL = {
+  full: ["完成", "Done"], partial: ["部分完成", "Partial"], "made-up": ["已补课", "Caught up"],
+  missed: ["缺勤", "Missed"], today: ["今天", "Today"], future: ["还没到", "Not yet"], before: ["", ""]
+};
+function renderCalendar() {
+  const now = new Date();
+  if (!calCursor) calCursor = { y: now.getFullYear(), mo: now.getMonth() };
+  const { y, mo } = calCursor;
+  const isCurrentMonth = y === now.getFullYear() && mo === now.getMonth();
+  const cells = calMonthCells(y, mo);
+  const missed = calMissedInMonth(y, mo);
+  const usedToday = makeupUsedToday();
+  const dow = [["一","Mon"],["二","Tue"],["三","Wed"],["四","Thu"],["五","Fri"],["六","Sat"],["日","Sun"]];
+  const monthLabel = { zh: y + "年" + (mo + 1) + "月", en: now.toLocaleDateString ? new Date(y, mo, 1).toLocaleDateString("en-AU", { month: "long", year: "numeric" }) : (mo + 1) + "/" + y };
+
+  view.innerHTML = `
+    <h2>${T("日历", "Calendar")}<span class="en">${Tp("打卡记录与补课", "Check-in record & catch-up")}</span></h2>
+    <p class="lede">${TB("每完成一天的任务，当天格子会打勾 —— 这就是打卡。断掉的几天不会扣任何东西，也不会被跳过；如果想补回来，花一点金币就能在「今天」多学一个知识点，把那天补上。",
+      "Every day the tasks are finished, that day's box ticks itself — that is the check-in. Missed days cost nothing and are never skipped over; to catch one up, spend a few coins to learn one extra topic today.")}</p>
+
+    <div class="panel">
+      <div class="cal-head">
+        <button class="icon-btn" data-cal="prev" aria-label="Previous month">‹</button>
+        <b>${T(esc(monthLabel.zh), esc(monthLabel.en))}</b>
+        <button class="icon-btn" data-cal="next" aria-label="Next month" ${isCurrentMonth ? "disabled" : ""}>›</button>
+      </div>
+      <div class="cal-dow">${dow.map(d => `<span>${T(d[0], d[1])}</span>`).join("")}</div>
+      <div class="cal-grid">
+        ${cells.map(d => {
+          if (d === null) return `<div class="cal-cell empty"></div>`;
+          const key = calDateKey(y, mo, d);
+          const st = calDayStatus(key);
+          return `<div class="cal-cell ${st}">
+            <span class="cal-d">${d}</span>
+            <span class="cal-ic">${CAL_ICON[st] || ""}</span>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="cal-legend">
+        ${["full","partial","made-up","missed"].map(st => `<span class="cal-lg"><i class="cal-dot ${st}"></i>${T(esc(CAL_LABEL[st][0]), esc(CAL_LABEL[st][1]))}</span>`).join("")}
+      </div>
+    </div>
+
+    <p class="eyebrow">${T("本月缺勤 · 花 " + MAKEUP_COST + " 金币补课", "This month's missed days · " + MAKEUP_COST + " coins to catch up")}</p>
+    <div class="panel">
+      ${missed.length === 0
+        ? `<p class="sub" style="margin:0">🎉 ${T("这个月没有缺勤。", "No missed days this month.")}</p>`
+        : `<p class="sub">${TB("补课会在「今天」多加一项学习任务，不会占用速算、朗读、写作课这些固定任务的名额；<strong>每天最多补一次</strong>，慢慢补完就行。",
+            "Catching up adds one extra learning task to <strong>Today</strong> — it never touches the tables sprint, reading or writing lesson slots. <strong>Only one catch-up a day</strong>, so clear the backlog gradually.")}</p>
+          <div class="cal-miss-list">
+            ${missed.map(key => {
+              const lbl = calFmtDay(key);
+              const disabled = usedToday || coins() < MAKEUP_COST;
+              return `<div class="cal-missrow">
+                <span>${T(esc(lbl.zh), esc(lbl.en))}</span>
+                <button class="btn sm" data-makeup="${key}" ${disabled ? "disabled" : ""}>🪙 ${Tp("补课 " + MAKEUP_COST, "Catch up · " + MAKEUP_COST)}</button>
+              </div>`;
+            }).join("")}
+          </div>
+          ${usedToday ? `<p class="sub" style="margin:10px 0 0">${T("今天已经补过一次了，明天可以再补。", "Already used today's catch-up — another one is ready tomorrow.")}</p>`
+            : coins() < MAKEUP_COST ? `<p class="sub" style="margin:10px 0 0">${T("金币不够，去做几次速算抢答。", "Not enough coins yet — a few rounds of the number sprint will cover it.")}</p>` : ""}`}
     </div>`;
 }
 
@@ -3793,6 +3903,77 @@ function dayAssign() {
   return pl.assign[k];
 }
 
+/* ============================================================
+   日历打卡 + 补课：缺勤不扣任何东西，只是可以花金币多学一个知识点补回来
+   ============================================================ */
+const CAL_START = PHASES[0].from;
+const MAKEUP_COST = 20;
+function makeupState() {
+  if (!progress.makeup) progress.makeup = { usedOn: "", caughtUp: {} };
+  if (!progress.makeup.caughtUp) progress.makeup.caughtUp = {};
+  return progress.makeup;
+}
+function makeupUsedToday() { return makeupState().usedOn === todayKey(); }
+/* 补课要选一个「今天正常任务还没占用」的知识点，不能跟当天本来的新知识点撞车 */
+function makeupTarget(A) {
+  const skipNew = A && A.newKp, skipWeak = A && A.weak9;
+  const nk = CURRICULUM.find(([s, k]) => kpStat(s, k).total === 0 && !(skipNew && s === skipNew[0] && k === skipNew[1]));
+  if (nk) return { s: nk[0], k: nk[1] };
+  const w = CURRICULUM.map(([s, k]) => ({ s, k, st: kpStat(s, k) }))
+    .filter(x => x.st.total && x.st.right / x.st.total < .9 && !(skipWeak && x.s === skipWeak[0] && x.k === skipWeak[1]))
+    .sort((a, b) => (a.st.right / a.st.total) - (b.st.right / b.st.total))[0];
+  return w ? { s: w.s, k: w.k } : null;
+}
+function redeemMakeup(dateKey) {
+  if (makeupUsedToday()) return false;
+  if (!spendCoins(MAKEUP_COST)) return false;
+  const m = makeupState();
+  m.usedOn = todayKey();
+  m.caughtUp[dateKey] = true;
+  save();
+  return true;
+}
+function calDateKey(y, mo, d) { return y + "-" + String(mo + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0"); }
+function calDayStatus(key) {
+  const todayK = todayKey();
+  if (key < CAL_START) return "before";
+  if (key > todayK) return "future";
+  if (key === todayK) return "today";
+  const pl = planState();
+  if (pl.bonus && pl.bonus[key]) return "full";
+  if (makeupState().caughtUp[key]) return "made-up";
+  if (pl.done && pl.done[key] && pl.done[key].length) return "partial";
+  return "missed";
+}
+function calMonthCells(y, mo) {
+  const startDow = (new Date(y, mo, 1).getDay() + 6) % 7; /* 周一为 0 */
+  const daysInMonth = new Date(y, mo + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+  return cells;
+}
+function calMissedInMonth(y, mo) {
+  const daysInMonth = new Date(y, mo + 1, 0).getDate(), out = [];
+  for (let d = 1; d <= daysInMonth; d++) {
+    const key = calDateKey(y, mo, d);
+    if (calDayStatus(key) === "missed") out.push(key);
+  }
+  return out;
+}
+function anyMissedSoFar() {
+  const end = new Date(todayKey());
+  for (let d = new Date(CAL_START); d < end; d.setDate(d.getDate() + 1)) {
+    if (calDayStatus(d.toISOString().slice(0, 10)) === "missed") return true;
+  }
+  return false;
+}
+function calFmtDay(key) {
+  const d = new Date(key + "T00:00:00");
+  return { zh: (d.getMonth() + 1) + "月" + d.getDate() + "日",
+    en: d.toLocaleDateString("en-AU", { weekday: "short", day: "numeric", month: "short" }) };
+}
+
 function todayTasks() {
   const done = doneToday();
   const A = dayAssign();
@@ -3860,6 +4041,18 @@ function todayTasks() {
     zh: "重做错题（" + wrongs + " 道待攻克）", en: "Redo mistakes (" + wrongs + " to fix)",
     zhWhy: "按 1/3/7/21 天的间隔重考，这样记得最牢", enWhy: "They come back at 1, 3, 7 and 21 day gaps — the way memory sticks best",
     go: { review: 1 } });
+
+  /* 补课：在日历页花金币兑换，今天多学一个知识点（不影响固定的每日任务） */
+  if (makeupUsedToday()) {
+    const mk = makeupTarget(A);
+    if (mk) {
+      const g = BANK[mk.s].groups.find(x => x.kp === mk.k);
+      t.push({ id: "makeup", icon: "🌱", min: 10,
+        zh: "补课：" + mk.k + "（" + g.qs.length + " 题）", en: "Catch-up: " + g.en + " (" + g.qs.length + " questions)",
+        zhWhy: "用金币换来的一次额外学习，学完这天的缺勤就算补上了", enWhy: "An extra topic bought with coins — finishing it marks that missed day as caught up",
+        go: { quiz: mk.s, kp: mk.k } });
+    }
+  }
 
   /* 听写：学习期每 3 天一次，复习期起每 2 天一次并升级难度 */
   const every = ph === "learn" ? 3 : 2;
@@ -5724,6 +5917,11 @@ function renderToday() {
       <div class="q-nav" style="margin-top:10px"><button class="btn" data-tab="backup">${Tp("去备份页","Open Backup")}</button></div>
     </div>` : ""}
     ${allDone ? `<div class="done-banner">🎉 ${T("今天的任务全部完成了！明天见。", "All done for today. See you tomorrow!")}</div>` : ""}
+    ${(!makeupUsedToday() && anyMissedSoFar()) ? `<div class="bk-warn" style="margin-bottom:20px">
+      🗓️ ${TB("日历上有缺勤的日子。想补的话，花一点金币就能在今天多学一个知识点。",
+        "There are missed days on the calendar. A few coins buys one extra topic today to catch one up.")}
+      <div class="q-nav" style="margin-top:10px"><button class="btn" data-tab="calendar">${Tp("去日历看看","Open Calendar")}</button></div>
+    </div>` : ""}
     ${(allDone && progress.needBackup) ? `<div class="bk-warn" style="margin-bottom:20px">
       💾 ${TB("这周还没备份过。花一分钟把备份码存起来 —— 万一换设备或清了浏览器数据，记录还能找回来。",
         "No backup this week. Take a minute to save the code — if you switch device or clear browser data, this is what gets it back.")}
@@ -6180,6 +6378,7 @@ function render() {
   else if (current === "rewards") renderRewards();
   else if (current === "coach") renderCoach();
   else if (current === "progress") renderProgress();
+  else if (current === "calendar") renderCalendar();
   else renderSubject(current);
   window.scrollTo({ top: 0 });
 }
@@ -6202,7 +6401,7 @@ function leave() {
 }
 
 document.addEventListener("click", e => {
-  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],[data-wlstep],[data-wbcat],[data-wbquiz],[data-wbpick],[data-wbnext],[data-openwb],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wlStart,#wlShow,#wlDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
+  const t = e.target.closest("[data-tab],[data-tab2],[data-quiz],[data-back],[data-pick],[data-next],[data-retry],[data-prompt],[data-dict],[data-play],[data-dcheck],[data-dreveal],[data-dnext],[data-drill],[data-key],[data-quitdrill],[data-exam],[data-epick],[data-emove],[data-esubmit],[data-quitexam],[data-review],[data-rpick],[data-rnext],[data-node],[data-gfilter],[data-gclear],[data-lang],[data-go],[data-buy],[data-set],[data-rtab],[data-teach],[data-wlstep],[data-wbcat],[data-wbquiz],[data-wbpick],[data-wbnext],[data-openwb],[data-cal],[data-makeup],#saveGoal,#wtStart,#wtStop,#rdStart,#rdStop,#rdDone,#wlStart,#wlShow,#wlDone,#bkCopy,#rsGo,#syGo,#syUse,#syCopy,#syOff,#resetBtn,#themeBtn");
   if (!t) return;
 
   if (t.dataset.lang) { setLang(t.dataset.lang); leave(); render(); return; }
@@ -6258,6 +6457,19 @@ document.addEventListener("click", e => {
   if (t.dataset.wbquiz) { startWordQuiz(); return; }
   if (t.dataset.wbpick !== undefined) { wbPick(+t.dataset.wbpick); return; }
   if (t.dataset.wbnext) { wbNext(); return; }
+  if (t.dataset.cal) {
+    if (!calCursor) { const n = new Date(); calCursor = { y: n.getFullYear(), mo: n.getMonth() }; }
+    calCursor.mo += (t.dataset.cal === "next" ? 1 : -1);
+    if (calCursor.mo < 0) { calCursor.mo = 11; calCursor.y--; }
+    if (calCursor.mo > 11) { calCursor.mo = 0; calCursor.y++; }
+    renderCalendar(); return;
+  }
+  if (t.dataset.makeup) {
+    const ok = redeemMakeup(t.dataset.makeup);
+    if (ok) { toast({ icon: "🌱", n: "补课任务已加入今天", en: "Catch-up task added to Today", d: "去「今天」多学一个知识点", de: "Head to Today for the extra topic" }); updateCoinUI(); }
+    renderCalendar();
+    return;
+  }
   if (t.id === "rdStart") { startRead(); return; }
   if (t.id === "rdStop") { stopRead(); current = "today"; render(); return; }
   if (t.id === "rdDone") { finishRead(); return; }
