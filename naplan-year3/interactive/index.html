@@ -2621,8 +2621,8 @@ function startQuiz(subj, kpName, opts) {
 function renderQuiz() {
   const { group, i, results } = quiz;
   const q = group.qs[i];
-  const isReading = quiz.subj === "reading";
-  const txt = isReading && q.t ? READING_TEXTS[q.t] : null;
+  const txt = q.t ? READING_TEXTS[q.t] : null;
+  const isReading = quiz.subj === "reading" || !!txt;
 
   const dots = quiz.qs.map((_, n) => {
     const r = results[n];
@@ -2641,7 +2641,7 @@ function renderQuiz() {
         ? `<p class="sub coach-line"><strong>${T("老师说", "Teacher says")} ·</strong> ${
             TB(esc(COACH[quiz.subj + "::" + quiz.kp]), esc(EN_COACH[quiz.subj + "::" + quiz.kp] || ""))}</p>` : ""}
     </div>
-    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.typeZh || txt.type), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${quiz.qs.length} 题`, `Question ${i + 1} of ${quiz.qs.length}`)} · ${
         lang === "zh" ? esc(quiz.kp) : esc(BANK[quiz.subj].groups.find(g => g.kp === quiz.kp).en)}</div>
@@ -3397,15 +3397,15 @@ function renderExam() {
   const { qs, i, picks } = exam;
   const item = qs[i];
   const q = item.q;
-  const isReading = exam.subj === "reading";
-  const txt = isReading && q.t ? READING_TEXTS[q.t] : null;
+  const txt = q.t ? READING_TEXTS[q.t] : null;
+  const isReading = exam.subj === "reading" || !!txt;
   view.innerHTML = `
     <div class="quiz-head">
       <button class="back" data-quitexam="1">← 结束</button>
       <span class="quiz-title">${T("限时测验","Timed test")} · ${lang==="zh"?BANK[exam.subj].label:BANK[exam.subj].en}</span>
       <span class="clock" id="examClock">${fmtTime(exam.left)}</span>
     </div>
-    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.typeZh || txt.type), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${qs.length} 题`, `Question ${i + 1} of ${qs.length}`)} · ${T("中途不显示对错，交卷后一次看","no answers shown until you finish")}</div>
       <p class="q-text ${isReading ? "serif" : ""}">${q.q}</p>
@@ -3490,8 +3490,8 @@ function renderReview() {
   const { list, i, results } = review;
   const item = list[i];
   const q = item.q;
-  const isReading = item.subj === "reading";
-  const txt = isReading && q.t ? READING_TEXTS[q.t] : null;
+  const txt = q.t ? READING_TEXTS[q.t] : null;
+  const isReading = item.subj === "reading" || !!txt;
   const dots = list.map((_, n) => {
     const r = results[n];
     return `<span class="dot ${r === undefined ? "" : r ? "ok" : "no"} ${n === i ? "now" : ""}"></span>`;
@@ -3507,7 +3507,7 @@ function renderReview() {
         `答对后会隔 <strong>1 天 → 3 天 → 7 天 → 21 天</strong>各再考你一次，四关全过才算真记住。这道题错过 ${item.meta.times} 次，现在在第 ${(item.meta.box || 0) + 1} 关。`,
         `Once you get it right it comes back after <strong>1 day, then 3, then 7, then 21</strong>. Survive all four and it is really learnt. You have missed this one ${item.meta.times} time(s) — you are on stage ${(item.meta.box || 0) + 1}.`)}</p>
     </div>
-    ${txt ? `<div class="passage"><h4>${T(esc(txt.type) + " " + esc(txt.typeZh || ""), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
+    ${txt ? `<div class="passage"><h4>${T(esc(txt.typeZh || txt.type), esc(txt.type))} — ${esc(txt.title)}</h4>${txt.html}</div>` : ""}
     <div class="q-card">
       <div class="q-meta">${Tp(`第 ${i + 1} / ${list.length} 题`, `Question ${i + 1} of ${list.length}`)} · ${
         esc(lang === "zh" ? BANK[item.subj].label + " → " + item.kp
