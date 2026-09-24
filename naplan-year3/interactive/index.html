@@ -2746,6 +2746,7 @@ function next() {
 function finish() {
   const total = quiz.qs.length;
   const right = quiz.results.filter(Boolean).length;
+  addCoins(right * 2 + (right === total ? 10 : 0), "quiz");
   if (quiz.mini) {
     const st = kpStat(quiz.subj, quiz.kp);
     progress.kp[kpKey(quiz.subj, quiz.kp)] = { done: 1, right: st.right, total: st.total, at: Date.now() };
@@ -3249,6 +3250,7 @@ function nextDict() {
 
 function finishDict() {
   const total = dict.words.length, right = dict.results.filter(Boolean).length;
+  addCoins(right * 2 + (right === total ? 10 : 0), "dict");
   touchStreak(); markTask("dict");
   checkAllDone();
   if (right === total) toast(earn("speller"));
@@ -3550,6 +3552,7 @@ function finishExam() {
   const total = exam.qs.length, pct = Math.round(right / total * 100);
   const used = Math.max(0, (exam.total0 || 0) - Math.max(0, exam.left));
   const timedOut = exam.left <= 0;
+  addCoins(right * 2 + (pct >= 90 ? 15 : 0), "exam");
   progress.tests = (progress.tests || []).concat([{ subj: exam.subj, right, total, at: Date.now() }]).slice(-20);
   save(); touchStreak(); checkMilestones(); markTask("exam");
   checkAllDone(); renderTabs();
@@ -3675,6 +3678,8 @@ function reviewPick(n) {
 
 function reviewNext() {
   if (review.i === review.list.length - 1) {
+    const right = review.results.filter(Boolean).length;
+    addCoins(right * 3, "review");
     touchStreak(); checkMilestones(); markTask("review");
     checkAllDone();
     if ((progress.cleared || 0) >= 5) toast(earn("fixer"));
@@ -4956,8 +4961,8 @@ function renderShop() {
   const L = look(), own = owned();
   view.innerHTML = `
     <h2>${T("我的形象", "My Character")}<span class="en">${Tp("赚金币，换装扮", "Earn coins, dress up")}</span></h2>
-    <p class="lede">${TB("金币来自<strong>乘法口诀抢答</strong>：答对一题 +3，3 分钟答对 25 题以上再 +40。用它换发型、衣服、围巾、帽子、宠物和背景 —— 共 54 件，还有 5 套整买更便宜的主题套装。",
-      "Coins come from the <strong>times tables sprint</strong>: +3 for each correct answer, and +40 for 25 or more in three minutes. Spend them on hair, outfits, scarves, hats, pets and scenes — 54 items in all, plus 5 themed sets that cost less bought together.")}</p>
+    <p class="lede">${TB("每一项练习答对都能拿金币：速算抢答最快（答对 +3，达标再 +40）；知识点小测、限时测验、拼写听写、词汇小测答对 +2，全对再加成；重做错题 +3；朗读和写作课完成各 +10。用金币换发型、衣服、围巾、帽子、宠物和背景 —— 共 54 件，还有 5 套整买更便宜的主题套装。",
+      "Every piece of practice earns coins when it goes well: the number sprint pays fastest (+3 per correct, +40 for hitting the goal); topic quizzes, timed tests, spelling and the word quiz pay +2 per correct with a bonus for a perfect score; redoing mistakes pays +3; finishing the reading or writing lesson pays +10 each. Spend them on hair, outfits, scarves, hats, pets and scenes — 54 items in all, plus 5 themed sets that cost less bought together.")}</p>
 
     <div class="av-stage">
       <div class="av-big">${avatarSvg(200)}</div>
@@ -5269,7 +5274,8 @@ function wbNext() {
   renderWordQuiz();
 }
 function finishWordQuiz() {
-  const right = wbq.right, missed = wbq.missed;
+  const right = wbq.right, missed = wbq.missed, total = wbq.qs.length;
+  addCoins(right * 2 + (right === total ? 10 : 0), "wordq");
   progress.wordq = progress.wordq || { best: 0, runs: [] };
   const isBest = right > (progress.wordq.best || 0);
   progress.wordq.best = Math.max(progress.wordq.best || 0, right);
@@ -5766,6 +5772,7 @@ function renderWLesson() {
 function finishWLesson() {
   stopWLTimer();
   progress.wlDays = (progress.wlDays || 0) + 1;
+  addCoins(10, "wlesson");
   save(); touchStreak(); markTask("wlesson"); checkAllDone();
   wles = null;
   current = "today"; render();
@@ -5855,6 +5862,7 @@ function finishRead() {
   const k = todayKey();
   progress.readDays = progress.readDays || [];
   if (!progress.readDays.includes(k)) progress.readDays.push(k);
+  addCoins(10, "read");
   save();
   markTask("read");
   touchStreak();
